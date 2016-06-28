@@ -1,0 +1,45 @@
+create table variants (
+CHROM tinyint(3) unsigned,
+POS int(11) unsigned,
+ID int(11) unsigned not null auto_increment,
+REF varchar(20),
+ALT varchar(50),
+QUAL varchar(12),
+FILTER varchar(12),
+TYPE varchar(3),
+CHROM2 tinyint(3) unsigned,
+POS2 int(10) unsigned,
+LEN int(10),
+primary key(ID))
+
+create table samples(
+sample_id varchar(16) not null,
+individual_id varchar(8),
+tumor boolean not null,
+primary key(sample_id))
+
+create table individuals (
+individual_id varchar(8) not null,
+sex varchar(1) not null,
+disease_status varchar(255) not null,
+tissue_type varchar(4),
+mean_read_depth float,
+insert_size smallint(5) unsigned,
+primary key(individual_id) )
+
+create table genotype (
+individual_id varchar(8) not null,
+variant_id int(11) unsigned not null,
+GT varchar(3),
+primary key(individual_id, variant_id))
+
+create table tool1.info (
+variant_id
+
+primary key(variant_id))
+
+create table tool1.samples(
+individual_id varchar(8) not null,
+variant_id int(11) not null,
+
+primary key(individual_id, variant_id))

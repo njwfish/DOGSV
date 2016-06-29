@@ -8,9 +8,9 @@ import glob, os
 
 #TODO: Change tool_id value to the ID of the correct tool
 ids = {
-	'individual_id': 	'UNKN0001',
+	'individual_id': 	'0',
 	'variant_id':		'0',
-	'tool_id': 			'UNK',  #TODO: update
+	'tool_id': 			'0',  #TODO: update
 }
 
 #TODO: Add variant types specific to this tool on the left,
@@ -190,7 +190,9 @@ def insertSamples(record):
 	for j in range(len(record.samples)):
 		ids['individual_id'] = individual_mapping[record.samples[j].sample]
 		# Add universally queryable genotype data to the genotype table.
-		insertSQL('genotype', ['individual_id', 'variant_id', 'GT'], [ids[individual_id], ids[variant_id], getField(record, "GT @samples %d" % (j))])
+		insertSQL('genotype', ['individual_id', 'variant_id', 'GT'], 
+			[ids[individual_id], ids[variant_id], 
+			getField(record, "GT @samples %d" % (j))])
 		cols = ['individual_id', 'variant_id']
 		vals = [ids['individual_id'], ids['variant_id']]
 		for i in range(len(toolSamples)):

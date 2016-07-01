@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Builder</h1>
+  <form action="" method="post" name="record">
+      {{ form.hidden_tag() }}
+      <p>
+          Chrmosome: {{ form.chrom(size=20) }}
+      </p>
+      <p>
+          Range: {{ form.pos(size=12) }} to {{ form.pos2(size=12) }}
+      </p>
+      <p>
+          Length: {{ form.length(size=8) }}
+      </p>
+      <p>
+          Filter: {{ form.filt(size=20) }}
+      </p>
+      <p>{{ form.DEL }} DEL {{ form.DUP }} DUP {{ form.INS }} INS {{ form.INV }} INV {{ form.TRA }} TRA {{ form.SIN }} SIN {{ form.LIN }} LIN {{ form.BXP }} BXP</p>
+      <p><input type="submit" value="Query"></p>
+  </form>
+{% endblock %}

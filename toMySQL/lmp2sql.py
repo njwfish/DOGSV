@@ -29,7 +29,8 @@ variant_type_mapping = {
 	'LIN':'LIN',
 	'BXP':'BXP',
 	'DUP:TANDEM':'DUP',
-	'CNV':'UKN'
+	'CNV':'UKN',
+	'BND':'BXP'
 }
 
 #TODO: Change the right side of the values to be updated to the correct
@@ -180,7 +181,7 @@ def genAlignmentLocationMap():
 	locations = querySQL(sql)
 	for location in locations:
 		formatLoc = str(location[1])
-		if len(str(location[1])) < 3: 
+		if len(str(location[1])) < 3:
 			formatLoc = '%s%s' % (CHROM_format,str(location[1]))
 		alignment_location_mapping.update({formatLoc:str(location[0])})
 
@@ -276,7 +277,7 @@ def insertInfo(record):
 	insertSQL("%s_info" % ids['tool_id'], cols, vals)
 
 def insertSampleData(record):
-	"""Adds genotype data to genotype table and adds all the samples and tool 
+	"""Adds genotype data to genotype table and adds all the samples and tool
 		specific sample information to the tool's samples table,
 		getting the fields from the toolSamples dict.
 		:param record: the record to get the specified samples fields
@@ -288,8 +289,8 @@ def insertSampleData(record):
 		ids['individual_id'] = individual_mapping[record.samples[j].sample.split('.')[0]]
 		# Add universally queryable genotype data to the genotype table.
 		if hasGT:
-			insertSQL('genotypes', ['individual_id', 'record_id', 'GT'], 
-				[ids['individual_id'], ids['record_id'], 
+			insertSQL('genotypes', ['individual_id', 'record_id', 'GT'],
+				[ids['individual_id'], ids['record_id'],
 				genotype_mapping[getField(record, "GT @samples %d" % (j))]])
 
 		cols = ['individual_id', 'record_id']

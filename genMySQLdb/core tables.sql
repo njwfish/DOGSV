@@ -22,7 +22,7 @@ TYPE tinyint(3) unsigned not null comment 'This is a foriegn key to the variants
 CHROM2 smallint(6) unsigned not null comment 'This is a foriegn key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of the POS2 where this variant was detected. Mostly only relevant for translocations.',
 POS2 int(11) unsigned not null comment 'Either the end of the variant or the position of the translocation on the second chromosome.',
 LEN int(11) not null comment 'The length of the structural variant.',
-primary key(ID),
+primary key(ID, CHROM, TYPE),
 foreign key fk_vaiant(TYPE) references ref_variant(variant_id),
 foreign key fk_alignment_location1(CHROM) references ref_alignment_location(location_id),
 foreign key fk_alignment_location2(CHROM2) references ref_alignment_location(location_id)) comment = 'This is the core of the database. It stores all the records for all the variants.'
@@ -68,7 +68,7 @@ unabbreviated varchar(40) not null comment 'The unabbreviated name of this item.
 primary key(sequencing_id)) comment = 'This is a reference table to tissue_type in the samples table.'
 
 create table samples(
-sample_id varchar(16) not null comment 'The unique identifier of this sample, used for reference.',
+sample_id varchar(40) not null comment 'The unique identifier of this sample, used for reference.',
 individual_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
 tissue_type tinyint(3) unsigned not null comment 'The unique identifier of this tissue type, used for reference.',
 tumor boolean comment 'True if this is a tumor, false if it is not.',
@@ -95,14 +95,3 @@ primary key(individual_id, record_id),
 foreign key fk_genotype_individual_id(individual_id) references individuals(individual_id),
 foreign key fk_genotype_record_id(record_id) references records(ID),
 foreign key fk_genotype(GT) references ref_genotype(genotype_id)) comment = 'Allows querying of genotype sample data regardless of tool.'
-
-create table tool1.info (
-record_id
-
-primary key(record_id))
-
-create table tool1.samples(
-individual_id varchar(8) not null,
-record_id int(11) not null,
-
-primary key(individual_id, record_id))

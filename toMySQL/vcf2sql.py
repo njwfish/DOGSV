@@ -6,6 +6,9 @@ import sys
 import getopt
 import glob, os
 
+CHROM_format = 'chr'
+hasGT = True
+
 #TODO: Change tool_id value to the ID of the correct tool
 ids = {
 	'individual_id': 	'0',
@@ -25,9 +28,6 @@ variant_mapping = {
 	'SIN':'SIN',
 	'LIN':'LIN',
 	'BXP':'BXP'
-}
-
-individual_mapping = {
 }
 
 #TODO: Change the right side of the values to be updated to the correct
@@ -73,9 +73,13 @@ toolSamples = [
 ################################################################################
 #   DO NOT CHANGE ANYTHING BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING   #
 ################################################################################
-
-#db = MySQLdb.connect("localhost","root","12345","DogSVStore" )
-#cursor = db.cursor()
+individual_mapping = {}
+variant_mapping = {}
+alignment_location_mapping = {}
+tool_mapping = {}
+genotype_mapping = {}
+db = MySQLdb.connect("localhost","root","12345","DogSVStore" )
+cursor = db.cursor()
 
 def executeSQL(sql):
 	"""This executes a passed string via cursor
@@ -83,14 +87,21 @@ def executeSQL(sql):
 		:type sql: string
 	"""
 	try:
-		#cursor.execute(sql)
-		#db.commit()
-		print sql
+		cursor.execute(sql)
+		db.commit()
 	except:
 		# Rollback (undo changes) in case there is any error
 		print "Error: rolling back..."
-		#db.rollback()
-	return
+		print sql
+		db.rollback()
+
+def querySQL(sql):
+	try:
+		cursor.execute(sql)
+		return cursor.fetchall()
+	except:
+		print "Error: unable to fecth data"
+	return None
 
 def insertSQL(table, cols, vals):
 	"""Attempt to add val to col in table in database via cursor
@@ -101,8 +112,8 @@ def insertSQL(table, cols, vals):
 		:param vals: the vals, in the same order as the columns, for the table
 		:type vals: string list
 	"""
-	sql = "INSERT INTO '%s'('%s') VALUES ('%s')" % (
-			table, ', '.join(cols), ', '.join(vals))
+	sql = "INSERT INTO %s(%s) VALUES ('%s')" % (
+			table, ', '.join(cols), '\', \''.join(str(v) for v in vals))
 	executeSQL(sql)
 
 def getField(record, field):
@@ -124,28 +135,80 @@ def getField(record, field):
 	elif '@samples' in field:
 		# Retrieve the field from the samples list, then from the Call class
 		# get the data tuple and extract the field created by PyVCF.
-		return getattr(record.samples[int(field.split(' ')[2])].data, key)
+		try:
+			return getattr(record.samples[int(field.split(' ')[2])].data, key)
+		except:
+			return None
 	else:
 		return getattr(record, key)
 	return None
 
-def genIndividualMap(record):
-	for sample in record.samples:
-		sql = "SELECT individual_id FROM individuals WHERE file = '%s'" % (file)
+def genIndividualMap(vcf_reader):
+	for sample in vcf_reader.samples:
+		sample_id = sample.split('.')[0]
+		sql = "SELECT individual_id FROM samples WHERE sample_id = '%s'" % (sample_id)
+		individual_id = querySQL(sql)
+		if len(individual_id) == 0:
+			insertSQL('individuals',['sex'],['1'])
+			individual_id = cursor.lastrowid
+			insertSQL('samples',['sample_id', 'individual_id','tissue_type'],[str(sample_id),str(individual_id),'1'])
+		else:
+			individual_id = individual_id[0][0]
+		individual_mapping.update({sample_id:individual_id})
+
+def genVariantMap():
+	for variant in variant_type_mapping.values():
+		sql = "SELECT variant_id FROM ref_variant WHERE type = '%s'" % (variant)
+		variant_id = querySQL(sql)
 		try:
-			cursor.execute(sql)
-			results = cursor.fetchall()
-			individual_mapping.update({sample.sample:results[0][0]})
-				
+			variant_mapping.update({variant:variant_id[0][0]})
 		except:
-			print "Error: unable to fecth data"
+			print "Error: the variant_type_mapping is incorrect."
 
+def genAlignmentLocationMap():
+	sql = "SELECT location_id, type FROM ref_alignment_location"
+	locations = querySQL(sql)
+	for location in locations:
+		formatLoc = str(location[1])
+		if len(str(location[1])) < 3: 
+			formatLoc = '%s%s' % (CHROM_format,str(location[1]))
+		alignment_location_mapping.update({formatLoc:str(location[0])})
 
-def setVariantID():
-	"""Set the variant_id to the autoincrement key created on the last insert."""
-	#ids['variant_id'] = cursor.lastrowid
+def genToolMap():
+	sql = "SELECT tool_id, tool FROM ref_tool"
+	tools = querySQL(sql)
+	for tool in tools:
+		tool_mapping.update({tool[1]:tool[0]})
 
-def insertCore(record):
+def genGenotypeMap():
+	sql = "SELECT genotype_id, genotype FROM ref_genotype"
+	gts = querySQL(sql)
+	for gt in gts:
+		genotype_mapping.update({gt[1]:gt[0]})
+
+def getVariantID(key):
+	if key in variant_mapping:
+		return variant_mapping[key]
+	else:
+		insertSQL('ref_variant',[('type')],[(str(key))])
+		variant_id = cursor.lastrowid
+		variant_mapping.update({key:variant_id})
+		return variant_id
+
+def getLocationID(key):
+	if key in alignment_location_mapping:
+		return alignment_location_mapping[key]
+	else:
+		insertSQL('ref_alignment_location',[('type')],[(str(key))])
+		location_id = cursor.lastrowid
+		alignment_location_mapping.update({key:location_id})
+		return variant_id
+
+def setRecordID():
+	"""Set the record_id to the autoincrement key created on the last insert."""
+	ids['record_id'] = cursor.lastrowid
+
+def insertRecord(record):
 	"""Adds the core fields, retrieved from the core dict,
 		to the CHROM tables in the MySQL database
 		:param record: the record from which to get the fields for the table
@@ -153,13 +216,29 @@ def insertCore(record):
 	"""
 	cols = []
 	vals = []
-	valKeys = core.values()
-	for i in range(len(valKeys)):
-		s = getField(record, valKeys[i])
+	coreVals = core.values()
+	coreKeys = core.keys()
+	for i in range(len(coreVals)):
+		s = getField(record, coreVals[i])
+		if 'FILTER' in coreKeys[i]:
+			if s is not None:
+				if len(s) == 0:
+					s = 'PASS'
+		if isinstance(s, list):
+				if len(s) == 0:
+					s = None
+				else:
+					s = ','.join(str(v) for v in s)
 		if s is not None:
-			cols.append(core.keys()[i])
-			vals.append(str(s))
-	insertSQL('variants', cols, vals)
+			if 'CHROM' in coreKeys[i]:
+				s = getLocationID(s)
+			if 'TYPE' in coreKeys[i]:
+				s = getVariantID(s)
+			cols.append(coreKeys[i])
+			vals.append(s)
+	insertSQL('records', cols, vals)
+	setRecordID()
+	insertSQL('tools_used',['record_id,tool'],[ids['record_id'],tool_mapping[ids['tool_id']]])
 
 def insertInfo(record):
 	"""Adds the unique, tool specific information to the tool's INFO table,
@@ -169,16 +248,24 @@ def insertInfo(record):
 		..warning: this assumes all the fields in toolSamples and toolInfo are
 				   fields in the VCF, if not, the code will throw an error.
 	"""
-	cols = ['variant_id']
-	vals = [ids['variant_id']]
+	cols = ['record_id']
+	vals = [ids['record_id']]
 	for i in range(len(toolInfo)):
 		info = getField(record, "%s @info" % toolInfo[i])
 		if info is not None:
-			cols.append(toolInfo[i])
-			vals.append(str(info))
-	insertSQL("%s.INFO" % ids['tool_id'], cols, vals)
+			if '_L' in toolInfo[i]:
+				for j in range(len(info)):
+					cols.append('%s_%d' % (toolInfo[i], j))
+					vals.append(info[j])
+			elif isinstance(info, list):
+				cols.append(toolInfo[i])
+				vals.append(', '.join(str(v) for v in info))
+			else:
+				cols.append(toolInfo[i])
+				vals.append(info)
+	insertSQL("%s_info" % ids['tool_id'], cols, vals)
 
-def insertSamples(record):
+def insertSampleData(record):
 	"""Adds genotype data to genotype table and adds all the samples and tool 
 		specific sample information to the tool's samples table,
 		getting the fields from the toolSamples dict.
@@ -188,19 +275,29 @@ def insertSamples(record):
 				   fields in the VCF, if not, the code will throw an error.
 	"""
 	for j in range(len(record.samples)):
-		ids['individual_id'] = individual_mapping[record.samples[j].sample]
+		ids['individual_id'] = individual_mapping[record.samples[j].sample.split('.')[0]]
 		# Add universally queryable genotype data to the genotype table.
-		insertSQL('genotype', ['individual_id', 'variant_id', 'GT'], 
-			[ids[individual_id], ids[variant_id], 
-			getField(record, "GT @samples %d" % (j))])
-		cols = ['individual_id', 'variant_id']
-		vals = [ids['individual_id'], ids['variant_id']]
+		if hasGT:
+			insertSQL('genotypes', ['individual_id', 'record_id', 'GT'], 
+				[ids['individual_id'], ids['record_id'], 
+				genotype_mapping[getField(record, "GT @samples %d" % (j))]])
+
+		cols = ['individual_id', 'record_id']
+		vals = [ids['individual_id'], ids['record_id']]
 		for i in range(len(toolSamples)):
 			field = getField(record, "%s @samples %d" % (toolSamples[i], j))
 			if field is not None:
-				cols.append(toolSamples[i])
-				vals.append(str(field))
-		insertSQL("%s.samples" % ids['tool_id'], cols, vals)
+				if '_L' in toolSamples[i]:
+					for j in range(len(field)):
+						cols.append('%s_%d' % (toolSamples[i], j))
+						vals.append(field[j])
+				elif isinstance(field, list):
+					cols.append(toolSamples[i])
+					vals.append(', '.join(str(v) for v in field))
+				else:
+					cols.append(toolSamples[i])
+					vals.append(field)
+		insertSQL("%s_samples" % ids['tool_id'], cols, vals)
 
 def parseOptions(argv):
 	"""Parse the command line arguments for this script.
@@ -223,14 +320,18 @@ def parseOptions(argv):
 			ids['individual_id'] = arg
 
 def main(argv):
-	parseOptions(argv)
 	for file in glob.glob("*.vcf"):
 		vcf_reader = vcf.Reader(open(file, 'r'))
+		parseOptions(argv)
+		genIndividualMap(vcf_reader)
+		genVariantMap()
+		genAlignmentLocationMap()
+		genToolMap()
+		genGenotypeMap()
 		for record in vcf_reader:
-			insertCore(record)
-			setVariantID()
+			insertRecord(record)
 			insertInfo(record)
-			insertSamples(record)
+			insertSampleData(record)
 
 if __name__ == "__main__":
 	main(sys.argv[1:])

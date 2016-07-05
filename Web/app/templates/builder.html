@@ -1,6 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script type="text/javascript">
+    function assign_object() {
+        return !$('#breed_exclude option:selected').remove().appendTo('#breed_include');
+    };
+
+    function unassign_object() {
+        return !$('#breed_include option:selected').remove().appendTo('#breed_exclude');
+    }
+
+    $(document).ready( function() {
+        $('#breed_exclude').dblclick( assign_object );
+        $('#breed_include').dblclick( unassign_object );
+    });
+</script>
+
   <h1>Builder</h1>
   <form action="" method="post" name="record">
       {{ form.hidden_tag() }}
@@ -17,6 +32,9 @@
           Filter: {{ form.filt(size=20) }}
       </p>
       <p>{{ form.DEL }} DEL {{ form.DUP }} DUP {{ form.INS }} INS {{ form.INV }} INV {{ form.TRA }} TRA {{ form.SIN }} SIN {{ form.LIN }} LIN {{ form.BXP }} BXP</p>
+      <p>Breeds: </p>
+      <p>{{form.breed_exclude()}}
+      {{form.breed_include()}}</p>
       <p><input type="submit" value="Query"></p>
   </form>
 {% endblock %}

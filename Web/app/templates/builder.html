@@ -2,18 +2,25 @@
 
 {% block content %}
 <script type="text/javascript">
-    function assign_object() {
-        return !$('#breed_exclude option:selected').remove().appendTo('#breed_include');
-    };
+  function move_selected(from, to) {
+    return !$(from + ' option:selected').remove().appendTo(to);
+  };
 
-    function unassign_object() {
-        return !$('#breed_include option:selected').remove().appendTo('#breed_exclude');
-    }
+  function select_all() {
+    $('#breed_include option').prop('selected', true);
+    $('#sample_include option').prop('selected', true);
+    $('#tool_include option').prop('selected', true);
+  }
 
-    $(document).ready( function() {
-        $('#breed_exclude').dblclick( assign_object );
-        $('#breed_include').dblclick( unassign_object );
-    });
+  $(document).ready( function() {
+    $('#breed_exclude').dblclick( function(){move_selected('#breed_exclude', '#breed_include')} );
+    $('#breed_include').dblclick( function(){move_selected('#breed_include', '#breed_exclude')} );
+    $('#sample_exclude').dblclick( function(){move_selected('#sample_exclude', '#sample_include')} );
+    $('#sample_include').dblclick( function(){move_selected('#sample_include', '#sample_exclude')} );
+    $('#tool_exclude').dblclick( function(){move_selected('#tool_exclude', '#tool_include')} );
+    $('#tool_include').dblclick( function(){move_selected('#tool_include', '#tool_exclude')} );
+    $('#submit').click(select_all() );
+  });
 </script>
 
   <h1>Builder</h1>
@@ -35,6 +42,12 @@
       <p>Breeds: </p>
       <p>{{form.breed_exclude()}}
       {{form.breed_include()}}</p>
-      <p><input type="submit" value="Query"></p>
+      <p>Samples: </p>
+      <p>{{form.sample_exclude()}}
+      {{form.sample_include()}}</p>
+      <p>Tools: </p>
+      <p>{{form.tool_exclude()}}
+      {{form.tool_include()}}</p>
+      <p><input type="submit" value="Query" id="submit" name="submit" action="{{ url_for('results') }}"></p>
   </form>
 {% endblock %}

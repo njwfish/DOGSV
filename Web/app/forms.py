@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired
 
 class RecordForm(Form):
 	chrom = StringField('chrom')
+	chrom2 = StringField('chrom2')
 	filt = StringField('filt')
 	pos = IntegerField('pos')
 	pos2 = IntegerField('pos2')
@@ -23,4 +24,11 @@ class RecordForm(Form):
 
 	breed_include = SelectMultipleField('breed_include',choices=[])
 	breed_exclude = SelectMultipleField('breed_exclude',choices=[])
+
+	sample_include = SelectMultipleField('individual_include',choices=[])
+	sample_exclude = SelectMultipleField('individual_exclude',choices=[])
+	tumor = BooleanField('tumor', default=False)
+
+	tool_include = SelectMultipleField('tool_include',choices=[])
+	tool_exclude = SelectMultipleField('tool_exclude',choices=[])
 

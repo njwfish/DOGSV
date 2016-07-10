@@ -22,7 +22,7 @@ primary key(record_id),
 foreign key fk_dly_info_record_id(record_id) references records(ID))
 
 create table LMP_samples(
-individual_id mediumint(8) unsigned not null,
+sample_id mediumint(8) unsigned not null,
 record_id int(11) unsigned not null,
 SU int(11) comment 'Number of pieces of evidence supporting the variant',
 PE int(11) comment 'Number of paired-end reads supporting the variant',
@@ -30,4 +30,4 @@ SR int(11) comment 'Number of split reads supporting the variant',
 BD int(11) comment 'Amount of BED evidence supporting the variant',
 primary key(record_id),
 foreign key fk_dly_samples_record_id(record_id) references records(ID),
-foreign key fk_dly_samples_individual_id(individual_id) references individuals(individual_id))
+foreign key fk_dly_samples_sample_id(sample_id) references samples(sample_id))

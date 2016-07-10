@@ -16,7 +16,7 @@ primary key(record_id),
 foreign key fk_dly_info_record_id(record_id) references records(ID))
 
 create table DLY_samples(
-individual_id mediumint(8) unsigned not null,
+sample_id mediumint(8) unsigned not null,
 record_id int(11) unsigned not null,
 GL0 float(11) comment 'Log10-scaled genotype likelihoods for RR,RA,AA genotypes',
 GL1 float(11) comment 'Log10-scaled genotype likelihoods for RR,RA,AA genotypes',
@@ -33,4 +33,4 @@ RR int(11) comment '# high-quality reference junction reads',
 RV int(11) comment '# high-quality variant junction reads',
 primary key(record_id),
 foreign key fk_dly_samples_record_id(record_id) references records(ID),
-foreign key fk_dly_samples_individual_id(individual_id) references individuals(individual_id))
+foreign key fk_dly_samples_sample_id(sample_id) references samples(sample_id))

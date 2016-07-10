@@ -27,6 +27,17 @@ foreign key fk_vaiant(TYPE) references ref_variant(variant_id),
 foreign key fk_alignment_location1(CHROM) references ref_alignment_location(location_id),
 foreign key fk_alignment_location2(CHROM2) references ref_alignment_location(location_id)) comment = 'This is the core of the database. It stores all the records for all the variants.'
 
+DELIMITER $$
+
+    CREATE TRIGGER default_to_CHROM BEFORE INSERT ON records
+    FOR EACH ROW BEGIN
+      IF (NEW.CHROM2 IS NULL) THEN
+            SET NEW.CHROM2 = NEW.CHROM;
+      END IF;
+    END$$
+
+DELIMITER ;
+
 create table ref_tool (
 tool_id tinyint(3) unsigned not null comment 'The unique identifier of this tool, used for reference.',
 tool varchar(4) not null comment 'Four letter abreviation of the tool.',
@@ -67,8 +78,13 @@ sequencing_platform varchar(4) not null comment 'Four letter abreviation of the 
 unabbreviated varchar(40) not null comment 'The unabbreviated name of this item.',
 primary key(sequencing_id)) comment = 'This is a reference table to tissue_type in the samples table.'
 
+create table ref_sample (
+sample_id mediumint(8) unsigned not null comment 'The unique identifier of this samples, used for reference.',
+sample varchar(40) not null comment 'The file name of this sample.',
+primary key(sample_id)) comment = 'This is a reference table to tissue_type in the samples table.'
+
 create table samples(
-sample_id varchar(40) not null comment 'The unique identifier of this sample, used for reference.',
+sample_id mediumint(8) unsigned not null comment 'The unique identifier of this sample, used for reference.',
 individual_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
 tissue_type tinyint(3) unsigned not null comment 'The unique identifier of this tissue type, used for reference.',
 tumor boolean comment 'True if this is a tumor, false if it is not.',
@@ -78,6 +94,7 @@ sequencing_type tinyint(3) unsigned comment 'The unique identifier of this seque
 mapped_reads int(11) unsigned comment 'Number of reads confidently mapped to the reference genome.',
 unmapped_reads int(11) unsigned comment 'Number of reads unable to be mapped to the reference genome.',
 primary key(sample_id),
+foreign key fk_sample_id(sample_id) references samples(sample_id)
 foreign key fk_individual_id(individual_id) references individuals(individual_id),
 foreign key fk_tissue(tissue_type) references ref_tissue(tissue_id),
 foreign key fk_sequencing(sequencing_type) references ref_sequencing(sequencing_id)) comment = 'Information on the sample from chich the variant calls were generated.'
@@ -88,10 +105,10 @@ genotype varchar(3) not null comment 'The three letter code describing the genot
 primary key(genotype_id)) comment = 'This is a reference table to GT in the genotypes table.'
 
 create table genotypes (
-individual_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
+sample_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
 record_id int(11) unsigned not null comment 'The unique identifier of this record, used for reference.',
 GT tinyint(3) unsigned not null comment 'The unique identifier of this genotype, used for reference.',
 primary key(individual_id, record_id),
-foreign key fk_genotype_individual_id(individual_id) references individuals(individual_id),
+foreign key fk_genotype_sample_id(sample_id) references samples(sample_id),
 foreign key fk_genotype_record_id(record_id) references records(ID),
 foreign key fk_genotype(GT) references ref_genotype(genotype_id)) comment = 'Allows querying of genotype sample data regardless of tool.'

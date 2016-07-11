@@ -1,14 +1,13 @@
 from flask_wtf import Form
-from wtforms import SelectMultipleField, StringField, IntegerField, DecimalField, BooleanField
-from wtforms.validators import DataRequired
+from wtforms import SelectMultipleField, StringField, IntegerField, DecimalField, BooleanField, TextAreaField, validators
 
-class RecordForm(Form):
+class BuilderForm(Form):
 	chrom = StringField('chrom')
 	chrom2 = StringField('chrom2')
-	filt = StringField('filt')
-	pos = IntegerField('pos')
-	pos2 = IntegerField('pos2')
-	length = IntegerField('length')
+	filter = StringField('filter')
+	pos = IntegerField('pos', [validators.optional()])
+	pos2 = IntegerField('pos2', [validators.optional()])
+	len = IntegerField('len', [validators.optional()])
 	DEL = BooleanField('DEL', default=False)
 	DUP = BooleanField('DUP', default=False)
 	INS = BooleanField('INS', default=False)
@@ -32,3 +31,21 @@ class RecordForm(Form):
 	tool_include = SelectMultipleField('tool_include',choices=[])
 	tool_exclude = SelectMultipleField('tool_exclude',choices=[])
 
+class QueryForm(Form):
+	query = TextAreaField('query')
+
+class SearchForm(Form):
+	search = StringField('search')
+
+class ColumnForm(Form):
+	records_include= SelectMultipleField('records_include',choices=[])
+	records_exclude= SelectMultipleField('records_exclude',choices=[])
+
+	individuals_include= SelectMultipleField('individuals_include',choices=[])
+	individuals_exclude= SelectMultipleField('individuals_exclude',choices=[])
+
+	samples_include= SelectMultipleField('samples_include',choices=[])
+	samples_exclude= SelectMultipleField('samples_exclude',choices=[])
+
+	genotypes_include= SelectMultipleField('genotypes_include',choices=[])
+	genotypes_exclude= SelectMultipleField('genotypes_exclude',choices=[])

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+
+	<form action="" method="post" name="record">
+		<h1>Query</h1>
+		<p>
+			{{ form.query(style="width:100%;height:75%;") }}
+		</p>
+		<p><input type="submit" value="Query" id="submit" name="submit"></p>
+	</form>
+ {% endblock %}

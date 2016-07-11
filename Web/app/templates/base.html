@@ -1,26 +1,60 @@
 <html>
   <head>
     {% if title %}
-    <title>{{ title }} - Dog SVStore</title>
+      <title>{{ title }} - Dog SVStore</title>
     {% else %}
-    <title>Dog SVStore</title>
+      <title>Dog SVStore</title>
     {% endif %}
-        <script type=text/javascript src="{{
-  url_for('static', filename='jquery.js') }}"></script>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
-    <div>Dog SVStore: <a href="/index">Home</a></div>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Logo</a>
+        </div>
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="nav navbar-nav">
+            <li id="build"><a href="builder">Build</a></li>
+            <li id="query"><a href="query">Query</a></li>
+            <li id="library"><a href="library">Library</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="docs"> Documentation</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <hr>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-        {% for message in messages %}
-            <li>{{ message }} </li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-    {% block content %}{% endblock %}
+    <div class="">
+      <div class="row content">
+        <div class="col-sm-2 sidenav"></div>
+          <div class="col-sm-8 text-left">
+            <form action="" method="post" name="record">
+              {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  <ul>
+                  {% for message in messages %}
+                      <li>{{ message }} </li>
+                  {% endfor %}
+                  </ul>
+                {% endif %}
+              {% endwith %}
+              {% block content %}{% endblock %}
+            </form>
+          </div>
+        <div class="col-sm-2 sidenav"></div>
+      </div>
+    </div>
   </body>
   <footer class="footer">
    <p class="alignleft">
@@ -29,8 +63,8 @@
    </p>
    <p class="alignright">
     <a href="library">Library</a>
-    <a href="build">Build</a>
-    <a href="advanced">Advanced</a>
+    <a href="builder">Build</a>
+    <a href="query">Query</a>
    </p>
   </footer>
 </html>

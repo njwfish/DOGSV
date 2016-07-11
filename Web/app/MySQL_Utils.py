@@ -1,4 +1,4 @@
-def executeSQL(sql, cursor):
+def executeSQL(sql, db, cursor):
 	"""This executes a passed string via cursor
 		:param sql: the query to be executed
 		:type sql: string
@@ -12,15 +12,16 @@ def executeSQL(sql, cursor):
 		print sql
 		db.rollback()
 
-def querySQL(sql, cursor):
+def querySQL(sql, db, cursor):
 	try:
 		cursor.execute(sql)
 		return cursor.fetchall()
 	except:
 		print "Error: unable to fecth data"
+		print sql
 	return None
 
-def insertSQL(table, cols, vals, cursor):
+def insertSQL(table, cols, vals, db, cursor):
 	"""Attempt to add val to col in table in database via cursor
 		:param table: a table in the connected MySQL database
 		:type table: string
@@ -31,4 +32,4 @@ def insertSQL(table, cols, vals, cursor):
 	"""
 	sql = "INSERT INTO %s(%s) VALUES ('%s')" % (
 			table, ', '.join(cols), '\', \''.join(str(v) for v in vals))
-	executeSQL(sql)
+	executeSQL(sql, db, cursor)

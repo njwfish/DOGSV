@@ -11,45 +11,29 @@
     }
 
     $(document).ready( function() {
-      $('#form-breed_exclude').dblclick( function(){
-        move_selected('#form-breed_exclude', '#form-breed_include')
-      });
-      $('#form-breed_include').dblclick( function(){
-        move_selected('#form-breed_include', '#breed_exclude')
-      });
-      $('#form-sample_exclude').dblclick( function(){
-        move_selected('#form-sample_exclude', '#form-sample_include')
-      });
-      $('#form-sample_include').dblclick( function(){
-        move_selected('#form-sample_include', '#form-sample_exclude')
-      });
-      $('#form-tool_exclude').dblclick( function(){
-        move_selected('#form-tool_exclude', '#form-tool_include')
-      });
-      $('#form-tool_include').dblclick( function(){
-        move_selected('#form-tool_include', '#form-tool_exclude')
-      });
+      $('#form-breed_exclude').dblclick( function(){move_selected('#form-breed_exclude', '#form-breed_include')} );
+      $('#form-breed_include').dblclick( function(){move_selected('#form-breed_include', '#breed_exclude')} );
+      $('#form-sample_exclude').dblclick( function(){move_selected('#form-sample_exclude', '#form-sample_include')} );
+      $('#form-sample_include').dblclick( function(){move_selected('#form-sample_include', '#form-sample_exclude')} );
+      $('#form-tool_exclude').dblclick( function(){move_selected('#form-tool_exclude', '#form-tool_include')} );
+      $('#form-tool_include').dblclick( function(){move_selected('#form-tool_include', '#form-tool_exclude')} );
       $('#submit').click(function(){
         select_all('#form-breed_include');
         select_all('#form-sample_include');
         select_all('#form-tool_include');
-        select_all('#cols-records_include');
-        select_all('#cols-individuals_include');
-        select_all('#cols-samples_include');
-        select_all('#cols-genotypes_include');
       });
-      $('#cols-records_exclude').dblclick( function(){move_selected('#cols-records_exclude', '#cols-records_include')} );
-      $('#cols-records_include').dblclick( function(){move_selected('#cols-records_include', '#cols-records_exclude')} );
-      $('#cols-individuals_exclude').dblclick( function(){move_selected('#cols-individuals_exclude', '#cols-individuals_include')} );
-      $('#cols-individuals_include').dblclick( function(){move_selected('#cols-individuals_include', '#cols-individuals_exclude')} );
-      $('#cols-samples_exclude').dblclick( function(){move_selected('#cols-samples_exclude', '#cols-samples_include')} );
-      $('#cols-samples_include').dblclick( function(){move_selected('#cols-samples_include', '#cols-samples_exclude')} );
-      $('#cols-genotypes_exclude').dblclick( function(){move_selected('#cols-genotypes_exclude', '#cols-genotypes_include')} );
-      $('#cols-genotypes_include').dblclick( function(){move_selected('#cols-genotypes_include', '#cols-genotypes_exclude')} );
-      $('#openModal').click(function() {
+      //$('#cols-records_exclude').dblclick( function(){move_selected('#cols-records_exclude', '#cols-records_include')} );
+      //$('#cols-records_include').dblclick( function(){move_selected('#cols-records_include', '#cols-records_exclude')} );
+      //$('#cols-individuals_exclude').dblclick( function(){move_selected('#cols-individuals_exclude', '#cols-individuals_include')} );
+      //$('#cols-individuals_include').dblclick( function(){move_selected('#cols-individuals_include', '#cols-individuals_exclude')} );
+      //$('#cols-samples_exclude').dblclick( function(){move_selected('#cols-samples_exclude', '#cols-samples_include')} );
+      //$('#cols-samples_include').dblclick( function(){move_selected('#cols-samples_include', '#cols-samples_exclude')} );
+      //$('#cols-genotypes_exclude').dblclick( function(){move_selected('#cols-genotypes_exclude', '#cols-genotypes_include')} );
+      //$('#cols-genotypes_include').dblclick( function(){move_selected('#cols-genotypes_include', '#cols-genotypes_exclude')} );
+      $('#cols-openModal').click(function() {
         chooseCols.style.display = "block";
       });
-      $('#closeModal').click(function() {
+      $('#cols-closeModal').click(function() {
         chooseCols.style.display = "none";
       });
     });
@@ -74,11 +58,11 @@
           <div id="records" class="tab-pane fade in active">
             <div class="col-sm-4">
               <h5><center>Exclude</center></h5>
-              <p>{{cols.records_exclude(style="width:100%;height:200px;")}}</p>
+              <p>{{cols.records_exclude(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
               <h5><center>Include</center></h5>
-              <p> {{cols.records_include(style="width:100%;height:200px;")}}</p>
+              <p> {{cols.records_include(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
               
@@ -87,11 +71,11 @@
           <div id="individuals" class="tab-pane fade">
             <div class="col-sm-4">
               <h5><center>Exclude</center></h5>
-              <p>{{cols.individuals_exclude(style="width:100%;height:200px;")}}</p>
+              <p>{{cols.individuals_exclude(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
               <h5><center>Include</center></h5>
-              <p> {{cols.individuals_include(style="width:100%;height:200px;")}}</p>
+              <p> {{cols.individuals_include(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
               
@@ -100,11 +84,11 @@
           <div id="sampels" class="tab-pane fade">
             <div class="col-sm-4">
               <h5><center>Exclude</center></h5>
-              <p>{{cols.samples_exclude(style="width:100%;height:200px;")}}</p>
+              <p>{{cols.samples_exclude(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
               <h5><center>Include</center></h5>
-              <p> {{cols.samples_include(style="width:100%;height:200px;")}}</p>
+              <p> {{cols.samples_include(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
               
@@ -113,11 +97,11 @@
           <div id="genotypes" class="tab-pane fade">
             <div class="col-sm-4">
               <h5><center>Exclude</center></h5>
-              <p>{{cols.genotypes_exclude(style="width:100%;height:200px;")}}</p>
+              <p>{{cols.genotypes_exclude(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
               <h5><center>Include</center></h5>
-              <p> {{cols.genotypes_include(style="width:100%;height:200px;")}}</p>
+              <p> {{cols.genotypes_include(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
               

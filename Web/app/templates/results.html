@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-    {% for row in results %}
-    <div><p>{}</b></p></div>
-    {% endfor %}
+	<table >
+		<tr>
+			{% for h in fields %}
+    			<th>{{ h }}</th>
+			{% endfor %}
+  		</tr>
+		{% for t in results %}
+			<tr>
+				{% for i in t %}
+					<td>{{ i }}</td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+	</table>
 {% endblock %}

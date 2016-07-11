@@ -34,10 +34,8 @@ def build():
     breeds = ast.literal_eval(request.args['breeds'])
     tools = ast.literal_eval(request.args['tools'])
     recCols = ast.literal_eval(request.args['recCols'])
-    print recCols
     if len(recCols) < 1:
     	recCols = ['*']
-    indCols = ast.literal_eval(request.args['indCols'])
     samCols = ast.literal_eval(request.args['samCols'])
     gtpCols = ast.literal_eval(request.args['gtpCols'])
     recVals = records.values()
@@ -70,6 +68,7 @@ def build():
     else:
         query = ''
     query = "select %s from records %s" % (', '.join(recCols), query)
+    print query
     return redirect(url_for('results', query=query))
 
 @app.route('/builder', methods=['GET', 'POST'])
@@ -86,8 +85,6 @@ def builder():
 
         cols.records_include.choices = [(str(b), str(b)) for b in cols.records_include.data]
         cols.records_exclude.choices = [(str(b), str(b)) for b in cols.records_exclude.data]
-        cols.individuals_include.choices = [(str(b), str(b)) for b in cols.individuals_include.data]
-        cols.individuals_exclude.choices = [(str(b), str(b)) for b in cols.individuals_exclude.data]
         cols.samples_include.choices = [(str(b), str(b)) for b in cols.samples_include.data]
         cols.samples_exclude.choices = [(str(b), str(b)) for b in cols.samples_exclude.data]
         cols.genotypes_include.choices = [(str(b), str(b)) for b in cols.genotypes_include.data]
@@ -125,10 +122,9 @@ def builder():
             breeds = form.breed_include.data,     #adding a comma here avoids a bad request
             tools = form.tool_include.data,        #adding a comma here avoids a bad request
             recCols = cols.records_include.data,
-            indCols = cols.individuals_include.data,
             samCols = cols.samples_include.data,
             gtpCols = cols.genotypes_include.data,
-            return redirect(url_for('build', records=records, types=types, genotypes=genotypes, tumor=tumor, samples=samples, breeds=breeds, tools=tools, recCols=recCols, indCols=indCols, samCols=samCols, gtpCols=gtpCols))
+            return redirect(url_for('build', records=records, types=types, genotypes=genotypes, tumor=tumor, samples=samples, breeds=breeds, tools=tools, recCols=recCols, samCols=samCols, gtpCols=gtpCols))
 
     sql = "SELECT Unabbreviated FROM ref_breed"
     form.breed_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if form.breed_include.choices is not None and (b[0],b[0]) not in form.breed_include.choices]
@@ -139,8 +135,6 @@ def builder():
 
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'Records'"
     cols.records_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if cols.records_include.choices is not None and (b[0],b[0]) not in cols.records_include.choices]
-    sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'individuals'"
-    cols.individuals_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if cols.individuals_include.choices is not None and (b[0],b[0]) not in cols.individuals_include.choices]
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'samples'"
     cols.samples_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if cols.samples_include.choices is not None and (b[0],b[0]) not in cols.samples_include.choices]
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'genotypes'"

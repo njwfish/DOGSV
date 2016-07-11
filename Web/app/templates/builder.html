@@ -34,14 +34,11 @@
         select_all('#form-sample_include');
         select_all('#form-tool_include');
         select_all('#cols-records_include');
-        select_all('#cols-individuals_include');
         select_all('#cols-samples_include');
         select_all('#cols-genotypes_include');
       });
       $('#cols-records_exclude').dblclick( function(){move_selected('#cols-records_exclude', '#cols-records_include')} );
       $('#cols-records_include').dblclick( function(){move_selected('#cols-records_include', '#cols-records_exclude')} );
-      $('#cols-individuals_exclude').dblclick( function(){move_selected('#cols-individuals_exclude', '#cols-individuals_include')} );
-      $('#cols-individuals_include').dblclick( function(){move_selected('#cols-individuals_include', '#cols-individuals_exclude')} );
       $('#cols-samples_exclude').dblclick( function(){move_selected('#cols-samples_exclude', '#cols-samples_include')} );
       $('#cols-samples_include').dblclick( function(){move_selected('#cols-samples_include', '#cols-samples_exclude')} );
       $('#cols-genotypes_exclude').dblclick( function(){move_selected('#cols-genotypes_exclude', '#cols-genotypes_include')} );
@@ -65,7 +62,6 @@
         <h2>Select Columns</h2>
         <ul class="nav nav-tabs">
           <li class="active"><a data-toggle="tab" href="#records">Records</a></li>
-          <li><a data-toggle="tab" href="#individuals">Individuals</a></li>
           <li><a data-toggle="tab" href="#sampels">Samples</a></li>
           <li><a data-toggle="tab" href="#genotypes">Genotypes</a></li>
         </ul>
@@ -79,19 +75,6 @@
             <div class="col-sm-4">
               <h5><center>Include</center></h5>
               <p> {{cols.records_include(style="width:100%;height:200px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              
-            </div>
-          </div>
-          <div id="individuals" class="tab-pane fade">
-            <div class="col-sm-4">
-              <h5><center>Exclude</center></h5>
-              <p>{{cols.individuals_exclude(style="width:100%;height:200px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              <h5><center>Include</center></h5>
-              <p> {{cols.individuals_include(style="width:100%;height:200px;")}}</p>
             </div>
             <div class="col-sm-4">
               

@@ -41,9 +41,6 @@ class ColumnForm(Form):
 	records_include= SelectMultipleField('records_include',choices=[])
 	records_exclude= SelectMultipleField('records_exclude',choices=[])
 
-	individuals_include= SelectMultipleField('individuals_include',choices=[])
-	individuals_exclude= SelectMultipleField('individuals_exclude',choices=[])
-
 	samples_include= SelectMultipleField('samples_include',choices=[])
 	samples_exclude= SelectMultipleField('samples_exclude',choices=[])
 

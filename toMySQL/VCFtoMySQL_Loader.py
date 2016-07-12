@@ -6,11 +6,12 @@ from MySQL_Utils import executeSQL, querySQL, insertSQL
 
 class VCFtoMySQL:
 	def __init__(self, ids, variant_type_mapping, core, toolInfo, toolSamples, CHROM_format, hasGT):
-		self.individual_mapping = {}
+		self.sample_mapping = {}
 		self.variant_mapping = {}
 		self.alignment_location_mapping = {}
 		self.tool_mapping = {}
 		self.genotype_mapping = {}
+		self.filter_mapping = {}
 		self.db = MySQLdb.connect("localhost","root","12345","DogSVStore" )
 		self.cursor = self.db.cursor()
 		self.CHROM_format = CHROM_format
@@ -50,20 +51,23 @@ class VCFtoMySQL:
 
 	def genIndividualMap(self, vcf_reader):
 		for sample in vcf_reader.samples:
-			sample_id = sample.split('.')[0]
-			sql = "SELECT individual_id FROM samples WHERE sample_id = '%s'" % (sample_id)
-			individual_id = querySQL(sql, self.db, self.cursor)
-			if len(individual_id) == 0:
+			str_sample_id = sample.split('.')[0]
+			sql = "SELECT sample_id FROM ref_sample WHERE sample = '%s'" % (str_sample_id)
+			sample_id = querySQL(sql, self.db, self.cursor)
+			if len(sample_id) == 0:
 				insertSQL('individuals',['sex'],['1'], self.db, self.cursor)
 				individual_id = self.cursor.lastrowid
-				insertSQL('samples',['sample_id', 'individual_id','tissue_type'],[str(sample_id),str(individual_id),'1'],self.db, self.cursor)
+				insertSQL('ref_sample',['sample'],[str_sample_id], self.db, self.cursor)
+				sample_id = self.cursor.lastrowid
+				insertSQL('samples',['sample_id, individual_id'],[str(sample_id),str(individual_id)],self.db, self.cursor)
 			else:
-				individual_id = individual_id[0][0]
-			self.individual_mapping.update({sample_id:individual_id})
+				sample_id = sample_id[0][0]
+			self.sample_mapping.update({str_sample_id:sample_id})
 
 	def genVariantMap(self):
 		for variant in self.variant_type_mapping.values():
-			sql = "SELECT variant_id FROM ref_variant WHERE type = '%s'" % (variant)
+			sql = "SELECT variant_id FROM ref_variant WHERE variant = '%s'" % (variant)
+			
 			variant_id = querySQL(sql, self.db, self.cursor)
 			try:
 				self.variant_mapping.update({variant:variant_id[0][0]})
@@ -71,7 +75,7 @@ class VCFtoMySQL:
 				print "Error: the variant_type_mapping is incorrect."
 
 	def genAlignmentLocationMap(self):
-		sql = "SELECT location_id, type FROM ref_alignment_location"
+		sql = "SELECT location_id, location FROM ref_alignment_location"
 		locations = querySQL(sql, self.db, self.cursor)
 		for location in locations:
 			formatLoc = str(location[1])
@@ -91,11 +95,17 @@ class VCFtoMySQL:
 		for gt in gts:
 			self.genotype_mapping.update({gt[1]:gt[0]})
 
+	def genFilterMap(self):
+		sql = "SELECT filter_id, filter FROM ref_filter"
+		filters = querySQL(sql, self.db, self.cursor)
+		for filter in filters:
+			self.filter_mapping.update({filter[1]:filter[0]})
+
 	def getVariantID(self, key):
 		if key in self.variant_mapping:
 			return self.variant_mapping[key]
 		else:
-			insertSQL('ref_variant',[('type')],[(str(key))],self.db, self.cursor)
+			insertSQL('ref_variant',[('variant')],[(str(key))],self.db, self.cursor)
 			variant_id = self.cursor.lastrowid
 			self.variant_mapping.update({key:variant_id})
 			return variant_id
@@ -104,10 +114,19 @@ class VCFtoMySQL:
 		if key in self.alignment_location_mapping:
 			return self.alignment_location_mapping[key]
 		else:
-			insertSQL('ref_alignment_location',[('type')],[(str(key))],self.db, self.cursor)
+			insertSQL('ref_alignment_location',[('location')],[(str(key)).split(self.CHROM_format)[1]],self.db, self.cursor)
 			location_id = self.cursor.lastrowid
 			self.alignment_location_mapping.update({key:location_id})
-			return variant_id
+			return location_id
+
+	def getFilterID(self, key):
+		if key in self.filter_mapping:
+			return self.filter_mapping[key]
+		else:
+			insertSQL('ref_filter',[('filter')],[(str(key))],self.db, self.cursor)
+			filter_id = self.cursor.lastrowid
+			self.filter_mapping.update({key:filter_id})
+			return filter_id
 
 	def setRecordID(self):
 		"""Set the record_id to the autoincrement key created on the last insert."""
@@ -137,8 +156,10 @@ class VCFtoMySQL:
 			if s is not None:
 				if 'CHROM' in coreKeys[i]:
 					s = self.getLocationID(s)
-				if 'TYPE' in coreKeys[i]:
-					s = self.getVariantID(s)
+				elif 'TYPE' in coreKeys[i]:
+					s = self.getVariantID(self.variant_type_mapping[s])
+				elif 'FILTER' in coreKeys[i]:
+					s = self.getFilterID(s)
 				cols.append(coreKeys[i])
 				vals.append(s)
 		insertSQL('records', cols, vals, self.db, self.cursor)
@@ -156,11 +177,11 @@ class VCFtoMySQL:
 		cols = ['record_id']
 		vals = [self.ids['record_id']]
 		for i in range(len(self.toolInfo)):
-			info = self.getField(record, "%s @info" % self.toolInfo[i])
+			info = self.getField(record, "%s @info" % self.toolInfo[i].split('_L')[0])
 			if info is not None:
 				if '_L' in self.toolInfo[i]:
 					for j in range(len(info)):
-						cols.append('%s_%d' % (self.toolInfo[i], j))
+						cols.append('%s_%d' % (self.toolInfo[i].split('_L')[0], j))
 						vals.append(info[j])
 				elif isinstance(info, list):
 					cols.append(self.toolInfo[i])
@@ -180,22 +201,25 @@ class VCFtoMySQL:
 					   fields in the VCF, if not, the code will throw an error.
 		"""
 		for j in range(len(record.samples)):
-			self.ids['individual_id'] = self.individual_mapping[record.samples[j].sample.split('.')[0]]
+			self.ids['sample_id'] = self.sample_mapping[record.samples[j].sample.split('.')[0]]
 			# Add universally queryable genotype data to the genotype table.
 			if self.hasGT:
-				insertSQL('genotypes', ['individual_id', 'record_id', 'GT'], 
-					[self.ids['individual_id'], self.ids['record_id'], 
+				insertSQL('genotype', ['sample_id', 'record_id', 'GT'], 
+					[self.ids['sample_id'], self.ids['record_id'], 
 					self.genotype_mapping[self.getField(record, "GT @samples %d" % (j))]], self.db, self.cursor)
+			else:
+				insertSQL('genotype', ['sample_id', 'record_id'], 
+					[self.ids['sample_id'], self.ids['record_id']], self.db, self.cursor)
 
-			cols = ['individual_id', 'record_id']
-			vals = [self.ids['individual_id'], self.ids['record_id']]
+			cols = ['sample_id', 'record_id']
+			vals = [self.ids['sample_id'], self.ids['record_id']]
 			for i in range(len(self.toolSamples)):
-				field = self.getField(record, "%s @samples %d" % (self.toolSamples[i], j))
+				field = self.getField(record, "%s @samples %d" % (self.toolSamples[i].split('_L')[0], j))
 				if field is not None:
 					if '_L' in self.toolSamples[i]:
-						for j in range(len(field)):
-							cols.append('%s_%d' % (self.toolSamples[i], j))
-							vals.append(field[j])
+						for k in range(len(field)):
+							cols.append('%s_%d' % (self.toolSamples[i].split('_L')[0], k))
+							vals.append(field[k])
 					elif isinstance(field, list):
 						cols.append(self.toolSamples[i])
 						vals.append(', '.join(str(v) for v in field))
@@ -211,6 +235,7 @@ class VCFtoMySQL:
 		self.genAlignmentLocationMap()
 		self.genToolMap()
 		self.genGenotypeMap()
+		self.genFilterMap()
 		for record in vcf_reader:
 			self.insertRecord(record)
 			self.insertInfo(record)

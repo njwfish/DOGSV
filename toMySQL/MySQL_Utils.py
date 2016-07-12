@@ -17,6 +17,7 @@ def querySQL(sql, db, cursor):
 		cursor.execute(sql)
 		return cursor.fetchall()
 	except:
+		print sql
 		print "Error: unable to fecth data"
 	return None
 

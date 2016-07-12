@@ -27,7 +27,7 @@ variant_type_mapping = {
 	'LIN':'LIN',
 	'BXP':'BXP',
 	'DUP:TANDEM':'DUP',
-	'CNV':'UKN',
+	'CNV':'BXP',
 	'BND':'BXP'
 }
 

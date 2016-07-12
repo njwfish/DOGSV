@@ -33,11 +33,10 @@ def build():
     samples = ast.literal_eval(request.args['samples'])
     breeds = ast.literal_eval(request.args['breeds'])
     tools = ast.literal_eval(request.args['tools'])
-    recCols = ast.literal_eval(request.args['recCols'])
-    if len(recCols) < 1:
-    	recCols = ['*']
+    recCols = ast.literal_eval(request.args['recCols']) if len(recCols) < 1 else ['*']
     samCols = ast.literal_eval(request.args['samCols'])
     gtpCols = ast.literal_eval(request.args['gtpCols'])
+    regions = ast.literal_eval(request.args['regions'])
     recVals = records.values()
     recKeys = records.keys()
     records = ["%s = '%s'" % (recKeys[i], recVals[i]) for i in range(len(recVals)) if recVals[i] is not None and len(str(recVals[i])) > 0]
@@ -79,9 +78,11 @@ def builder():
         form.breed_include.choices = [(str(b), str(b)) for b in form.breed_include.data] 
         form.sample_include.choices = [(str(b), str(b)) for b in form.sample_include.data] 
         form.tool_include.choices = [(str(b), str(b)) for b in form.tool_include.data]
+        form.region_include.choices = [(str(b), str(b)) for b in form.region_include.data]
         form.breed_exclude.choices = [(str(b), str(b)) for b in form.breed_exclude.data] 
         form.sample_exclude.choices = [(str(b), str(b)) for b in form.sample_exclude.data] 
         form.tool_exclude.choices = [(str(b), str(b)) for b in form.tool_exclude.data]
+        form.region_exclude.choices = [(str(b), str(b)) for b in form.region_exclude.data]
 
         cols.records_include.choices = [(str(b), str(b)) for b in cols.records_include.data]
         cols.records_exclude.choices = [(str(b), str(b)) for b in cols.records_exclude.data]
@@ -117,6 +118,7 @@ def builder():
             'het':form.het.data, 
             'homalt':form.homalt.data
             }
+            regions = form.region_include
             tumor = form.tumor.data
             samples = form.sample_include.data, 
             breeds = form.breed_include.data,     #adding a comma here avoids a bad request
@@ -124,35 +126,38 @@ def builder():
             recCols = cols.records_include.data,
             samCols = cols.samples_include.data,
             gtpCols = cols.genotypes_include.data,
-            return redirect(url_for('build', records=records, types=types, genotypes=genotypes, tumor=tumor, samples=samples, breeds=breeds, tools=tools, recCols=recCols, samCols=samCols, gtpCols=gtpCols))
+            return redirect(url_for('build', records=records, types=types, genotypes=genotypes, regions=regions, tumor=tumor, samples=samples, breeds=breeds, tools=tools, recCols=recCols, samCols=samCols, gtpCols=gtpCols))
 
     sql = "SELECT Unabbreviated FROM ref_breed"
-    form.breed_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if form.breed_include.choices is not None and (b[0],b[0]) not in form.breed_include.choices]
+    if form.breed_include.choices is not None:
+    	form.breed_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in form.breed_include.choices]
+    else:
+    	form.breed_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
     sql = "SELECT sample_id FROM samples"
-    form.sample_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if form.sample_include.choices is not None and (b[0],b[0]) not in form.sample_include.choices]
+    if form.sample_include.choices is not None:
+    	form.sample_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in form.sample_include.choices]
+    else:
+    	form.sample_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
     sql = "SELECT Unabbreviated FROM ref_tool"
-    form.tool_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if form.tool_include.choices is not None and (b[0],b[0]) not in form.tool_include.choices]
+    if form.tool_include.choices is not None:
+    	form.tool_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in form.tool_include.choices]
+    else:
+    	form.tool_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
 
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'Records'"
-    cols.records_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if cols.records_include.choices is not None and (b[0],b[0]) not in cols.records_include.choices]
+    if cols.records_include.choices is not None:
+    	cols.records_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in cols.records_include.choices]
+    else:
+    	cols.records_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'samples'"
-    cols.samples_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if cols.samples_include.choices is not None and (b[0],b[0]) not in cols.samples_include.choices]
+    if cols.samples_include.choices is not None:
+    	cols.samples_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in cols.samples_include.choices]
+    else:
+    	cols.samples_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'genotypes'"
-    cols.genotypes_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if cols.genotypes_include.choices is not None and (b[0],b[0]) not in cols.genotypes_include.choices]
+    if cols.genotypes_include.choices is not None:
+    	cols.genotypes_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in cols.genotypes_include.choices]
+    else:
+    	cols.genotypes_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
 
     return render_template('builder.html', form=form, cols=cols)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

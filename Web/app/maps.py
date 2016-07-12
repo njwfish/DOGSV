@@ -26,14 +26,14 @@ class Maps:
 			self.sample_mapping.update({sample[1]:sample[0]})
 
 	def genVariantMap(self):
-		sql = "SELECT variant_id, type FROM ref_variant"
+		sql = "SELECT variant_id, variant FROM ref_variant"
 		variants = querySQL(sql, self.db, self.cursor)
 		for variant in variants:
 			self.variant_mapping.update({variant[1]:variant[0]})
 			
 
 	def genAlignmentLocationMap(self):
-		sql = "SELECT location_id, type FROM ref_alignment_location"
+		sql = "SELECT location_id, location FROM ref_alignment_location"
 		locations = querySQL(sql, self.db, self.cursor)
 		for location in locations:
 			self.alignment_location_mapping.update({location[1]:location[0]})

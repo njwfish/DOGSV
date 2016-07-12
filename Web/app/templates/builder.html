@@ -29,6 +29,13 @@
       $('#form-tool_include').dblclick( function(){
         move_selected('#form-tool_include', '#form-tool_exclude')
       });
+      $('#form-region_exclude').dblclick( function(){
+        move_selected('#form-region_exclude', '#form-region_include')
+      });
+      $('#form-region_include').dblclick( function(){
+        move_selected('#form-region_include', '#form-region_exclude')
+      });
+
       $('#submit').click(function(){
         select_all('#form-breed_include');
         select_all('#form-sample_include');
@@ -49,17 +56,30 @@
       $('#closeModal').click(function() {
         chooseCols.style.display = "none";
       });
+      $('#add').click(function() {
+        if (document.getElementById('chrom').value.length > 0 & document.getElementById('start').value.length > 0 & document.getElementById('end').value.length > 0) {
+          if (document.getElementById('isSecond').checked){
+            region = "chrom2 = " + document.getElementById('chrom').value + " and pos2 between " + document.getElementById('start').value + " and " + document.getElementById('end').value
+          } else {
+            region = "chrom = " + document.getElementById('chrom').value + " and pos between " + document.getElementById('start').value + " and " + document.getElementById('end').value
+          }
+          document.getElementById('chrom').value = ""
+          document.getElementById('start').value = ""
+          document.getElementById('end').value = ""
+          return $('#form-region_include').append("<option value=" + region + ">" + region + "</option>")
+        }
+      });
     });
   </script>
-  <h1>Builder</h1>
+  <h1>Builder <button id="openModal" type="button" class="btn btn-primary">Columns</button></h1>
   <!-- Trigger/Open The Modal -->
-  <button id="openModal" type="button">Open Modal</button>
+  <hr>
   <!-- The Modal -->
   <div id="chooseCols" class="modal">
     <!-- Modal content -->
     <div class="modal-content">
       <div class="container">
-        <h2>Select Columns</h2>
+        <h2><center>Select Columns</center></h2>
         <ul class="nav nav-tabs">
           <li class="active"><a data-toggle="tab" href="#records">Records</a></li>
           <li><a data-toggle="tab" href="#sampels">Samples</a></li>
@@ -108,7 +128,7 @@
           </div>
         </div>
       </div>
-      <button id="closeModal" type="button">Close</button>
+      <button id="closeModal" type="button" class="btn btn-primary">Close</button>
     </div>
   </div>
   <form action="" method="post" name="record">
@@ -122,18 +142,41 @@
         </div>
         <div id="Record" class="panel-collapse collapse">
           <p>
-            Chrmosome: {{ form.chrom(size=20) }}
-          </p>
-          <p>
-            Range: {{ form.pos(size=12) }} to {{ form.pos2(size=12) }}
-          </p>
-          <p>
             Length: {{ form.len(size=8) }}
           </p>
           <p>
             Filter: {{ form.filter(size=20) }}
           </p>
           <p><center>{{ form.DEL }} DEL {{ form.DUP }} DUP {{ form.INS }} INS {{ form.INV }} INV {{ form.TRA }} TRA {{ form.SIN }} SIN {{ form.LIN }} LIN {{ form.BXP }} BXP</center></p>
+        </div>
+      </div>
+    </div>
+    <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" href="#Region"><center>Region</center></a>
+          </h4>
+        </div>
+        <div id="Region" class="panel-collapse collapse">
+          <div class="row" style="padding:10px;">
+            <div class="col-sm-4">
+              <h5><center>Exclude</center></h5>
+              <p>{{form.region_exclude(style="width:100%;height:100px;")}}</p>
+            </div>
+            <div class="col-sm-4">
+              <h5><center>Include</center></h5>
+              <p> {{form.region_include(style="width:100%;height:100px;")}}</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="alignright">Chrom: <input type="text" id="chrom"></p>
+              <p class="alignright">Start: <input type="text" id="start"></p>
+              <p class="alignright">End: <input type="text" id="end"></p><br>
+              <p>Chrom 2 <input type="checkbox" name="isSecond" id="isSecond"></p><br>
+              
+              <input type="button" value="Add" id="add" name="add" class="btn btn-primary">
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -209,6 +252,6 @@
         </div>
       </div>
     </div>
-    <p><input type="submit" value="Query" id="submit" name="submit"></p>
+    <p><input type="submit" value="Query" id="submit" name="submit" class="btn btn-primary"></p>
   </form>
 {% endblock %}

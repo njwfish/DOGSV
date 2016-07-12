@@ -13,6 +13,7 @@
 	height: auto;
 }
 
+
 table {
 	width:100%;
 }
@@ -37,14 +38,13 @@ table th {
 
 /* Set black background color, white text and some padding */
 footer {
-	background-color: #555;
+	background: #222222;
 	color: white;
 	padding: 15px;
-	margin-top:-40px;
 	position:fixed;
 	left:0px;
 	bottom:0px;
-	height:40px;
+	height:50px;
 	width:100%;
 } 
 
@@ -116,4 +116,62 @@ wrapper {
     color: #000;
     text-decoration: none;
     cursor: pointer;
+}
+
+.btn {
+    padding: 14px 24px;
+    border: 0 none;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+ 
+.btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: 0 none;
+}
+ 
+.btn-primary {
+    background: #222222;
+    color: #9D9D9D;
+}
+ 
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background: #ffffff;
+    background: #9D9D9D;
+}
+ 
+.btn-primary:active, .btn-primary.active {
+    background: #ffffff;
+    box-shadow: none;
+}
+
+a {
+	color:#9D9D9D;
+}
+
+
+a:hover{
+	color:#ffffff;
+	text-decoration: none;
+}
+
+textarea {
+    resize: none;
+}
+
+h1{
+    text-align:left;
+}
+
+h1 button{
+    float:right;
+}
+
+.nav-tabs > li > a:hover{
+  background-color: #222222 !important;
+    color:#ffffff;
+}
+
+.panel-title > a:hover{
+	color:#9D9D9D;
 }

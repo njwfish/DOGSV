@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 	<form action="" method="post" name="record">
-		<h1>Lassie</h1>
 		<p class = "centered">
 			<center>
-				{{ form.search(style="width:75%;") }}
-				<input type="submit" value="Search" id="submit" name="submit">
+				{{ form.search(style="width:75%;height:45px;") }}
+				<input type="submit" value="Search" id="submit" name="submit" class="btn btn-primary">
 			</center>
 		</p>
 	</form>

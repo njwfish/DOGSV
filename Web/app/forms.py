@@ -21,6 +21,9 @@ class BuilderForm(Form):
 	het = BooleanField('het', default=False)
 	homalt = BooleanField('HomAlt', default=False)
 
+	region_include = SelectMultipleField('region_include',choices=[])
+	region_exclude = SelectMultipleField('region_exclude',choices=[])
+
 	breed_include = SelectMultipleField('breed_include',choices=[])
 	breed_exclude = SelectMultipleField('breed_exclude',choices=[])
 

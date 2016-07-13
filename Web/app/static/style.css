@@ -26,15 +26,15 @@ th, td {
 	text-align: left;
 }
 table tr:nth-child(even) {
-	background-color: #eee;
+	background-color: #9D9D9D;
 }		
 table tr:nth-child(odd) {
 	background-color: #fff;
 }
 table th {
 	color: white;
-	background-color: black;
-}
+	background-color: 222222;
+} 
 
 /* Set black background color, white text and some padding */
 footer {
@@ -175,3 +175,4 @@ h1 button{
 .panel-title > a:hover{
 	color:#9D9D9D;
 }
+

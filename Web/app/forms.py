@@ -2,11 +2,10 @@ from flask_wtf import Form
 from wtforms import SelectMultipleField, StringField, IntegerField, DecimalField, BooleanField, TextAreaField, validators
 
 class BuilderForm(Form):
-	chrom = StringField('chrom')
-	chrom2 = StringField('chrom2')
+	ref = StringField('ref')
+	alt = StringField('alt')
+	qual = StringField('qual')
 	filter = StringField('filter')
-	pos = IntegerField('pos', [validators.optional()])
-	pos2 = IntegerField('pos2', [validators.optional()])
 	len = IntegerField('len', [validators.optional()])
 	DEL = BooleanField('DEL', default=False)
 	DUP = BooleanField('DUP', default=False)

@@ -34,7 +34,7 @@ class BuilderForm(Form):
 	tool_exclude = SelectMultipleField('tool_exclude',choices=[])
 
 class QueryForm(Form):
-	query = TextAreaField('query')
+	input_query = TextAreaField('input_query')
 
 class SearchForm(Form):
 	search = StringField('search')

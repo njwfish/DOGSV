@@ -10,19 +10,22 @@ def index():
     form = SearchForm()
     return render_template('search.html', form=form)
 
-@app.route('/results/')
+@app.route('/results/', methods=['GET', 'POST'])
 def results():
+    form = QueryForm()
+    if request.method == 'POST':
+        return redirect(url_for('results', query=form.input_query.data))
     query = request.args['query']
     results = querySQL(query, db, cursor)
     fields = [i[0] for i in cursor.description]
     results = sorted(results, key=lambda element: (element[0], element[1]))
-    return render_template('results.html', fields = fields, results=results, query=query)
+    return render_template('results.html', form=form, fields = fields, results=results, query=query)
 
 @app.route('/query', methods=['GET', 'POST'])
 def query():
     form = QueryForm()
     if request.method == 'POST':
-        return redirect(url_for('results', query=form.query.data))
+        return redirect(url_for('results', query=form.input_query.data))
     return render_template('query.html', form=form)
 
 @app.route('/build/')

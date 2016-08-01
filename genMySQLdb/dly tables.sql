@@ -1,9 +1,9 @@
-create table DLY_info (
+create table dly_info (
 record_id int(11) unsigned not null comment 'The unique identifier of this record, used for reference.',
-CIPOS0 int(11) comment 'PE confidence interval around POS',
-CIPOS1 int(11) comment 'PE confidence interval around POS',
-CIEND0 int(11) comment 'PE confidence interval around END',
-CIEND1 int(11) comment 'PE confidence interval around END',
+CIPOS_0 int(11) comment 'PE confidence interval around POS',
+CIPOS_1 int(11) comment 'PE confidence interval around POS',
+CIEND_0 int(11) comment 'PE confidence interval around END',
+CIEND_1 int(11) comment 'PE confidence interval around END',
 PE int(3) comment 'Paired-end support of the structural variant', 
 MAPQ int(3) comment 'Median mapping quality of paired-ends',
 SR int(3) comment 'Split-read support',
@@ -15,12 +15,12 @@ SVMETHOD varchar(18) comment 'Type of approach used to detect SV',
 primary key(record_id),
 foreign key fk_dly_info_record_id(record_id) references records(ID))
 
-create table DLY_samples(
+create table dly_samples(
 sample_id mediumint(8) unsigned not null,
 record_id int(11) unsigned not null,
-GL0 float(11) comment 'Log10-scaled genotype likelihoods for RR,RA,AA genotypes',
-GL1 float(11) comment 'Log10-scaled genotype likelihoods for RR,RA,AA genotypes',
-GL2 float(11) comment 'Log10-scaled genotype likelihoods for RR,RA,AA genotypes',
+GL_0 float(11) comment 'Log10-scaled genotype likelihoods for RR,RA,AA genotypes',
+GL_1 float(11) comment 'Log10-scaled genotype likelihoods for RR,RA,AA genotypes',
+GL_2 float(11) comment 'Log10-scaled genotype likelihoods for RR,RA,AA genotypes',
 GQ int(11) comment 'Genotype Quality',
 FT varchar(10) comment 'Per-sample genotype filter',
 RC int(11) comment 'Raw high-quality read counts for the SV',

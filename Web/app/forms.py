@@ -33,6 +33,8 @@ class BuilderForm(Form):
 	tool_include = SelectMultipleField('tool_include',choices=[])
 	tool_exclude = SelectMultipleField('tool_exclude',choices=[])
 
+	tool_clauses = SelectMultipleField('tool_clauses',choices=[])
+
 class QueryForm(Form):
 	input_query = TextAreaField('input_query')
 

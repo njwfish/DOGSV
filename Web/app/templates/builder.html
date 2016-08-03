@@ -12,14 +12,17 @@
         <h2><center>Select Columns</center></h2>
         <ul class="nav nav-tabs">
           <li class="active"><a data-toggle="tab" href="#records">Records</a></li>
-          <li><a data-toggle="tab" href="#sampels">Samples</a></li>
+          <li><a data-toggle="tab" href="#samples">Samples</a></li>
           <li><a data-toggle="tab" href="#genotypes">Genotypes</a></li>
+          {% for t in tools %}
+          <li><a data-toggle="tab" href="#{{t}}">{{t}}</a></li>
+          {% endfor %}
         </ul>
 
         <div class="tab-content">
           <div id="records" class="tab-pane fade in active">
             <div class="col-sm-4">
-              <h5><center>Exclude</center></h5>
+              <h5><center>Options</center></h5>
               <p>{{cols.records_exclude(style="width:100%;height:200px;")}}</p>
             </div>
             <div class="col-sm-4">
@@ -30,9 +33,9 @@
               
             </div>
           </div>
-          <div id="sampels" class="tab-pane fade">
+          <div id="samples" class="tab-pane fade">
             <div class="col-sm-4">
-              <h5><center>Exclude</center></h5>
+              <h5><center>Options</center></h5>
               <p>{{cols.samples_exclude(style="width:100%;height:200px;")}}</p>
             </div>
             <div class="col-sm-4">
@@ -45,7 +48,7 @@
           </div>
           <div id="genotypes" class="tab-pane fade">
             <div class="col-sm-4">
-              <h5><center>Exclude</center></h5>
+              <h5><center>Options</center></h5>
               <p>{{cols.genotypes_exclude(style="width:100%;height:200px;")}}</p>
             </div>
             <div class="col-sm-4">
@@ -56,6 +59,27 @@
               
             </div>
           </div>
+          {% for t in tools %}
+          <div id={{t}} class="tab-pane fade">
+            <div class="col-sm-4">
+              <h5><center>Options</center></h5>
+              {% set key = ("%s_info" % t) %}
+              <p><select id="{{key}}_exclude" multiple name="{{key}}_exclude" style="width:100%;height:200px;">
+                {% for c in columns[key] %} 
+                <option value="{{c}}">{{c}}</option>
+                {% endfor %}
+              </select></p>
+            </div>
+            <div class="col-sm-4">
+              <h5><center>Include</center></h5>
+              <p> <p><select id="{{key}}_include" multiple name="{{key}}_include" style="width:100%;height:200px;">
+              </select> </p>
+            </div>
+            <div class="col-sm-4">
+
+            </div>
+          </div>
+          {% endfor %}
         </div>
       </div>
       <button id="closeModal" type="button" class="btn btn-primary">Close</button>
@@ -123,7 +147,7 @@
         <div id="Region" class="panel-collapse collapse">
           <div class="row" style="padding:10px;">
             <div class="col-sm-4">
-              <h5><center>Exclude</center></h5>
+              <h5><center>Options</center></h5>
               <p>{{form.region_exclude(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
@@ -154,7 +178,7 @@
         <div id="Breed" class="panel-collapse collapse">
           <div class="row" style="padding:10px;">
             <div class="col-sm-4">
-              <h5><center>Exclude</center></h5>
+              <h5><center>Options</center></h5>
               <p>{{form.breed_exclude(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
@@ -178,7 +202,7 @@
         <div id="Sample" class="panel-collapse collapse">
           <div class="row" style="padding:10px;">
             <div class="col-sm-4">
-              <h5><center>Exclude</center></h5>
+              <h5><center>Options</center></h5>
               <p>{{form.sample_exclude(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
@@ -200,17 +224,60 @@
           </h4>
         </div>
         <div id="Tool" class="panel-collapse collapse">
-          <div class="row" style="padding:10px;">
-            <div class="col-sm-4">
-              <h5><center>Exclude</center></h5>
-              <p>{{form.tool_exclude(style="width:100%;height:100px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              <h5><center>Include</center></h5>
-              <p> {{form.tool_include(style="width:100%;height:100px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              
+          <h4><center>Filters</center></h4>
+          <center>{{form.tool_clauses(style="width:75%;height:200px;")}}</center>
+          <div class="container" style="width:75%;">
+            <hr>
+            <ul id="tools" class="nav nav-tabs">
+              {% for t in tools %}
+              <li><a data-toggle="tab" href="#{{t}}_tools">{{t}}</a></li>
+              {% endfor %}
+            </ul>
+            <div class="tab-content">
+              {% for t in tools %}
+              <div id={{t}}_tools class="tab-pane fade">
+                <div class="col-sm-4 centered">
+                  {% set key = ("%s_info" % t) %}
+                  <p style="width:100%;">
+                    <select id="{{t}}_cols" multiple name="{{t}}_info" style="width:100%;height:200px;">
+                      {% for c in columns[key] %} 
+                      <option value="{{c}}">{{c}}</option>
+                      {% endfor %}
+                    </select>
+                  </p>
+                </div>
+                <div class="col-sm-4 centered">
+                  <ul class="operators" id="{{t}}_operators">
+                  <center>
+                  <li>
+                    <input type="radio" id="{{t}}_less" value="<" name="{{t}}_operator" />
+                    <label for="{{t}}_less"><</label>
+                  </li>
+                  <li>
+                    <input type="radio" id="{{t}}_more" value=">" name="{{t}}_operator" />
+                    <label for="{{t}}_more">></label>
+                  </li>
+                  <li>
+                    <input type="radio" id="{{t}}_equal" value="=" name="{{t}}_operator" />
+                    <label for="{{t}}_equal">=</label>
+                  </li>
+                  <li>
+                    <input type="radio" id="{{t}}_between" value="between" name="{{t}}_operator" />
+                    <label for="{{t}}_between">between</label>
+                    </li>
+                    </center>
+                  </ul>
+                </div>
+                <div class="col-sm-4">
+                  <p class="centered">
+                    <input type="text" id="{{t}}_val" style="width:100%;">
+                  </p>
+                </div>
+                <p class="alignright">
+                  <input type="button" value="Add" id="{{t}}_add" name="{{t}}_add" class="btn btn-primary">
+                </p>
+              </div>
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -219,6 +286,7 @@
     <p><input type="submit" value="Query" id="submit" name="submit" class="btn btn-primary"></p>
   </form>
   <script type="text/javascript">
+  $('#tools a:first').tab('show');
     function move_selected(from, to) {
       return !$(from + ' option:selected').remove().appendTo(to);
     };
@@ -236,12 +304,29 @@
       $('#form-tool_include').dblclick( function(){move_selected('#form-tool_include', '#form-tool_exclude')});
       $('#form-region_exclude').dblclick( function(){move_selected('#form-region_exclude', '#form-region_include')});
       $('#form-region_include').dblclick( function(){move_selected('#form-region_include', '#form-region_exclude')});
+      {% for t in tools %}
+      {% set key = ("%s_info" % t) %}
+      $('#{{key}}_include').dblclick( function(){move_selected('#{{key}}_include', '#{{key}}_exclude')});
+      $('#{{key}}_exclude').dblclick( function(){move_selected('#{{key}}_exclude', '#{{key}}_include')});
+
+      $('#{{t}}_add').click( function(){
+        var e = document.getElementById("{{t}}_cols");
+        var col = "{{t}}_info." + e.options[e.selectedIndex].value;
+        var operator = $('input[name=dly_operator]:checked').val();
+        var val = document.getElementById('{{t}}_val').value;
+        clause = col + " " + operator + " " + val;
+        return $('#form-tool_clauses').append("<option value=\"" + clause + "\">" + clause + "</option>")
+      });
+
+
+      {% endfor %}
 
       $('#submit').click(function(){
         select_all('#form-breed_include');
         select_all('#form-sample_include');
         select_all('#form-tool_include');
         select_all('#form-region_include');
+        select_all('#form-tool_clauses');
         select_all('#cols-records_include');
         select_all('#cols-samples_include');
         select_all('#cols-genotypes_include');
@@ -262,14 +347,14 @@
       $('#add').click(function() {
         if (document.getElementById('chrom').value.length > 0 & document.getElementById('start').value.length > 0 & document.getElementById('end').value.length > 0) {
           if (document.getElementById('isSecond').checked){
-            region = "chrom2 is " + document.getElementById('chrom').value + " and pos2 between " + document.getElementById('start').value + " and " + document.getElementById('end').value
+            region = "chrom2 is " + document.getElementById('chrom').value + " and pos2 between " + document.getElementById('start').value + " and " + document.getElementById('end').value;
           } else {
-            region = "chrom is " + document.getElementById('chrom').value + " and pos between " + document.getElementById('start').value + " and " + document.getElementById('end').value
+            region = "chrom is " + document.getElementById('chrom').value + " and pos between " + document.getElementById('start').value + " and " + document.getElementById('end').value;
           }
-          document.getElementById('chrom').value = ""
-          document.getElementById('start').value = ""
-          document.getElementById('end').value = ""
-          return $('#form-region_include').append("<option value=" + region + ">" + region + "</option>")
+          document.getElementById('chrom').value = "";
+          document.getElementById('start').value = "";
+          document.getElementById('end').value = "";
+          return $('#form-region_include').append("<option value=" + region + ">" + region + "</option>");
         }
       });
     });

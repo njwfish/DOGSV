@@ -7,7 +7,6 @@
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
 .row.content {height: auto;}
 
-/* Set gray background color and 100% height */
 .sidenav {
 	padding-top: 20px;
 	height: auto;
@@ -62,6 +61,10 @@ wrapper {
 	padding-bottom:-30px;
 	width:985px;
 	position: relative;
+}
+
+container {
+	padding:20px 0;
 }
 
 /* On small screens, set height to 'auto' for sidenav and grid */
@@ -220,8 +223,49 @@ input[type="checkbox"] {
     background:url(check_radio_sheet.png) left top no-repeat;
     cursor:pointer;
 }
+
 input[type="checkbox"]:checked{
     background:url(check_radio_sheet.png) -19px top no-repeat;
 }
+.operators {
+     list-style-type:none;
+     margin:25px 0 0 0;
+     padding:0;
+}
 
+.operators li {
+    margin:5px;
+    width:100px;
+    height:40px;
+    position:relative;
+}
+
+.operators label, .operators input {
+    display:block;
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+.operators input[type="radio"] {
+    opacity:0.011;
+    z-index:100;
+}
+
+.operators input[type="radio"]:checked + label {
+    background:#D2D2D2;
+}
+
+.operators label {
+     padding:5px;
+     border:1px solid #CCC; 
+     cursor:pointer;
+    z-index:90;
+}
+
+.operators label:hover {
+     background:#DDD;
+}
 

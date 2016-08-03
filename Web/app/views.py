@@ -3,6 +3,7 @@ from flask import render_template, flash, redirect, request, url_for
 from app import app, db, cursor, maps
 from .forms import BuilderForm, QueryForm, SearchForm, ColumnForm
 from MySQL_Utils import executeSQL, querySQL, insertSQL
+from collections import defaultdict
 
 @app.route('/')
 @app.route('/index')
@@ -38,6 +39,7 @@ def build():
     samples = ast.literal_eval(request.args['samples'])
     breeds = ast.literal_eval(request.args['breeds'])
     tools = ast.literal_eval(request.args['tools'])
+    tool_filters = ast.literal_eval(request.args['tool_filters'])
     recCols = ast.literal_eval(request.args['recCols']) 
     samCols = ast.literal_eval(request.args['samCols'])
     gtpCols = ast.literal_eval(request.args['gtpCols'])
@@ -55,7 +57,15 @@ def build():
     breeds = ["breed_type = '%s'" % (maps.breed_mapping[breed]) for breed in breeds]
     tools = ["t.tool = '%s'" % (maps.tool_mapping[maps.tool_name_mapping[tool]]) for tool in tools]
     regions = ["(%s)" % region.replace(" is ", "=") for region in regions]
-
+    print tool_filters
+    filters = defaultdict(list)
+    for f in tool_filters:
+    	filters[f.split(".")[0]].append(f.split(".")[1])
+    for k in filters.keys():
+    	f = 'INNER JOIN %s on %s.record_id=r.id ' % (k, k)
+    	f = '%s and (%s)' % (f, ' and '.join(filters[k]))
+    	query.append(f)
+    print query
 
     if len(gtpCols) > 0 or len(samples) > 0 or len(genotypes) > 0:
     	g = 'INNER JOIN genotype g on g.record_id=r.id '
@@ -111,6 +121,7 @@ def builder():
         form.sample_exclude.choices = [(str(b), str(b)) for b in form.sample_exclude.data] 
         form.tool_exclude.choices = [(str(b), str(b)) for b in form.tool_exclude.data]
         form.region_exclude.choices = [(str(b), str(b)) for b in form.region_exclude.data]
+        form.tool_clauses.choices = [(str(b),str(b)) for b in form.tool_clauses.data]
 
         cols.records_include.choices = [(str(b), str(b)) for b in cols.records_include.data]
         cols.records_exclude.choices = [(str(b), str(b)) for b in cols.records_exclude.data]
@@ -146,10 +157,12 @@ def builder():
             samples = form.sample_include.data, 
             breeds = form.breed_include.data,     #adding a comma here avoids a bad request
             tools = form.tool_include.data,        #adding a comma here avoids a bad request
+            tool_filters = '["' + '", "'.join(form.tool_clauses.data) + '"]'
+            print tool_filters
             recCols = cols.records_include.data,
             samCols = cols.samples_include.data,
             gtpCols = cols.genotypes_include.data,
-            return redirect(url_for('build', records=records, types=types, genotypes=genotypes, regions=regions, tumor=tumor, samples=samples, breeds=breeds, tools=tools, recCols=recCols, samCols=samCols, gtpCols=gtpCols))
+            return redirect(url_for('build', records=records, types=types, genotypes=genotypes, regions=regions, tumor=tumor, samples=samples, breeds=breeds, tools=tools, tool_filters=tool_filters, recCols=recCols, samCols=samCols, gtpCols=gtpCols))
 
     sql = "SELECT Unabbreviated FROM ref_breed"
     if form.breed_include.choices is not None:
@@ -183,4 +196,12 @@ def builder():
     else:
     	cols.genotypes_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
 
-    return render_template('builder.html', form=form, cols=cols)
+    tools = [b[0].lower() for b in querySQL("SELECT tool FROM ref_tool", db, cursor)]
+    tables = [b[0] for t in tools for b in querySQL("SELECT table_name from information_schema.tables where table_name like '%s_%%'" % (t), db, cursor)]
+    columns = {}
+    for t in tables:
+    	table_cols = []
+    	for b in querySQL("SELECT column_name from information_schema.columns where table_name = '%s'" % (t), db, cursor):
+    		table_cols.append(b[0])
+    	columns.update({t:table_cols})
+    return render_template('builder.html', form=form, cols=cols, tools=tools, columns=columns)

@@ -237,34 +237,45 @@
               {% for t in tools %}
               <div id={{t}}_tools class="tab-pane fade">
                 <div class="col-sm-4 centered">
-                  {% set key = ("%s_info" % t) %}
-                  <p style="width:100%;">
-                    <select id="{{t}}_cols" multiple name="{{t}}_info" style="width:100%;height:200px;">
+                  <div style="width:100%;">
+                    <center><h4>Columns</h4><center>
+                    {% set key = ("%s_info" % t) %}
+                    <select id="{{t}}_cols" multiple name="{{t}}_cols" style="width:100%;height:200px;">
                       {% for c in columns[key] %} 
                       <option value="{{c}}">{{c}}</option>
                       {% endfor %}
                     </select>
-                  </p>
+                    <ul class="selector" id="{{t}}_switch">
+                      <li style="float:left;">
+                        <input type="radio" id="{{t}}_info_switch" value="{{t}}_info" name="{{t}}_switch" checked="checked"/>
+                        <label for="{{t}}_info_switch">{{t}}_info</label>
+                      </li>
+                      <li style="float:left;">
+                        <input type="radio" id="{{t}}_samples_switch" value="{{t}}_samples" name="{{t}}_switch" />
+                        <label for="{{t}}_samples_switch">{{t}}_samples</label>
+                      </li>
+                    </ul> 
+                  </div>
                 </div>
                 <div class="col-sm-4 centered">
-                  <ul class="operators" id="{{t}}_operators">
-                  <center>
-                  <li>
-                    <input type="radio" id="{{t}}_less" value="<" name="{{t}}_operator" />
-                    <label for="{{t}}_less"><</label>
-                  </li>
-                  <li>
-                    <input type="radio" id="{{t}}_more" value=">" name="{{t}}_operator" />
-                    <label for="{{t}}_more">></label>
-                  </li>
-                  <li>
-                    <input type="radio" id="{{t}}_equal" value="=" name="{{t}}_operator" />
-                    <label for="{{t}}_equal">=</label>
-                  </li>
-                  <li>
-                    <input type="radio" id="{{t}}_between" value="between" name="{{t}}_operator" />
-                    <label for="{{t}}_between">between</label>
-                    </li>
+                  <ul class="selector" id="{{t}}_operators">
+                    <center>
+                      <li>
+                        <input type="radio" id="{{t}}_less" value="<" name="{{t}}_operator" />
+                        <label for="{{t}}_less"><</label>
+                      </li>
+                      <li>
+                        <input type="radio" id="{{t}}_more" value=">" name="{{t}}_operator" />
+                        <label for="{{t}}_more">></label>
+                      </li>
+                      <li>
+                        <input type="radio" id="{{t}}_equal" value="=" name="{{t}}_operator" />
+                        <label for="{{t}}_equal">=</label>
+                      </li>
+                      <li>
+                        <input type="radio" id="{{t}}_between" value="between" name="{{t}}_operator" />
+                        <label for="{{t}}_between">between</label>
+                      </li>
                     </center>
                   </ul>
                 </div>
@@ -311,14 +322,25 @@
 
       $('#{{t}}_add').click( function(){
         var e = document.getElementById("{{t}}_cols");
-        var col = "{{t}}_info." + e.options[e.selectedIndex].value;
+        var col =  e.name + "." + e.options[e.selectedIndex].value;
         var operator = $('input[name=dly_operator]:checked').val();
         var val = document.getElementById('{{t}}_val').value;
         clause = col + " " + operator + " " + val;
         return $('#form-tool_clauses').append("<option value=\"" + clause + "\">" + clause + "</option>")
       });
 
-
+      {% set key = ("%s_info" % t) %}
+      $('#{{t}}_info_switch').click( function(){
+          $('#{{t}}_cols option').remove();
+          $("{% for c in columns[key] %} <option value=\"{{c}}\">{{c}}</option>{% endfor %}").appendTo('#{{t}}_cols');
+          document.getElementById("{{t}}_cols").setAttribute("name","{{key}}");
+      });
+      {% set key = ("%s_samples" % t) %}
+      $('#{{t}}_samples_switch').click( function(){
+          $('#{{t}}_cols option').remove();
+          $("{% for c in columns[key] %} <option value=\"{{c}}\">{{c}}</option>{% endfor %}").appendTo('#{{t}}_cols');
+          document.getElementById("{{t}}_cols").setAttribute("name","{{key}}");
+      });
       {% endfor %}
 
       $('#submit').click(function(){

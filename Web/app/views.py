@@ -199,9 +199,22 @@ def builder():
     tools = [b[0].lower() for b in querySQL("SELECT tool FROM ref_tool", db, cursor)]
     tables = [b[0] for t in tools for b in querySQL("SELECT table_name from information_schema.tables where table_name like '%s_%%'" % (t), db, cursor)]
     columns = {}
+    table_types = {}
     for t in tables:
     	table_cols = []
+    	col_type = []
     	for b in querySQL("SELECT column_name from information_schema.columns where table_name = '%s'" % (t), db, cursor):
     		table_cols.append(b[0])
     	columns.update({t:table_cols})
-    return render_template('builder.html', form=form, cols=cols, tools=tools, columns=columns)
+    	for d in querySQL("SELECT data_type from information_schema.columns where table_name = '%s'" % (t), db, cursor):
+    		if "int" in d[0]:
+    			col_type.append("num")
+    		elif "float" in d[0]:
+    			col_type.append("num")
+    		elif "varchar" in d[0]:
+    			col_type.append("str")
+    		else:
+    			col_type.append(d[0])
+    	columns.update({t:table_cols})
+    	table_types.update({t:col_type})
+    return render_template('builder.html', form=form, cols=cols, tools=tools, columns=columns, table_types=table_types)

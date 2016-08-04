@@ -241,8 +241,8 @@
                     <center><h4>Columns</h4><center>
                     {% set key = ("%s_info" % t) %}
                     <select id="{{t}}_cols" multiple name="{{t}}_cols" style="width:100%;height:200px;">
-                      {% for c in columns[key] %} 
-                      <option value="{{c}}">{{c}}</option>
+                      {% for i in range(0, columns[key]|length) %}
+                      <option value={{table_types[key][i]}}|{{columns[key][i]}}>{{columns[key][i]}}</option>
                       {% endfor %}
                     </select>
                     <ul class="selector" id="{{t}}_switch">
@@ -262,27 +262,33 @@
                     <center>
                       <li>
                         <input type="radio" id="{{t}}_less" value="<" name="{{t}}_operator" />
-                        <label for="{{t}}_less"><</label>
+                        <label id="{{t}}_less_label" for="{{t}}_less"><</label>
                       </li>
                       <li>
                         <input type="radio" id="{{t}}_more" value=">" name="{{t}}_operator" />
-                        <label for="{{t}}_more">></label>
-                      </li>
-                      <li>
-                        <input type="radio" id="{{t}}_equal" value="=" name="{{t}}_operator" />
-                        <label for="{{t}}_equal">=</label>
+                        <label id="{{t}}_more_label" for="{{t}}_more">></label>
                       </li>
                       <li>
                         <input type="radio" id="{{t}}_between" value="between" name="{{t}}_operator" />
-                        <label for="{{t}}_between">between</label>
+                        <label id="{{t}}_between_label" for="{{t}}_between">between</label>
+                      </li>
+                      <li>
+                        <input type="radio" id="{{t}}_equal" value="=" name="{{t}}_operator" />
+                        <label id="{{t}}_equal_label" for="{{t}}_equal">=</label>
+                      </li>
+                      <li>
+                        <input type="radio" id="{{t}}_like" value="like" name="{{t}}_operator" />
+                        <label id="{{t}}_like_label" for="{{t}}_like">like</label>
                       </li>
                     </center>
                   </ul>
                 </div>
                 <div class="col-sm-4">
-                  <p class="centered">
-                    <input type="text" id="{{t}}_val" style="width:100%;">
-                  </p>
+
+                    <div class="centered">
+                    <p style="height:20px"><input type="text" id="{{t}}_val" style="width:120%;"></p><p id="{{t}}_range" style="height:20px"><input type="text" id="{{t}}_start" style="width:40%;"> and <input type="text" id="{{t}}_end" style="width:40%;"></p>
+                    </div>
+
                 </div>
                 <p class="alignright">
                   <input type="button" value="Add" id="{{t}}_add" name="{{t}}_add" class="btn btn-primary">
@@ -297,7 +303,7 @@
     <p><input type="submit" value="Query" id="submit" name="submit" class="btn btn-primary"></p>
   </form>
   <script type="text/javascript">
-  $('#tools a:first').tab('show');
+    $('#tools a:first').tab('show');
     function move_selected(from, to) {
       return !$(from + ' option:selected').remove().appendTo(to);
     };
@@ -315,16 +321,42 @@
       $('#form-tool_include').dblclick( function(){move_selected('#form-tool_include', '#form-tool_exclude')});
       $('#form-region_exclude').dblclick( function(){move_selected('#form-region_exclude', '#form-region_include')});
       $('#form-region_include').dblclick( function(){move_selected('#form-region_include', '#form-region_exclude')});
+
+
       {% for t in tools %}
       {% set key = ("%s_info" % t) %}
+      $('#{{t}}_like').hide();
+      $('#{{t}}_like_label').hide();
+      $('#{{t}}_range').hide();
       $('#{{key}}_include').dblclick( function(){move_selected('#{{key}}_include', '#{{key}}_exclude')});
       $('#{{key}}_exclude').dblclick( function(){move_selected('#{{key}}_exclude', '#{{key}}_include')});
 
+      $('#{{t}}_between_label').click( function(){
+        $('#{{t}}_val').hide();
+        $('#{{t}}_range').show();
+      });
+
+      $('#{{t}}_less_label').click( function(){
+        $('#{{t}}_val').show();
+        $('#{{t}}_range').hide();
+      });
+      $('#{{t}}_more_label').click( function(){
+        $('#{{t}}_val').show();
+        $('#{{t}}_range').hide();
+      });
+      $('#{{t}}_equal_label').click( function(){
+        $('#{{t}}_val').show();
+        $('#{{t}}_range').hide();
+      });
+
       $('#{{t}}_add').click( function(){
         var e = document.getElementById("{{t}}_cols");
-        var col =  e.name + "." + e.options[e.selectedIndex].value;
+        var col =  e.name + "." + e.options[e.selectedIndex].value.split("|")[1];
         var operator = $('input[name=dly_operator]:checked').val();
         var val = document.getElementById('{{t}}_val').value;
+        if (operator == "between"){
+          var val = document.getElementById('{{t}}_start').value + " and " + document.getElementById('{{t}}_end').value; 
+        }
         clause = col + " " + operator + " " + val;
         return $('#form-tool_clauses').append("<option value=\"" + clause + "\">" + clause + "</option>")
       });
@@ -332,15 +364,41 @@
       {% set key = ("%s_info" % t) %}
       $('#{{t}}_info_switch').click( function(){
           $('#{{t}}_cols option').remove();
-          $("{% for c in columns[key] %} <option value=\"{{c}}\">{{c}}</option>{% endfor %}").appendTo('#{{t}}_cols');
+          $("{% for i in range(0, columns[key]|length) %} <option value={{table_types[key][i]}}|{{columns[key][i]}}>{{columns[key][i]}}</option>{% endfor %}").appendTo('#{{t}}_cols');
           document.getElementById("{{t}}_cols").setAttribute("name","{{key}}");
       });
       {% set key = ("%s_samples" % t) %}
       $('#{{t}}_samples_switch').click( function(){
           $('#{{t}}_cols option').remove();
-          $("{% for c in columns[key] %} <option value=\"{{c}}\">{{c}}</option>{% endfor %}").appendTo('#{{t}}_cols');
+          $("{% for i in range(0, columns[key]|length) %} <option value={{table_types[key][i]}}|{{columns[key][i]}}>{{columns[key][i]}}</option>{% endfor %}").appendTo('#{{t}}_cols');
           document.getElementById("{{t}}_cols").setAttribute("name","{{key}}");
       });
+
+      $('#{{t}}_cols').click( function(){
+        var e = document.getElementById("{{t}}_cols");
+        var type = e.options[e.selectedIndex].value.split("|")[0];
+        if (type.includes("str")){
+          $('#{{t}}_less').hide();
+          $('#{{t}}_less_label').hide();
+          $('#{{t}}_more').hide();
+          $('#{{t}}_more_label').hide();
+          $('#{{t}}_between').hide();
+          $('#{{t}}_between_label').hide();
+          $('#{{t}}_like').show();
+          $('#{{t}}_like_label').show();
+        } else {
+          $('#{{t}}_less').show();
+          $('#{{t}}_less_label').show();
+          $('#{{t}}_more').show();
+          $('#{{t}}_more_label').show();
+          $('#{{t}}_between').show();
+          $('#{{t}}_between_label').show();
+          $('#{{t}}_like').hide();
+          $('#{{t}}_like_label').hide();
+        }
+      });
+
+
       {% endfor %}
 
       $('#submit').click(function(){

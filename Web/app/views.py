@@ -1,6 +1,6 @@
 import ast
 from flask import render_template, flash, redirect, request, url_for
-from app import app, db, cursor, maps
+from app import app, variants, variants_cursor, maps, queries, queries_cursor
 from .forms import BuilderForm, QueryForm, SearchForm, ColumnForm
 from MySQL_Utils import executeSQL, querySQL, insertSQL
 from collections import defaultdict
@@ -17,9 +17,11 @@ def results():
     if request.method == 'POST':
         return redirect(url_for('results', query=form.input_query.data))
     query = request.args['query']
-    results = querySQL(query, db, cursor)
-    fields = [i[0] for i in cursor.description]
-    results = sorted(results, key=lambda element: (element[0], element[1]))
+    results = querySQL(query, variants, variants_cursor)
+    fields = [i[0] for i in variants_cursor.description]
+    if results is not None and len(results) > 0:
+    	insertSQL("queries", ["query"], [query], queries, queries_cursor)
+    	results = sorted(results, key=lambda element: (element[0], element[1]))
     return render_template('results.html', form=form, fields = fields, results=results, query=query)
 
 @app.route('/query', methods=['GET', 'POST'])
@@ -40,9 +42,7 @@ def build():
     breeds = ast.literal_eval(request.args['breeds'])
     tools = ast.literal_eval(request.args['tools'])
     tool_filters = ast.literal_eval(request.args['tool_filters'])
-    recCols = ast.literal_eval(request.args['recCols']) 
-    samCols = ast.literal_eval(request.args['samCols'])
-    gtpCols = ast.literal_eval(request.args['gtpCols'])
+    columns = ast.literal_eval(request.args['columns'])
     regions = ast.literal_eval(request.args['regions'])
     recVals = records.values()
     recKeys = records.keys()
@@ -57,32 +57,50 @@ def build():
     breeds = ["breed_type = '%s'" % (maps.breed_mapping[breed]) for breed in breeds]
     tools = ["t.tool = '%s'" % (maps.tool_mapping[maps.tool_name_mapping[tool]]) for tool in tools]
     regions = ["(%s)" % region.replace(" is ", "=") for region in regions]
-    print tool_filters
+    
+    print query
+    necessary_joins = []
+
     filters = defaultdict(list)
     for f in tool_filters:
-    	filters[f.split(".")[0]].append(f.split(".")[1])
-    for k in filters.keys():
-    	f = 'INNER JOIN %s on %s.record_id=r.id ' % (k, k)
-    	f = '%s and (%s)' % (f, ' and '.join(filters[k]))
-    	query.append(f)
-    print query
+    	table = f.split(".")[0]
+        filters[table].append(f.split(".")[1])
+        if table not in necessary_joins:
+    		necessary_joins.append(table)
+    for c in columns:
+    	table = c.split(".")[0]
+    	if table not in necessary_joins:
+    		necessary_joins.append(table)
+    print necessary_joins
+    necessary_joins.remove("r")
+    #distill necessary joins to just the list, with no ancillary checks
 
-    if len(gtpCols) > 0 or len(samples) > 0 or len(genotypes) > 0:
+
+    if len(samples) > 0 or len(genotypes) > 0 or "g" in necessary_joins or "s" in necessary_joins:
     	g = 'INNER JOIN genotype g on g.record_id=r.id '
     	if len(samples) > 0:
         	g = '%s and (%s) ' % (g, ' or '.join(samples))
     	if len(genotypes) > 0:
         	g = '%s and (%s)' % (g, ' or '.join(genotypes))
         query.append(g)
+    	necessary_joins.remove("g")
 
-    if len(breeds) > 0 or len(samCols) > 0:
+    if len(breeds) > 0 or "s" in necessary_joins:
         s = 'INNER JOIN samples s on s.sample_id=g.sample_id '
         if len(breeds) > 0:
             s = '%sand individual_id in (select individual_id from individuals where %s)' % (s, ' or '.join(breeds))
         query.append(s)
+        necessary_joins.remove("s")
 
     if len(tools) > 0:
         query.append('INNER JOIN tools_used t on t.record_id=r.id and %s' % (' or '.join(tools)))
+
+    if len(necessary_joins) > 0:
+        for j in necessary_joins:
+        	f = 'INNER JOIN %s on %s.record_id=r.id ' % (j, j)
+        	if len(filters.keys()) > 0:
+        		f = '%s and (%s)' % (f, ' and '.join(filters[j]))
+        	query.append(f)
 
     core = []
     if len(records) > 0:
@@ -95,12 +113,8 @@ def build():
     	query.append('where %s' % ' and '.join(core))
 
     cols = []
-    if len(recCols) > 0:
-    	cols.append(', '.join(recCols))
-    if len(samCols) > 0:
-    	cols.append('s.%s' % ', s.'.join(samCols))
-    if len(gtpCols) > 0:
-    	cols.append('g.%s' % ', g.'.join(gtpCols))
+    if len(columns) > 0:
+    	cols.append(', '.join(columns))
     if len(cols) == 0:
     	cols = ['*']
 
@@ -123,12 +137,8 @@ def builder():
         form.region_exclude.choices = [(str(b), str(b)) for b in form.region_exclude.data]
         form.tool_clauses.choices = [(str(b),str(b)) for b in form.tool_clauses.data]
 
-        cols.records_include.choices = [(str(b), str(b)) for b in cols.records_include.data]
-        cols.records_exclude.choices = [(str(b), str(b)) for b in cols.records_exclude.data]
-        cols.samples_include.choices = [(str(b), str(b)) for b in cols.samples_include.data]
-        cols.samples_exclude.choices = [(str(b), str(b)) for b in cols.samples_exclude.data]
-        cols.genotypes_include.choices = [(str(b), str(b)) for b in cols.genotypes_include.data]
-        cols.genotypes_exclude.choices = [(str(b), str(b)) for b in cols.genotypes_exclude.data]
+        cols.columns_include.choices = [(str(b), str(b)) for b in cols.columns_include.data]
+        cols.columns_exclude.choices = [(str(b), str(b)) for b in cols.columns_exclude.data]
         if form.validate_on_submit():
             records = {
             'ref':form.ref.data, 
@@ -157,56 +167,43 @@ def builder():
             samples = form.sample_include.data, 
             breeds = form.breed_include.data,     #adding a comma here avoids a bad request
             tools = form.tool_include.data,        #adding a comma here avoids a bad request
-            tool_filters = '["' + '", "'.join(form.tool_clauses.data) + '"]'
-            print tool_filters
-            recCols = cols.records_include.data,
-            samCols = cols.samples_include.data,
-            gtpCols = cols.genotypes_include.data,
-            return redirect(url_for('build', records=records, types=types, genotypes=genotypes, regions=regions, tumor=tumor, samples=samples, breeds=breeds, tools=tools, tool_filters=tool_filters, recCols=recCols, samCols=samCols, gtpCols=gtpCols))
+            tool_filters = '["' + '", "'.join(form.tool_clauses.data) + '"]' if len(form.tool_clauses.data) > 0 else '[]'
+            columns = cols.columns_include.data,
+            return redirect(url_for('build', records=records, types=types, genotypes=genotypes, regions=regions, tumor=tumor, samples=samples, breeds=breeds, tools=tools, tool_filters=tool_filters, columns=columns))
 
     sql = "SELECT Unabbreviated FROM ref_breed"
     if form.breed_include.choices is not None:
-    	form.breed_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in form.breed_include.choices]
+    	form.breed_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, variants, variants_cursor) if (b[0],b[0]) not in form.breed_include.choices]
     else:
-    	form.breed_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
+    	form.breed_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, variants, variants_cursor)]
     sql = "SELECT sample FROM ref_sample"
     if form.sample_include.choices is not None:
-    	form.sample_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in form.sample_include.choices]
+    	form.sample_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, variants, variants_cursor) if (b[0],b[0]) not in form.sample_include.choices]
     else:
-    	form.sample_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
+    	form.sample_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, variants, variants_cursor)]
     sql = "SELECT Unabbreviated FROM ref_tool"
     if form.tool_include.choices is not None:
-    	form.tool_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in form.tool_include.choices]
+    	form.tool_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, variants, variants_cursor) if (b[0],b[0]) not in form.tool_include.choices]
     else:
-    	form.tool_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
+    	form.tool_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, variants, variants_cursor)]
 
-    sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'Records'"
-    if cols.records_include.choices is not None:
-    	cols.records_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in cols.records_include.choices]
-    else:
-    	cols.records_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
-    sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'samples'"
-    if cols.samples_include.choices is not None:
-    	cols.samples_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in cols.samples_include.choices]
-    else:
-    	cols.samples_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
-    sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = N'genotype'"
-    if cols.genotypes_include.choices is not None:
-    	cols.genotypes_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor) if (b[0],b[0]) not in cols.genotypes_include.choices]
-    else:
-    	cols.genotypes_exclude.choices = [(b[0],b[0]) for b in querySQL(sql, db, cursor)]
+    sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'records'"
+    records = [b[0] for b in querySQL(sql, variants, variants_cursor)]
+    sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'samples'"
+    samples = [b[0] for b in querySQL(sql, variants, variants_cursor)]
+    sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'genotype'"
+    genotypes = [b[0] for b in querySQL(sql, variants, variants_cursor)]
 
-    tools = [b[0].lower() for b in querySQL("SELECT tool FROM ref_tool", db, cursor)]
-    tables = [b[0] for t in tools for b in querySQL("SELECT table_name from information_schema.tables where table_name like '%s_%%'" % (t), db, cursor)]
-    columns = {}
-    table_types = {}
+    tools = [b[0].lower() for b in querySQL("SELECT tool FROM ref_tool", variants, variants_cursor)]
+    tables = [b[0] for t in tools for b in querySQL("SELECT table_name from information_schema.tables where table_name like '%s_%%'" % (t), variants, variants_cursor)]
+    tool_columns = {}
+    tool_types = {}
     for t in tables:
     	table_cols = []
     	col_type = []
-    	for b in querySQL("SELECT column_name from information_schema.columns where table_name = '%s'" % (t), db, cursor):
+    	for b in querySQL("SELECT column_name from information_schema.columns where table_name = '%s'" % (t), variants, variants_cursor):
     		table_cols.append(b[0])
-    	columns.update({t:table_cols})
-    	for d in querySQL("SELECT data_type from information_schema.columns where table_name = '%s'" % (t), db, cursor):
+    	for d in querySQL("SELECT data_type from information_schema.columns where table_name = '%s'" % (t), variants, variants_cursor):
     		if "int" in d[0]:
     			col_type.append("num")
     		elif "float" in d[0]:
@@ -215,6 +212,6 @@ def builder():
     			col_type.append("str")
     		else:
     			col_type.append(d[0])
-    	columns.update({t:table_cols})
-    	table_types.update({t:col_type})
-    return render_template('builder.html', form=form, cols=cols, tools=tools, columns=columns, table_types=table_types)
+    	tool_columns.update({t:table_cols})
+    	tool_types.update({t:col_type})
+    return render_template('builder.html', form=form, cols=cols, tools=tools, tool_columns=tool_columns, tool_types=tool_types, records=records, samples=samples, genotypes=genotypes)

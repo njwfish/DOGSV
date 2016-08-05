@@ -42,11 +42,5 @@ class SearchForm(Form):
 	search = StringField('search')
 
 class ColumnForm(Form):
-	records_include= SelectMultipleField('records_include',choices=[])
-	records_exclude= SelectMultipleField('records_exclude',choices=[])
-
-	samples_include= SelectMultipleField('samples_include',choices=[])
-	samples_exclude= SelectMultipleField('samples_exclude',choices=[])
-
-	genotypes_include= SelectMultipleField('genotypes_include',choices=[])
-	genotypes_exclude= SelectMultipleField('genotypes_exclude',choices=[])
+	columns_include= SelectMultipleField('columns_include',choices=[])
+	columns_exclude= SelectMultipleField('columns_exclude',choices=[])

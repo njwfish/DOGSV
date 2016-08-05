@@ -10,73 +10,67 @@
     <div class="modal-content">
       <div class="container">
         <h2><center>Select Columns</center></h2>
+        <div class="col-sm-6">
+          <h5><center>Exclude</center></h5>
+          <p>{{cols.columns_exclude(style="width:100%;height:200px;")}}</p>
+        </div>
+        <div class="col-sm-6">
+          <h5><center>Include</center></h5>
+          <p>{{cols.columns_include(style="width:100%;height:200px;")}}</p>
+        </div>
+        <hr>
         <ul class="nav nav-tabs">
-          <li class="active"><a data-toggle="tab" href="#records">Records</a></li>
-          <li><a data-toggle="tab" href="#samples">Samples</a></li>
-          <li><a data-toggle="tab" href="#genotypes">Genotypes</a></li>
+          <li class="active"><a data-toggle="tab" href="#records">Core</a></li>
           {% for t in tools %}
           <li><a data-toggle="tab" href="#{{t}}">{{t}}</a></li>
           {% endfor %}
         </ul>
-
         <div class="tab-content">
           <div id="records" class="tab-pane fade in active">
             <div class="col-sm-4">
-              <h5><center>Options</center></h5>
-              <p>{{cols.records_exclude(style="width:100%;height:200px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              <h5><center>Include</center></h5>
-              <p> {{cols.records_include(style="width:100%;height:200px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              
-            </div>
-          </div>
-          <div id="samples" class="tab-pane fade">
-            <div class="col-sm-4">
-              <h5><center>Options</center></h5>
-              <p>{{cols.samples_exclude(style="width:100%;height:200px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              <h5><center>Include</center></h5>
-              <p> {{cols.samples_include(style="width:100%;height:200px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              
-            </div>
-          </div>
-          <div id="genotypes" class="tab-pane fade">
-            <div class="col-sm-4">
-              <h5><center>Options</center></h5>
-              <p>{{cols.genotypes_exclude(style="width:100%;height:200px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              <h5><center>Include</center></h5>
-              <p> {{cols.genotypes_include(style="width:100%;height:200px;")}}</p>
-            </div>
-            <div class="col-sm-4">
-              
-            </div>
-          </div>
-          {% for t in tools %}
-          <div id={{t}} class="tab-pane fade">
-            <div class="col-sm-4">
-              <h5><center>Options</center></h5>
-              {% set key = ("%s_info" % t) %}
-              <p><select id="{{key}}_exclude" multiple name="{{key}}_exclude" style="width:100%;height:200px;">
-                {% for c in columns[key] %} 
-                <option value="{{c}}">{{c}}</option>
+              <h5><center>Records</center></h5>
+              <p><select id="records_columns" multiple name="records_columns" style="width:100%;height:100px;">
+                {% for r in records %} 
+                <option value="r.{{r}}">r.{{r}}</option>
                 {% endfor %}
               </select></p>
             </div>
             <div class="col-sm-4">
-              <h5><center>Include</center></h5>
-              <p> <p><select id="{{key}}_include" multiple name="{{key}}_include" style="width:100%;height:200px;">
-              </select> </p>
+              <h5><center>Samples</center></h5>
+              <p><select id="samples_columns" multiple name="samples_columns" style="width:100%;height:100px;">
+                {% for s in samples %} 
+                <option value="s.{{s}}">s.{{s}}</option>
+                {% endfor %}
+              </select></p>
             </div>
             <div class="col-sm-4">
-
+              <h5><center>Genotypes</center></h5>
+              <p><select id="genotypes_columns" multiple name="genotypes_columns" style="width:100%;height:100px;">
+                {% for g in genotypes %} 
+                <option value="g.{{g}}">g.{{g}}</option>
+                {% endfor %}
+              </select></p>
+            </div>
+          </div>
+          {% for t in tools %}
+          <div id={{t}} class="tab-pane fade">
+            <div class="col-sm-6">
+              <h5><center>Info</center></h5>
+              {% set key = ("%s_info" % t) %}
+              <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
+                {% for c in tool_columns[key] %} 
+                <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
+                {% endfor %}
+              </select></p>
+            </div>
+            <div class="col-sm-6">
+              <h5><center>Samples</center></h5>
+              {% set key = ("%s_samples" % t) %}
+              <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
+                {% for c in tool_columns[key] %} 
+                <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
+                {% endfor %}
+              </select></p>
             </div>
           </div>
           {% endfor %}
@@ -241,8 +235,8 @@
                     <center><h4>Columns</h4><center>
                     {% set key = ("%s_info" % t) %}
                     <select id="{{t}}_cols" multiple name="{{t}}_cols" style="width:100%;height:200px;">
-                      {% for i in range(0, columns[key]|length) %}
-                      <option value={{table_types[key][i]}}|{{columns[key][i]}}>{{columns[key][i]}}</option>
+                      {% for i in range(0, tool_columns[key]|length) %}
+                      <option value={{tool_types[key][i]}}|{{tool_columns[key][i]}}>{{tool_columns[key][i]}}</option>
                       {% endfor %}
                     </select>
                     <ul class="selector" id="{{t}}_switch">
@@ -324,12 +318,13 @@
 
 
       {% for t in tools %}
-      {% set key = ("%s_info" % t) %}
       $('#{{t}}_like').hide();
       $('#{{t}}_like_label').hide();
       $('#{{t}}_range').hide();
-      $('#{{key}}_include').dblclick( function(){move_selected('#{{key}}_include', '#{{key}}_exclude')});
-      $('#{{key}}_exclude').dblclick( function(){move_selected('#{{key}}_exclude', '#{{key}}_include')});
+      {% set key = ("%s_info" % t) %}
+      $('#{{key}}_columns').dblclick( function(){move_selected('#{{key}}_columns', '#cols-columns_include')} );
+      {% set key = ("%s_samples" % t) %}
+      $('#{{key}}_columns').dblclick( function(){move_selected('#{{key}}_columns', '#cols-columns_include')} );
 
       $('#{{t}}_between_label').click( function(){
         $('#{{t}}_val').hide();
@@ -364,13 +359,13 @@
       {% set key = ("%s_info" % t) %}
       $('#{{t}}_info_switch').click( function(){
           $('#{{t}}_cols option').remove();
-          $("{% for i in range(0, columns[key]|length) %} <option value={{table_types[key][i]}}|{{columns[key][i]}}>{{columns[key][i]}}</option>{% endfor %}").appendTo('#{{t}}_cols');
+          $("{% for i in range(0, tool_columns[key]|length) %} <option value={{tool_types[key][i]}}|{{tool_columns[key][i]}}>{{tool_columns[key][i]}}</option>{% endfor %}").appendTo('#{{t}}_cols');
           document.getElementById("{{t}}_cols").setAttribute("name","{{key}}");
       });
       {% set key = ("%s_samples" % t) %}
       $('#{{t}}_samples_switch').click( function(){
           $('#{{t}}_cols option').remove();
-          $("{% for i in range(0, columns[key]|length) %} <option value={{table_types[key][i]}}|{{columns[key][i]}}>{{columns[key][i]}}</option>{% endfor %}").appendTo('#{{t}}_cols');
+          $("{% for i in range(0, tool_columns[key]|length) %} <option value={{tool_types[key][i]}}|{{tool_columns[key][i]}}>{{tool_columns[key][i]}}</option>{% endfor %}").appendTo('#{{t}}_cols');
           document.getElementById("{{t}}_cols").setAttribute("name","{{key}}");
       });
 
@@ -412,12 +407,11 @@
         select_all('#cols-genotypes_include');
       });
 
-      $('#cols-records_exclude').dblclick( function(){move_selected('#cols-records_exclude', '#cols-records_include')} );
-      $('#cols-records_include').dblclick( function(){move_selected('#cols-records_include', '#cols-records_exclude')} );
-      $('#cols-samples_exclude').dblclick( function(){move_selected('#cols-samples_exclude', '#cols-samples_include')} );
-      $('#cols-samples_include').dblclick( function(){move_selected('#cols-samples_include', '#cols-samples_exclude')} );
-      $('#cols-genotypes_exclude').dblclick( function(){move_selected('#cols-genotypes_exclude', '#cols-genotypes_include')} );
-      $('#cols-genotypes_include').dblclick( function(){move_selected('#cols-genotypes_include', '#cols-genotypes_exclude')} );
+      $('#records_columns').dblclick( function(){move_selected('#records_columns', '#cols-columns_include')} );
+      $('#samples_columns').dblclick( function(){move_selected('#samples_columns', '#cols-columns_include')} );
+      $('#genotypes_columns').dblclick( function(){move_selected('#genotypes_columns', '#cols-columns_include')} );
+      $('#cols-columns_include').dblclick( function(){move_selected('#cols-columns_include', '#cols-columns_exclude')} );
+      $('#cols-columns_exclude').dblclick( function(){move_selected('#cols-columns_exclude', '#cols-columns_include')} );
       $('#openModal').click(function() {
         chooseCols.style.display = "block";
       });

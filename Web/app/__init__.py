@@ -7,8 +7,8 @@ app.config.from_object('config')
 
 variants = MySQLdb.connect("localhost","root","12345","DogSVStore" )
 variants_cursor = variants.cursor()
-maps = Maps(variants, variants_cursor)
-maps.genDicts()
+maps = Maps(variants, variants_cursor, 0)
+maps.gen_dicts()
 
 queries = MySQLdb.connect("localhost","root","12345","Library" )
 queries_cursor = queries.cursor()

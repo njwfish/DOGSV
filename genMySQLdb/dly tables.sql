@@ -13,7 +13,7 @@ CE float comment 'Consensus sequence entropy',
 CT varchar(16) comment 'Paired-end signature induced connection type',
 SVMETHOD varchar(18) comment 'Type of approach used to detect SV',
 primary key(record_id),
-foreign key fk_dly_info_record_id(record_id) references records(ID))
+foreign key fk_dly_info_record_id(record_id) references records(ID));
 
 create table dly_samples(
 sample_id mediumint(8) unsigned not null,
@@ -33,4 +33,4 @@ RR int(11) comment '# high-quality reference junction reads',
 RV int(11) comment '# high-quality variant junction reads',
 primary key(record_id),
 foreign key fk_dly_samples_record_id(record_id) references records(ID),
-foreign key fk_dly_samples_sample_id(sample_id) references samples(sample_id))
+foreign key fk_dly_samples_sample_id(sample_id) references samples(sample_id));

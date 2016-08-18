@@ -6,15 +6,24 @@ from app.MySQL_Utils import query_sql, insert_sql
 from app.maps import Maps
 from jinja2 import TemplateNotFound
 
-results = Blueprint('results', __name__, template_folder='templates')
+process = Blueprint('process', __name__, template_folder='templates')
 
 
-@results.route('/results/', methods=['GET', 'POST'])
+def get_cluster(results, i, dist, interval, dir, cluster):
+    j = i + dir * dist
+    print i, j
+    if 0 < j < len(results):
+        print results[i][1] - results[j][1]
+        if results[i][1] - results[j][1] < interval:
+            cluster.append(j)
+        else:
+            return cluster
+    return get_cluster(results, i, dist + (dir - 1) / 2, interval, -dir, cluster)
+
+@process.route('/process', methods=['GET', 'POST'])
 def show():
-    form = QueryForm()
-    if request.method == 'POST':
-        return redirect(url_for('results.show', query=form.input_query.data))
-    query = request.args['query']
+    print request.args
+    query = request.args['submit']
     results = query_sql(query, variants, variants_cursor)
     results = [list(r) for r in results] if results is not None else results
     fields = [i[0] for i in variants_cursor.description]
@@ -25,7 +34,13 @@ def show():
         s = fields.index('sample_id') if 'sample_id' in fields else -1
         id_map = Maps(variants, variants_cursor, 0)
         id_map.gen_dicts()
+        results = sorted(results, key=lambda element: (element[0], element[1]))
+        clusters = []
         for i in range(len(results)):
+            cluster = get_cluster(results, i, 1, 50, 1, [])
+            if len(cluster) > 1:
+                clusters.append(cluster)
+            print clusters
             if t > -1:
                 results[i][t] = id_map.variant_mapping[results[i][t]] if results[i][
                                                                              t] in id_map.variant_mapping else 'None'
@@ -39,8 +54,9 @@ def show():
                 results[i][s] = id_map.sample_mapping[results[i][s]] if results[i][
                                                                             s] in id_map.sample_mapping else 'None'
         insert_sql("queries ", ["query"], [query], queries, queries_cursor)
-        results = sorted(results, key=lambda element: (element[0], element[1]))
+
     try:
-        return render_template('results.html', form=form, fields=fields, results=results, query=query)
+        return url_for('results.show', query=query)
     except TemplateNotFound:
         abort(404)
+

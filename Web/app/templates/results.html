@@ -33,7 +33,12 @@
         {% if results is iterable and results|length > 0 %}
             <form action="{{url_for("sql_to_vcf.show")}}" method="get" name="record">
                 <div class="controls">
-                    <button type="submit" value="{{ query }}" id="download" name="submit" class="btn btn-primary sharp" >Download</button>
+                    <button type="submit" value="{{ query }}" id="download" name="submit" class="btn btn-primary sharp">Download</button>
+                </div>
+            </form>
+            <form action="{{url_for("process.show")}}" method="get" name="record">
+                <div class="controls">
+                    <button type="submit" value="{{ query }}" id="process" name="submit" class="btn btn-primary sharp">Process</button>
                 </div>
             </form>
         {% endif %}
@@ -67,9 +72,9 @@
             <table>
                 <tr>
                     {% for h in fields %}
-                            			<th>{{ h }}</th>
+                        <th>{{ h }}</th>
                     {% endfor %}
-                      		</tr>
+                </tr>
                 {% for t in results %}
                     <tr>
                         {% for i in t %}

@@ -6,7 +6,7 @@
       <title>DOGSV</title>
     {% endif %}
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,13 +22,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{{url_for('index')}}"> <img src= {{ url_for('static', filename ='logo.png') }} width="25"></a>
+          <a class="navbar-brand" href="{{url_for('index.show')}}"> <img src= {{ url_for('static', filename ='logo.png') }} width="25"></a>
         </div>
         <div class="collapse navbar-collapse" id="nav">
           <ul class="nav navbar-nav">
-            <li id="build"><a href="{{url_for('builder')}}">Build</a></li>
-            <li id="query"><a href="{{url_for('query')}}">Query</a></li>
-            <li id="library"><a href="{{url_for('query')}}">Library</a></li>
+            <li id="build"><a href="{{url_for('builder.show')}}">Build</a></li>
+            <li id="query"><a href="{{url_for('query.show')}}">Query</a></li>
+            <li id="library"><a href="{{url_for('library.show')}}">Library</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a href="docs"> Documentation</a></li>

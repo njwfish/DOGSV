@@ -1,6 +1,783 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="dataSourceStorage">
   <data-source name="MySQL - DogSVStore@localhost" uuid="c56b90f9-9fff-47ed-82bc-8889933cf232">
-    <database-info product="" version="" jdbc-version="" driver-name="" driver-version=""/>
+    <database-info product="MySQL" version="5.7.13" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="mixed" quoted-identifiers="upper"/>
+    <database-model serializer="dbm" rdbms="MYSQL" format-version="2.6">
+      <schema id="1" name="DogSVStore">
+        <visible>1</visible>
+      </schema>
+      <schema id="2" name="information_schema"/>
+      <schema id="3" name="library"/>
+      <schema id="4" name="mysql"/>
+      <schema id="5" name="performance_schema"/>
+      <schema id="6" name="sys"/>
+      <table id="7" parent="1" name="dly_info"/>
+      <table id="8" parent="1" name="dly_samples"/>
+      <table id="9" parent="1" name="genotype">
+        <comment>Allows querying of genotype sample data regardless of tool.</comment>
+      </table>
+      <table id="10" parent="1" name="individuals">
+        <comment>Information on the individual from which the sample(s) were collected.</comment>
+      </table>
+      <table id="11" parent="1" name="lmp_info"/>
+      <table id="12" parent="1" name="lmp_samples"/>
+      <table id="13" parent="1" name="records">
+        <comment>This is the core of the database. It stores all the records for all the variants.</comment>
+      </table>
+      <table id="14" parent="1" name="ref_alignment_location">
+        <comment>This is a reference table to CHROM and CHROM2 in the records table.</comment>
+      </table>
+      <table id="15" parent="1" name="ref_breed">
+        <comment>This is a reference table to breed_type in the individuals table.</comment>
+      </table>
+      <table id="16" parent="1" name="ref_filter">
+        <comment>This is a reference table to FILTER in the records table.</comment>
+      </table>
+      <table id="17" parent="1" name="ref_genotype">
+        <comment>This is a reference table to GT in the genotypes table.</comment>
+      </table>
+      <table id="18" parent="1" name="ref_sample">
+        <comment>This is a reference table to tissue_type in the samples table.</comment>
+      </table>
+      <table id="19" parent="1" name="ref_sequencing">
+        <comment>This is a reference table to tissue_type in the samples table.</comment>
+      </table>
+      <table id="20" parent="1" name="ref_tissue">
+        <comment>This is a reference table to tissue_type in the samples table.</comment>
+      </table>
+      <table id="21" parent="1" name="ref_tool">
+        <comment>This is a reference table to tool in the tools_used table.</comment>
+      </table>
+      <table id="22" parent="1" name="ref_variant">
+        <comment>This is a reference table to TYPE in the records table.</comment>
+      </table>
+      <table id="23" parent="1" name="samples">
+        <comment>Information on the sample from chich the variant calls were generated.</comment>
+      </table>
+      <table id="24" parent="1" name="tools_used">
+        <comment>Stores the tools used to generate or coroberate a given variant.</comment>
+      </table>
+      <column id="25" parent="7" name="record_id">
+        <comment>The unique identifier of this record, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned|0</data-type>
+      </column>
+      <column id="26" parent="7" name="CIPOS_0">
+        <comment>PE confidence interval around POS</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="27" parent="7" name="CIPOS_1">
+        <comment>PE confidence interval around POS</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="28" parent="7" name="CIEND_0">
+        <comment>PE confidence interval around END</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="29" parent="7" name="CIEND_1">
+        <comment>PE confidence interval around END</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="30" parent="7" name="PE">
+        <comment>Paired-end support of the structural variant</comment>
+        <data-type>int(3)|0</data-type>
+      </column>
+      <column id="31" parent="7" name="MAPQ">
+        <comment>Median mapping quality of paired-ends</comment>
+        <data-type>int(3)|0</data-type>
+      </column>
+      <column id="32" parent="7" name="SR">
+        <comment>Split-read support</comment>
+        <data-type>int(3)|0</data-type>
+      </column>
+      <column id="33" parent="7" name="SRQ">
+        <comment>Split-read consensus alignment quality</comment>
+        <data-type>float|0</data-type>
+      </column>
+      <column id="34" parent="7" name="CONSENSUS">
+        <comment>Split-read consensus sequence</comment>
+        <data-type>varchar(1000)|0</data-type>
+      </column>
+      <column id="35" parent="7" name="CE">
+        <comment>Consensus sequence entropy</comment>
+        <data-type>float|0</data-type>
+      </column>
+      <column id="36" parent="7" name="CT">
+        <comment>Paired-end signature induced connection type</comment>
+        <data-type>varchar(16)|0</data-type>
+      </column>
+      <column id="37" parent="7" name="SVMETHOD">
+        <comment>Type of approach used to detect SV</comment>
+        <data-type>varchar(18)|0</data-type>
+      </column>
+      <key id="38" parent="7" name="PRIMARY">
+        <columns>record_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="39" parent="7" name="dly_info_ibfk_1">
+        <columns>record_id</columns>
+        <ref-key>dogsvstore.records(ID)</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="40" parent="8" name="sample_id">
+        <mandatory>1</mandatory>
+        <data-type>mediumint(8) unsigned|0</data-type>
+      </column>
+      <column id="41" parent="8" name="record_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned|0</data-type>
+      </column>
+      <column id="42" parent="8" name="GL_0">
+        <comment>Log10-scaled genotype likelihoods for RR,RA,AA genotypes</comment>
+        <data-type>float|0</data-type>
+      </column>
+      <column id="43" parent="8" name="GL_1">
+        <comment>Log10-scaled genotype likelihoods for RR,RA,AA genotypes</comment>
+        <data-type>float|0</data-type>
+      </column>
+      <column id="44" parent="8" name="GL_2">
+        <comment>Log10-scaled genotype likelihoods for RR,RA,AA genotypes</comment>
+        <data-type>float|0</data-type>
+      </column>
+      <column id="45" parent="8" name="GQ">
+        <comment>Genotype Quality</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="46" parent="8" name="FT">
+        <comment>Per-sample genotype filter</comment>
+        <data-type>varchar(10)|0</data-type>
+      </column>
+      <column id="47" parent="8" name="RC">
+        <comment>Raw high-quality read counts for the SV</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="48" parent="8" name="RCL">
+        <comment>Raw high-quality read counts for the left control region</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="49" parent="8" name="RCR">
+        <comment>Raw high-quality read counts for the right control region</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="50" parent="8" name="CN">
+        <comment>Read-depth based copy-number estimate for autosomal sites</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="51" parent="8" name="DR">
+        <comment># high-quality reference pairs</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="52" parent="8" name="DV">
+        <comment># high-quality variant pairs</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="53" parent="8" name="RR">
+        <comment># high-quality reference junction reads</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="54" parent="8" name="RV">
+        <comment># high-quality variant junction reads</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="55" parent="8" name="fk_dly_samples_record_id">
+        <columns>record_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="56" parent="8" name="PRIMARY">
+        <columns>sample_id
+record_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="57" parent="8" name="dly_samples_ibfk_2">
+        <columns>sample_id</columns>
+        <ref-key>~.samples.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="58" parent="8" name="dly_samples_ibfk_3">
+        <columns>record_id</columns>
+        <ref-key>dogsvstore.records(ID)</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="59" parent="9" name="sample_id">
+        <comment>The unique identifier of this individual, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>mediumint(8) unsigned|0</data-type>
+      </column>
+      <column id="60" parent="9" name="record_id">
+        <comment>The unique identifier of this record, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned|0</data-type>
+      </column>
+      <column id="61" parent="9" name="GT">
+        <comment>The unique identifier of this genotype, used for reference.</comment>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <index id="62" parent="9" name="fk_genotype">
+        <columns>GT</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="63" parent="9" name="fk_genotype_record_id">
+        <columns>record_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="64" parent="9" name="PRIMARY">
+        <columns>sample_id
+record_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="65" parent="9" name="genotype_ibfk_1">
+        <columns>sample_id</columns>
+        <ref-key>~.samples.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="66" parent="9" name="genotype_ibfk_2">
+        <columns>record_id</columns>
+        <ref-key>dogsvstore.records(ID)</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="67" parent="9" name="genotype_ibfk_3">
+        <columns>GT</columns>
+        <ref-key>~.ref_genotype.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="68" parent="10" name="individual_id">
+        <comment>The unique identifier of this individual, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>mediumint(8) unsigned|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="69" parent="10" name="breed_type">
+        <comment>The unique identifier of this breed, used for reference.</comment>
+        <data-type>smallint(6) unsigned|0</data-type>
+      </column>
+      <column id="70" parent="10" name="sex">
+        <comment>The boolean sex of the individual. True is female, false is male.</comment>
+        <data-type>tinyint(1)|0</data-type>
+      </column>
+      <column id="71" parent="10" name="disease_status">
+        <comment>Information on any diseases the individual might have.</comment>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <index id="72" parent="10" name="fk_breed">
+        <columns>breed_type</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="73" parent="10" name="PRIMARY">
+        <columns>individual_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="74" parent="10" name="individuals_ibfk_1">
+        <columns>breed_type</columns>
+        <ref-key>~.ref_breed.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="75" parent="11" name="record_id">
+        <comment>The unique identifier of this record, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned|0</data-type>
+      </column>
+      <column id="76" parent="11" name="strands">
+        <data-type>varchar(40)|0</data-type>
+      </column>
+      <column id="77" parent="11" name="CIPOS_0">
+        <comment>PE confidence interval around POS</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="78" parent="11" name="CIPOS_1">
+        <comment>PE confidence interval around POS</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="79" parent="11" name="CIEND_0">
+        <comment>PE confidence interval around END</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="80" parent="11" name="CIEND_1">
+        <comment>PE confidence interval around END</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="81" parent="11" name="CIPOS95_0">
+        <comment>Confidence interval (95%) around POS for imprecise variants</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="82" parent="11" name="CIPOS95_1">
+        <comment>Confidence interval (95%) around POS for imprecise variants</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="83" parent="11" name="CIEND95_0">
+        <comment>Confidence interval (95%) around END for imprecise variants</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="84" parent="11" name="CIEND95_1">
+        <comment>Confidence interval (95%) around END for imprecise variants</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="85" parent="11" name="MATEID">
+        <comment>ID of mate breakends</comment>
+        <data-type>varchar(20)|0</data-type>
+      </column>
+      <column id="86" parent="11" name="EVENT">
+        <comment>ID of event associated to breakend</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="87" parent="11" name="SECONDARY">
+        <comment>Secondary breakend in a multi-line variants</comment>
+        <data-type>tinyint(1)|0</data-type>
+      </column>
+      <column id="88" parent="11" name="SU">
+        <comment>Number of pieces of evidence supporting the variant across all samples</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="89" parent="11" name="PE">
+        <comment>Paired-end support of the structural variant</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="90" parent="11" name="SR">
+        <comment>Number of split reads supporting the variant across all samples</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="91" parent="11" name="EV">
+        <comment>Type of LUMPY evidence contributing to the variant call</comment>
+        <data-type>varchar(50)|0</data-type>
+      </column>
+      <column id="92" parent="11" name="PRPOS">
+        <comment>LUMPY probability curve of the POS breakend</comment>
+        <data-type>varchar(50)|0</data-type>
+      </column>
+      <column id="93" parent="11" name="PREND">
+        <comment>LUMPY probability curve of the END breakend</comment>
+        <data-type>varchar(50)|0</data-type>
+      </column>
+      <key id="94" parent="11" name="PRIMARY">
+        <columns>record_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="95" parent="11" name="lmp_info_ibfk_1">
+        <columns>record_id</columns>
+        <ref-key>dogsvstore.records(ID)</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="96" parent="12" name="sample_id">
+        <mandatory>1</mandatory>
+        <data-type>mediumint(8) unsigned|0</data-type>
+      </column>
+      <column id="97" parent="12" name="record_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned|0</data-type>
+      </column>
+      <column id="98" parent="12" name="SU">
+        <comment>Number of pieces of evidence supporting the variant</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="99" parent="12" name="PE">
+        <comment>Number of paired-end reads supporting the variant</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="100" parent="12" name="SR">
+        <comment>Number of split reads supporting the variant</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="101" parent="12" name="BD">
+        <comment>Amount of BED evidence supporting the variant</comment>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="102" parent="12" name="fk_dly_samples_record_id">
+        <columns>record_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="103" parent="12" name="PRIMARY">
+        <columns>sample_id
+record_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="104" parent="12" name="lmp_samples_ibfk_2">
+        <columns>sample_id</columns>
+        <ref-key>~.samples.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="105" parent="12" name="lmp_samples_ibfk_1">
+        <columns>record_id</columns>
+        <ref-key>dogsvstore.records(ID)</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="106" parent="13" name="CHROM">
+        <comment>This is a foriegn key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of the POS where this variant was detected.</comment>
+        <mandatory>1</mandatory>
+        <data-type>smallint(6) unsigned|0</data-type>
+      </column>
+      <column id="107" parent="13" name="POS">
+        <comment>Coordinate where the variant occurs.</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned|0</data-type>
+      </column>
+      <column id="108" parent="13" name="ID">
+        <comment>The unique identifier of this record, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="109" parent="13" name="REF">
+        <comment>The reference allele.</comment>
+        <data-type>varchar(20)|0</data-type>
+      </column>
+      <column id="110" parent="13" name="ALT">
+        <comment>The alternative alleles observed in the samples provided during VCF generation.</comment>
+        <data-type>varchar(50)|0</data-type>
+      </column>
+      <column id="111" parent="13" name="QUAL">
+        <comment>The Phred-scaled probability that a REF/ALT polymorphism exists at this site given sequencing data. Often missing for strucutral vaiants.</comment>
+        <data-type>varchar(12)|0</data-type>
+      </column>
+      <column id="112" parent="13" name="FILTER">
+        <comment>This field contains the name of any filter that the variant fails to pass, or the value PASS if the variant passed all filters.</comment>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <column id="113" parent="13" name="TYPE">
+        <comment>This is a foriegn key to the variants table, this setup is used to allow for faster queries.</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <column id="114" parent="13" name="CHROM2">
+        <comment>This is a foriegn key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of the POS2 where this variant was detected. Mostly only relevant for translocations.</comment>
+        <mandatory>1</mandatory>
+        <data-type>smallint(6) unsigned|0</data-type>
+      </column>
+      <column id="115" parent="13" name="pos2">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="116" parent="13" name="len">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="117" parent="13" name="fk_alignment_location1">
+        <columns>CHROM</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="118" parent="13" name="fk_alignment_location2">
+        <columns>CHROM2</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="119" parent="13" name="fk_filter">
+        <columns>FILTER</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="120" parent="13" name="fk_vaiant">
+        <columns>TYPE</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="121" parent="13" name="PRIMARY">
+        <columns>ID
+CHROM
+TYPE</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="122" parent="13" name="records_ibfk_2">
+        <columns>CHROM</columns>
+        <ref-key>~.ref_alignment_location.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="123" parent="13" name="records_ibfk_4">
+        <columns>FILTER</columns>
+        <ref-key>~.ref_filter.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="124" parent="13" name="records_ibfk_1">
+        <columns>TYPE</columns>
+        <ref-key>~.ref_variant.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="125" parent="13" name="records_ibfk_3">
+        <columns>CHROM2</columns>
+        <ref-key>~.ref_alignment_location.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <trigger id="126" parent="13" name="default_to_CHROM">
+        <trig-events>I</trig-events>
+        <trig-turn>BEFORE_ROW</trig-turn>
+      </trigger>
+      <column id="127" parent="14" name="location_id">
+        <comment>The unique identifier of this location, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>smallint(6) unsigned|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="128" parent="14" name="location">
+        <comment>The alignment location where the variant is found. Necessary to locate variants, this stores chromosomes and unplaced scaffolds.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(20)|0</data-type>
+      </column>
+      <column id="129" parent="14" name="unabbreviated">
+        <data-type>varchar(40)|0</data-type>
+      </column>
+      <key id="130" parent="14" name="PRIMARY">
+        <columns>location_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="131" parent="15" name="breed_id">
+        <comment>The unique identifier of this breed, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>smallint(6) unsigned|0</data-type>
+      </column>
+      <column id="132" parent="15" name="breed">
+        <comment>Four letter abreviation of the breed.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(4)|0</data-type>
+      </column>
+      <column id="133" parent="15" name="unabbreviated">
+        <comment>The unabbreviated name of this item.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(40)|0</data-type>
+      </column>
+      <key id="134" parent="15" name="PRIMARY">
+        <columns>breed_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="135" parent="16" name="filter_id">
+        <comment>The unique identifier of this filter, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(3) unsigned|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="136" parent="16" name="filter">
+        <comment>The filter used by whatever tool to determine pass or fail or whatever other metric is being utilized.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(20)|0</data-type>
+      </column>
+      <key id="137" parent="16" name="PRIMARY">
+        <columns>filter_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="138" parent="17" name="genotype_id">
+        <comment>The unique identifier of this genotype, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <column id="139" parent="17" name="genotype">
+        <comment>The three letter code describing the genotype.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(3)|0</data-type>
+      </column>
+      <key id="140" parent="17" name="PRIMARY">
+        <columns>genotype_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="141" parent="18" name="sample_id">
+        <comment>The unique identifier of this samples, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>mediumint(8) unsigned|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="142" parent="18" name="sample">
+        <comment>The file name of this sample.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(40)|0</data-type>
+      </column>
+      <key id="143" parent="18" name="PRIMARY">
+        <columns>sample_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="144" parent="19" name="sequencing_id">
+        <comment>The unique identifier of this breed, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <column id="145" parent="19" name="sequencing_platform">
+        <comment>Four letter abreviation of the sequencing platform.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(4)|0</data-type>
+      </column>
+      <column id="146" parent="19" name="unabbreviated">
+        <comment>The unabbreviated name of this item.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(40)|0</data-type>
+      </column>
+      <key id="147" parent="19" name="PRIMARY">
+        <columns>sequencing_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="148" parent="20" name="tissue_id">
+        <comment>The unique identifier of this tissue type, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <column id="149" parent="20" name="tissue">
+        <comment>Four letter abreviation of the tissue type.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(4)|0</data-type>
+      </column>
+      <column id="150" parent="20" name="unabbreviated">
+        <comment>The unabbreviated name of this item.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(40)|0</data-type>
+      </column>
+      <key id="151" parent="20" name="PRIMARY">
+        <columns>tissue_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="152" parent="21" name="tool_id">
+        <comment>The unique identifier of this tool, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <column id="153" parent="21" name="tool">
+        <comment>Four letter abreviation of the tool.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(4)|0</data-type>
+      </column>
+      <column id="154" parent="21" name="unabbreviated">
+        <comment>The unabbreviated name of this item.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(40)|0</data-type>
+      </column>
+      <key id="155" parent="21" name="PRIMARY">
+        <columns>tool_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="156" parent="22" name="variant_id">
+        <comment>The unique identifier of this variant, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(3) unsigned|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="157" parent="22" name="variant">
+        <comment>Three letter abreviation of the variant type, used in input and output VCF files.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(3)|0</data-type>
+      </column>
+      <column id="158" parent="22" name="unabbreviated">
+        <comment>The unabbreviated name of this item.</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(40)|0</data-type>
+      </column>
+      <key id="159" parent="22" name="PRIMARY">
+        <columns>variant_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="160" parent="23" name="sample_id">
+        <comment>The unique identifier of this sample, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>mediumint(8) unsigned|0</data-type>
+      </column>
+      <column id="161" parent="23" name="individual_id">
+        <comment>The unique identifier of this individual, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>mediumint(8) unsigned|0</data-type>
+      </column>
+      <column id="162" parent="23" name="tissue_type">
+        <comment>The unique identifier of this tissue type, used for reference.</comment>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <column id="163" parent="23" name="tumor">
+        <comment>True if this is a tumor, false if it is not.</comment>
+        <data-type>tinyint(1)|0</data-type>
+      </column>
+      <column id="164" parent="23" name="mean_read_depth">
+        <comment>Read  depth of this smaple accross the genome.</comment>
+        <data-type>float|0</data-type>
+      </column>
+      <column id="165" parent="23" name="insert_size">
+        <comment>The length of the make pair library.</comment>
+        <data-type>smallint(5) unsigned|0</data-type>
+      </column>
+      <column id="166" parent="23" name="sequencing_type">
+        <comment>The unique identifier of this sequencing platform, used for reference.</comment>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <column id="167" parent="23" name="mapped_reads">
+        <comment>Number of reads confidently mapped to the reference genome.</comment>
+        <data-type>int(11) unsigned|0</data-type>
+      </column>
+      <column id="168" parent="23" name="unmapped_reads">
+        <comment>Number of reads unable to be mapped to the reference genome.</comment>
+        <data-type>int(11) unsigned|0</data-type>
+      </column>
+      <index id="169" parent="23" name="fk_individual_id">
+        <columns>individual_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="170" parent="23" name="fk_sequencing">
+        <columns>sequencing_type</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="171" parent="23" name="fk_tissue">
+        <columns>tissue_type</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="172" parent="23" name="PRIMARY">
+        <columns>sample_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="173" parent="23" name="samples_ibfk_1">
+        <columns>sample_id</columns>
+        <ref-key>~.ref_sample.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="174" parent="23" name="samples_ibfk_2">
+        <columns>individual_id</columns>
+        <ref-key>~.individuals.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="175" parent="23" name="samples_ibfk_3">
+        <columns>tissue_type</columns>
+        <ref-key>~.ref_tissue.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="176" parent="23" name="samples_ibfk_4">
+        <columns>sequencing_type</columns>
+        <ref-key>~.ref_sequencing.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="177" parent="24" name="record_id">
+        <comment>The unique identifier of this record, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned|0</data-type>
+      </column>
+      <column id="178" parent="24" name="tool">
+        <comment>The unique identifier of this tool, used for reference.</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(3) unsigned|0</data-type>
+      </column>
+      <index id="179" parent="24" name="fk_tool">
+        <columns>tool</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="180" parent="24" name="PRIMARY">
+        <columns>record_id
+tool</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="181" parent="24" name="tools_used_ibfk_1">
+        <columns>record_id</columns>
+        <ref-key>dogsvstore.records(ID)</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="182" parent="24" name="tools_used_ibfk_2">
+        <columns>tool</columns>
+        <ref-key>~.ref_tool.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+    </database-model>
   </data-source>
 </component>

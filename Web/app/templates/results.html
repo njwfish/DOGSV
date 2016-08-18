@@ -11,16 +11,33 @@
 		}
 	</style>
 	<h2>Results:</h2>
-	<form action="" method="post" name="record">
 		<h1>Query</h1>
 		<div class="wrapper">
-			<div id="editor">{{query}}</div>
-			{{form.input_query}}
-			<div class="controls">
-				<input type="submit" value="Query" id="submit" name="submit" class="btn btn-primary sharp">
-			</div>
-		</div>
-	</form>
+            <form action="" method="post" name="record">
+			    <div id="editor">{{ query }}</div>
+                {{form.input_query}}
+                <div class="controls">
+                    <input type="submit" value="Query" id="submit" name="submit" class="btn btn-primary sharp alignleft">
+                </div>
+            </form>
+            <button id="openModal" type="button" class="btn btn-primary sharp alignleft">Save</button>
+            <div id="chooseCols" class="modal">
+               <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="container">
+                        Contents
+                    </div>
+                    <button id="closeModal" type="button" class="btn btn-primary">Close</button>
+                </div>
+            </div>
+            {% if results is iterable and results|length > 0 %}
+                <form action="{{url_for("sql_to_vcf")}}" method="get" name="record">
+                    <div class="controls">
+                        <button type="submit" value="{{ query }}" id="download" name="submit" class="btn btn-primary sharp" >Download</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
 	<script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 	<script>
 		var editor = ace.edit("editor");
@@ -34,21 +51,36 @@
 	      });
 
 	    });
+    $('#openModal').click(function() {
+        chooseCols.style.display = "block";
+      });
+      $('#closeModal').click(function() {
+        chooseCols.style.display = "none";
+      });
 
 	</script>
 	<hr>
-	<table >
-		<tr>
-			{% for h in fields %}
-    			<th>{{ h }}</th>
-			{% endfor %}
-  		</tr>
-		{% for t in results %}
-			<tr>
-				{% for i in t %}
-					<td>{{ i }}</td>
-				{% endfor %}
-			</tr>
-		{% endfor %}
-	</table>
+    {% if results is iterable %}
+        {% if results|length == 0 %}
+            <h2>No results...</h2>
+        {% else %}
+            <table>
+                <tr>
+                    {% for h in fields %}
+            			<th>{{ h }}</th>
+                    {% endfor %}
+          		</tr>
+                {% for t in results %}
+                    <tr>
+                        {% for i in t %}
+                            <td>{{ i }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    {% else %}
+        <h2>SQL error</h2>
+    {% endif %}
+
 {% endblock %}

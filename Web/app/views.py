@@ -1,8 +1,11 @@
 import ast
-from flask import render_template, redirect, request, url_for
+import tempfile
+from flask import render_template, redirect, request, url_for, send_file, send_from_directory
 from app import app, variants, variants_cursor, maps, queries, queries_cursor
 from .forms import BuilderForm, QueryForm, SearchForm, ColumnForm
 from MySQL_Utils import query_sql, insert_sql
+from maps import Maps
+from SQLtoVCF import SQLtoVCF
 from collections import defaultdict
 
 
@@ -13,6 +16,12 @@ def index():
     return render_template('search.html', form=form)
 
 
+@app.route('/sql_to_vcf/', methods=['GET', 'POST'])
+def sql_to_vcf():
+    vcf = SQLtoVCF(request.args['submit'], str(queries_cursor.lastrowid), 1, 0)
+    return send_from_directory('static', vcf.sql_to_vcf())
+
+
 @app.route('/results/', methods=['GET', 'POST'])
 def results():
     form = QueryForm()
@@ -20,8 +29,24 @@ def results():
         return redirect(url_for('results', query=form.input_query.data))
     query = request.args['query']
     results = query_sql(query, variants, variants_cursor)
+    results = [list(r) for r in results] if results is not None else results
     fields = [i[0] for i in variants_cursor.description]
     if results is not None and len(results) > 0:
+        t = fields.index('TYPE') if 'TYPE' in fields else -1
+        f = fields.index('FILTER') if 'FILTER' in fields else -1
+        g = fields.index('GT') if 'GT' in fields else -1
+        s = fields.index('sample_id') if 'sample_id' in fields else -1
+        id_map = Maps(variants, variants_cursor, 0)
+        id_map.gen_dicts()
+        for i in range(len(results)):
+            if t > -1:
+                results[i][t] = id_map.variant_mapping[results[i][t]] if results[i][t] in id_map.variant_mapping else 'None'
+            if f > -1:
+                results[i][f] = id_map.filter_mapping[results[i][f]] if results[i][f] in id_map.filter_mapping else 'None'
+            if g > -1:
+                results[i][g] = id_map.genotype_mapping[results[i][g]] if results[i][g] in id_map.genotype_mapping else 'None'
+            if s > -1:
+                results[i][s] = id_map.sample_mapping[results[i][s]] if results[i][s] in id_map.sample_mapping else 'None'
         insert_sql("queries ", ["query"], [query], queries, queries_cursor)
         results = sorted(results, key=lambda element: (element[0], element[1]))
     return render_template('results.html', form=form, fields=fields, results=results, query=query)
@@ -35,10 +60,17 @@ def query():
     return render_template('query.html', form=form)
 
 
+@app.route('/library', methods=['GET', 'POST'])
+def library():
+    results = query_sql("select time, query from queries", queries, queries_cursor)
+    results = [[v for v in r] for r in results] if results is not None else results
+    fields = [i[0] for i in queries_cursor.description]
+    return render_template('library.html', fields=fields, results=results)
+
+
 @app.route('/build/')
 def build():
     query = []
-    records = ast.literal_eval(request.args['records'])
     types = ast.literal_eval(request.args['types'])
     genotypes = ast.literal_eval(request.args['genotypes'])
     tumor = request.args['tumor'] if request.args['tumor'] == 'True' else ''
@@ -48,10 +80,6 @@ def build():
     tool_filters = ast.literal_eval(request.args['tool_filters'])
     columns = ast.literal_eval(request.args['columns'])
     regions = ast.literal_eval(request.args['regions'])
-    rec_vals = records.values()
-    rec_keys = records.keys()
-    records = ["%s = '%s'" % (rec_keys[i], rec_vals[i]) for i in range(len(rec_vals))
-               if rec_vals[i] is not None and len(str(rec_vals[i])) > 0]
     type_vals = types.values()
     type_keys = types.keys()
     types = ["type = '%s'" % (maps.variant_mapping[type_keys[i]]) for i in range(len(type_vals)) if type_vals[i]]
@@ -86,7 +114,8 @@ def build():
         if len(genotypes) > 0:
             g = '%s and (%s)' % (g, ' or '.join(genotypes))
         query.append(g)
-        necessary_joins.remove("g")
+        if "g" in necessary_joins:
+            necessary_joins.remove("g")
 
     if len(breeds) > 0 or "s" in necessary_joins:
         s = 'INNER JOIN samples s on s.sample_id=g.sample_id '
@@ -106,8 +135,8 @@ def build():
             query.append(f)
 
     core = []
-    if len(records) > 0:
-        core.append(' and '.join(records))
+    if len(filters['r']) > 0:
+        core.append(' and '.join(filters['r']))
     if len(types) > 0:
         core.append('(%s)' % ' or '.join(types))
     if len(regions) > 0:
@@ -119,7 +148,7 @@ def build():
     if len(columns) > 0:
         cols.append(', '.join(columns))
     if len(cols) == 0:
-        cols = ['*']
+        cols = ['chrom,pos,filter,type,chrom2,pos2,len']
 
     query = "select %s from records r %s limit 5000" % (', '.join(cols), ' '.join(query))
     return redirect(url_for('results', query=query))
@@ -143,13 +172,6 @@ def builder():
         cols.columns_include.choices = [(str(b), str(b)) for b in cols.columns_include.data]
         cols.columns_exclude.choices = [(str(b), str(b)) for b in cols.columns_exclude.data]
         if form.validate_on_submit():
-            records = {
-                'ref': form.ref.data,
-                'alt': form.alt.data,
-                'qual': form.alt.data,
-                'filter': form.filter.data,
-                'len': form.len.data,
-            }
             types = {
                 'DEL': form.DEL.data,
                 'DUP': form.DUP.data,
@@ -173,7 +195,7 @@ def builder():
             tool_filters = '["' + '", "'.join(form.tool_clauses.data) + '"]' \
                 if len(form.tool_clauses.data) > 0 else '[]'
             columns = cols.columns_include.data,
-            return redirect(url_for('build', records=records, types=types, genotypes=genotypes,
+            return redirect(url_for('build', types=types, genotypes=genotypes,
                                     regions=regions, tumor=tumor, samples=samples,
                                     breeds=breeds, tools=tools, tool_filters=tool_filters, columns=columns))
 

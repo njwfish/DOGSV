@@ -30,7 +30,7 @@
             <div class="col-sm-4">
               <h5><center>Records</center></h5>
               <p><select id="records_columns" multiple name="records_columns" style="width:100%;height:100px;">
-                {% for r in records %} 
+                {% for r in records %}
                 <option value="r.{{r}}">r.{{r}}</option>
                 {% endfor %}
               </select></p>
@@ -38,7 +38,7 @@
             <div class="col-sm-4">
               <h5><center>Samples</center></h5>
               <p><select id="samples_columns" multiple name="samples_columns" style="width:100%;height:100px;">
-                {% for s in samples %} 
+                {% for s in samples %}
                 <option value="s.{{s}}">s.{{s}}</option>
                 {% endfor %}
               </select></p>
@@ -46,7 +46,7 @@
             <div class="col-sm-4">
               <h5><center>Genotypes</center></h5>
               <p><select id="genotypes_columns" multiple name="genotypes_columns" style="width:100%;height:100px;">
-                {% for g in genotypes %} 
+                {% for g in genotypes %}
                 <option value="g.{{g}}">g.{{g}}</option>
                 {% endfor %}
               </select></p>
@@ -58,7 +58,7 @@
               <h5><center>Info</center></h5>
               {% set key = ("%s_info" % t) %}
               <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
-                {% for c in tool_columns[key] %} 
+                {% for c in tool_columns[key] %}
                 <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
                 {% endfor %}
               </select></p>
@@ -67,7 +67,7 @@
               <h5><center>Samples</center></h5>
               {% set key = ("%s_samples" % t) %}
               <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
-                {% for c in tool_columns[key] %} 
+                {% for c in tool_columns[key] %}
                 <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
                 {% endfor %}
               </select></p>
@@ -79,6 +79,131 @@
       <button id="closeModal" type="button" class="btn btn-primary">Close</button>
     </div>
   </div>
+    <h4><center>Filters</center></h4>
+      <center>{{form.tool_clauses(style="width:75%;height:200px;")}}</center>
+      <div class="container" style="width:75%;">
+        <hr>
+        <ul id="tools" class="nav nav-tabs">
+        <li><a data-toggle="tab" href="#record_filters">Records</a></li>
+          {% for t in tools %}
+          <li><a data-toggle="tab" href="#{{t}}_tools">{{t}}</a></li>
+          {% endfor %}
+        </ul>
+        <div class="tab-content">
+            <div id=record_filters class="tab-pane fade">
+            <div class="col-sm-4 centered">
+              <div style="width:100%;">
+                <center><h4>Columns</h4></center>
+                <select id="records_cols" multiple name="r" style="width:100%;height:200px;">
+                    <option value=str|REF>REF</option>
+                    <option value=str|ALT>ALT</option>
+                    <option value=str|QUAL>QUAL</option>
+                    <option value=num|len>len</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-4 centered">
+              <ul class="selector" id="records_operators">
+                <center>
+                  <li>
+                    <input type="radio" id="records_less" value="<" name="records_operator" />
+                    <label id="records_less_label" for="records_less"><</label>
+                  </li>
+                  <li>
+                    <input type="radio" id="records_more" value=">" name="records_operator" />
+                    <label id="records_more_label" for="records_more">></label>
+                  </li>
+                  <li>
+                    <input type="radio" id="records_between" value="between" name="records_operator" />
+                    <label id="records_between_label" for="records_between">between</label>
+                  </li>
+                  <li>
+                    <input type="radio" id="records_equal" value="=" name="records_operator" />
+                    <label id="records_equal_label" for="records_equal">=</label>
+                  </li>
+                  <li>
+                    <input type="radio" id="records_like" value="like" name="records_operator" />
+                    <label id="records_like_label" for="records_like">like</label>
+                  </li>
+                </center>
+              </ul>
+            </div>
+            <div class="col-sm-4">
+
+                <div class="centered">
+                <p style="height:20px"><input type="text" id="records_val" style="width:120%;"></p><p id="records_range" style="height:20px"><input type="text" id="records_start" style="width:40%;"> and <input type="text" id="records_end" style="width:40%;"></p>
+                </div>
+
+            </div>
+            <p class="alignright">
+              <input type="button" value="Add" id="records_add" name="records_add" class="btn btn-primary">
+            </p>
+          </div>
+
+          {% for t in tools %}
+          <div id={{t}}_tools class="tab-pane fade">
+            <div class="col-sm-4 centered">
+              <div style="width:100%;">
+                <center><h4>Columns</h4><center>
+                {% set key = ("%s_info" % t) %}
+                <select id="{{t}}_cols" multiple name="{{t}}_info" style="width:100%;height:200px;">
+                  {% for i in range(0, tool_columns[key]|length) %}
+                  <option value={{tool_types[key][i]}}|{{tool_columns[key][i]}}>{{tool_columns[key][i]}}</option>
+                  {% endfor %}
+                </select>
+                <ul class="selector" id="{{t}}_switch">
+                  <li style="float:left;">
+                    <input type="radio" id="{{t}}_info_switch" value="{{t}}_info" name="{{t}}_switch" checked="checked"/>
+                    <label for="{{t}}_info_switch">{{t}}_info</label>
+                  </li>
+                  <li style="float:left;">
+                    <input type="radio" id="{{t}}_samples_switch" value="{{t}}_samples" name="{{t}}_switch" />
+                    <label for="{{t}}_samples_switch">{{t}}_samples</label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-4 centered">
+              <ul class="selector" id="{{t}}_operators">
+                <center>
+                  <li>
+                    <input type="radio" id="{{t}}_less" value="<" name="{{t}}_operator" />
+                    <label id="{{t}}_less_label" for="{{t}}_less"><</label>
+                  </li>
+                  <li>
+                    <input type="radio" id="{{t}}_more" value=">" name="{{t}}_operator" />
+                    <label id="{{t}}_more_label" for="{{t}}_more">></label>
+                  </li>
+                  <li>
+                    <input type="radio" id="{{t}}_between" value="between" name="{{t}}_operator" />
+                    <label id="{{t}}_between_label" for="{{t}}_between">between</label>
+                  </li>
+                  <li>
+                    <input type="radio" id="{{t}}_equal" value="=" name="{{t}}_operator" />
+                    <label id="{{t}}_equal_label" for="{{t}}_equal">=</label>
+                  </li>
+                  <li>
+                    <input type="radio" id="{{t}}_like" value="like" name="{{t}}_operator" />
+                    <label id="{{t}}_like_label" for="{{t}}_like">like</label>
+                  </li>
+                </center>
+              </ul>
+            </div>
+            <div class="col-sm-4">
+
+                <div class="centered">
+                <p style="height:20px"><input type="text" id="{{t}}_val" style="width:120%;"></p><p id="{{t}}_range" style="height:20px"><input type="text" id="{{t}}_start" style="width:40%;"> and <input type="text" id="{{t}}_end" style="width:40%;"></p>
+                </div>
+
+            </div>
+            <p class="alignright">
+              <input type="button" value="Add" id="{{t}}_add" name="{{t}}_add" class="btn btn-primary">
+            </p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
   <form action="" method="post" name="record">
     {{ form.hidden_tag() }}
     <div class="panel-group">
@@ -102,7 +227,7 @@
               <p>{{ form.INV }} INV</p>
               <p>{{ form.TRA }} TRA</p>
               <p>{{ form.SIN }} SIN</p>
-              <p>{{ form.LIN }} LIN</p> 
+              <p>{{ form.LIN }} LIN</p>
               <p>{{ form.BXP }} BXP</p>
             </div>
             <div class="col-sm-4">
@@ -125,9 +250,9 @@
               </div>
             </div>
           </div>
-          
-          
-          
+
+
+
         </div>
       </div>
     </div>
@@ -155,7 +280,7 @@
               <p class="alignright">End: <input type="text" id="end"></p><br>
               </div>
               <p>Chrom 2 <input type="checkbox" name="isSecond" id="isSecond"></p><br>
-              
+
               <input type="button" value="Add" id="add" name="add" class="btn btn-primary">
             </div>
           </div>
@@ -180,7 +305,7 @@
               <p> {{form.breed_include(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
-              
+
             </div>
           </div>
         </div>
@@ -204,91 +329,7 @@
               <p> {{form.sample_include(style="width:100%;height:100px;")}}</p>
             </div>
             <div class="col-sm-4">
-              
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="panel-group">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h4 class="panel-title">
-            <a data-toggle="collapse" href="#Tool"><center>Tool</center></a>
-          </h4>
-        </div>
-        <div id="Tool" class="panel-collapse collapse">
-          <h4><center>Filters</center></h4>
-          <center>{{form.tool_clauses(style="width:75%;height:200px;")}}</center>
-          <div class="container" style="width:75%;">
-            <hr>
-            <ul id="tools" class="nav nav-tabs">
-              {% for t in tools %}
-              <li><a data-toggle="tab" href="#{{t}}_tools">{{t}}</a></li>
-              {% endfor %}
-            </ul>
-            <div class="tab-content">
-              {% for t in tools %}
-              <div id={{t}}_tools class="tab-pane fade">
-                <div class="col-sm-4 centered">
-                  <div style="width:100%;">
-                    <center><h4>Columns</h4><center>
-                    {% set key = ("%s_info" % t) %}
-                    <select id="{{t}}_cols" multiple name="{{t}}_cols" style="width:100%;height:200px;">
-                      {% for i in range(0, tool_columns[key]|length) %}
-                      <option value={{tool_types[key][i]}}|{{tool_columns[key][i]}}>{{tool_columns[key][i]}}</option>
-                      {% endfor %}
-                    </select>
-                    <ul class="selector" id="{{t}}_switch">
-                      <li style="float:left;">
-                        <input type="radio" id="{{t}}_info_switch" value="{{t}}_info" name="{{t}}_switch" checked="checked"/>
-                        <label for="{{t}}_info_switch">{{t}}_info</label>
-                      </li>
-                      <li style="float:left;">
-                        <input type="radio" id="{{t}}_samples_switch" value="{{t}}_samples" name="{{t}}_switch" />
-                        <label for="{{t}}_samples_switch">{{t}}_samples</label>
-                      </li>
-                    </ul> 
-                  </div>
-                </div>
-                <div class="col-sm-4 centered">
-                  <ul class="selector" id="{{t}}_operators">
-                    <center>
-                      <li>
-                        <input type="radio" id="{{t}}_less" value="<" name="{{t}}_operator" />
-                        <label id="{{t}}_less_label" for="{{t}}_less"><</label>
-                      </li>
-                      <li>
-                        <input type="radio" id="{{t}}_more" value=">" name="{{t}}_operator" />
-                        <label id="{{t}}_more_label" for="{{t}}_more">></label>
-                      </li>
-                      <li>
-                        <input type="radio" id="{{t}}_between" value="between" name="{{t}}_operator" />
-                        <label id="{{t}}_between_label" for="{{t}}_between">between</label>
-                      </li>
-                      <li>
-                        <input type="radio" id="{{t}}_equal" value="=" name="{{t}}_operator" />
-                        <label id="{{t}}_equal_label" for="{{t}}_equal">=</label>
-                      </li>
-                      <li>
-                        <input type="radio" id="{{t}}_like" value="like" name="{{t}}_operator" />
-                        <label id="{{t}}_like_label" for="{{t}}_like">like</label>
-                      </li>
-                    </center>
-                  </ul>
-                </div>
-                <div class="col-sm-4">
 
-                    <div class="centered">
-                    <p style="height:20px"><input type="text" id="{{t}}_val" style="width:120%;"></p><p id="{{t}}_range" style="height:20px"><input type="text" id="{{t}}_start" style="width:40%;"> and <input type="text" id="{{t}}_end" style="width:40%;"></p>
-                    </div>
-
-                </div>
-                <p class="alignright">
-                  <input type="button" value="Add" id="{{t}}_add" name="{{t}}_add" class="btn btn-primary">
-                </p>
-              </div>
-              {% endfor %}
             </div>
           </div>
         </div>
@@ -316,6 +357,72 @@
       $('#form-region_exclude').dblclick( function(){move_selected('#form-region_exclude', '#form-region_include')});
       $('#form-region_include').dblclick( function(){move_selected('#form-region_include', '#form-region_exclude')});
 
+
+    $('#records_like').hide();
+                $('#records_like_label').hide();
+                $('#records_range').hide();
+                {% set key = ("%s_info" % t) %}
+                $('#{{key}}_columns').dblclick(function () {
+                    move_selected('#{{key}}_columns', '#cols-columns_include')
+                });
+                {% set key = ("%s_samples" % t) %}
+                $('#{{key}}_columns').dblclick(function () {
+                    move_selected('#{{key}}_columns', '#cols-columns_include')
+                });
+
+                $('#records_between_label').click(function () {
+                    $('#records_val').hide();
+                    $('#records_range').show();
+                });
+
+                $('#records_less_label').click(function () {
+                    $('#records_val').show();
+                    $('#records_range').hide();
+                });
+                $('#records_more_label').click(function () {
+                    $('#records_val').show();
+                    $('#records_range').hide();
+                });
+                $('#records_equal_label').click(function () {
+                    $('#records_val').show();
+                    $('#records_range').hide();
+                });
+
+                $('#records_add').click(function () {
+                    var e = document.getElementById("records_cols");
+                    var col = e.name + "." + e.options[e.selectedIndex].value.split("|")[1];
+                    var operator = $('input[name=records_operator]:checked').val();
+                    var val = document.getElementById('records_val').value;
+                    if (operator == "between") {
+                        var val = document.getElementById('records_start').value + " and " + document.getElementById('records_end').value;
+                    }
+                    clause = col + " " + operator + " " + val;
+                    return $('#form-tool_clauses').append("<option value=\"" + clause + "\">" + clause + "</option>")
+                });
+
+                $('#records_cols').click(function () {
+                    var e = document.getElementById("records_cols");
+                    var type = e.options[e.selectedIndex].value.split("|")[0];
+                    if (type.includes("str")) {
+                        $('#records_less').hide();
+                        $('#records_less_label').hide();
+                        $('#records_more').hide();
+                        $('#records_more_label').hide();
+                        $('#records_between').hide();
+                        $('#records_between_label').hide();
+                        $('#records_like').show();
+                        $('#records_like_label').show();
+                    } else {
+                        $('#records_less').show();
+                        $('#records_less_label').show();
+                        $('#records_more').show();
+                        $('#records_more_label').show();
+                        $('#records_between').show();
+                        $('#records_between_label').show();
+                        $('#records_like').hide();
+                        $('#records_like_label').hide();
+                    }
+                });
 
       {% for t in tools %}
       $('#{{t}}_like').hide();
@@ -347,10 +454,10 @@
       $('#{{t}}_add').click( function(){
         var e = document.getElementById("{{t}}_cols");
         var col =  e.name + "." + e.options[e.selectedIndex].value.split("|")[1];
-        var operator = $('input[name=dly_operator]:checked').val();
+        var operator = $('input[name={{t}}_operator]:checked').val();
         var val = document.getElementById('{{t}}_val').value;
         if (operator == "between"){
-          var val = document.getElementById('{{t}}_start').value + " and " + document.getElementById('{{t}}_end').value; 
+          var val = document.getElementById('{{t}}_start').value + " and " + document.getElementById('{{t}}_end').value;
         }
         clause = col + " " + operator + " " + val;
         return $('#form-tool_clauses').append("<option value=\"" + clause + "\">" + clause + "</option>")

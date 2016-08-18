@@ -41,7 +41,7 @@ table tr:nth-child(odd) {
 }
 table th {
 	color: white;
-	background-color: 222222;
+	background-color: #222222;
 } 
 
 /* Set black background color, white text and some padding */

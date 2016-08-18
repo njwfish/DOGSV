@@ -1,65 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
-	<style>
-		#editor {
-    		height:100px;
-    		width: 100%;
-		}
-		*{
-		    padding: 0;
-		    margin:0;
-		}
-	</style>
-	<h2>Results:</h2>
-		<h1>Query</h1>
-		<div class="wrapper">
-            <form action="" method="post" name="record">
-			    <div id="editor">{{ query }}</div>
-                {{form.input_query}}
+    <style>
+        #editor {
+            height:100px;
+            width: 100%;
+        }
+        *{
+            padding: 0;
+            margin:0;
+        }
+    </style>
+    <h2>Results:</h2>
+    <h1>Query</h1>
+    <div class="wrapper">
+        <form action="" method="post" name="record">
+            <div id="editor">{{ query }}</div>
+            {{form.input_query}}
+            <div class="controls">
+                <input type="submit" value="Query" id="submit" name="submit" class="btn btn-primary sharp alignleft">
+            </div>
+        </form>
+        <button id="openModal" type="button" class="btn btn-primary sharp alignleft">Save</button>
+        <div id="chooseCols" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="container">
+                    Contents
+                </div>
+                <button id="closeModal" type="button" class="btn btn-primary">Close</button>
+            </div>
+        </div>
+        {% if results is iterable and results|length > 0 %}
+            <form action="{{url_for("sql_to_vcf.show")}}" method="get" name="record">
                 <div class="controls">
-                    <input type="submit" value="Query" id="submit" name="submit" class="btn btn-primary sharp alignleft">
+                    <button type="submit" value="{{ query }}" id="download" name="submit" class="btn btn-primary sharp" >Download</button>
                 </div>
             </form>
-            <button id="openModal" type="button" class="btn btn-primary sharp alignleft">Save</button>
-            <div id="chooseCols" class="modal">
-               <!-- Modal content -->
-                <div class="modal-content">
-                    <div class="container">
-                        Contents
-                    </div>
-                    <button id="closeModal" type="button" class="btn btn-primary">Close</button>
-                </div>
-            </div>
-            {% if results is iterable and results|length > 0 %}
-                <form action="{{url_for("sql_to_vcf.show")}}" method="get" name="record">
-                    <div class="controls">
-                        <button type="submit" value="{{ query }}" id="download" name="submit" class="btn btn-primary sharp" >Download</button>
-                    </div>
-                </form>
-            {% endif %}
-        </div>
-	<script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-	<script>
-		var editor = ace.edit("editor");
-		editor.getSession().setUseWorker(false);
-		editor.setTheme("ace/theme/textmate");
-		editor.getSession().setMode("ace/mode/sql");
+        {% endif %}
+    </div>
+    <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.getSession().setUseWorker(false);
+        editor.setTheme("ace/theme/textmate");
+        editor.getSession().setMode("ace/mode/sql");
 
-	    $(document).ready( function() {
-	      $('#submit').click(function(){
-	        document.getElementById('input_query').value = editor.getValue();
-	      });
+        $(document).ready( function() {
+            $('#submit').click(function(){
+                document.getElementById('input_query').value = editor.getValue();
+            });
 
-	    });
-    $('#openModal').click(function() {
-        chooseCols.style.display = "block";
-      });
-      $('#closeModal').click(function() {
-        chooseCols.style.display = "none";
-      });
+        });
+        $('#openModal').click(function() {
+            chooseCols.style.display = "block";
+        });
+        $('#closeModal').click(function() {
+            chooseCols.style.display = "none";
+        });
 
-	</script>
-	<hr>
+    </script>
+    <hr>
     {% if results is iterable %}
         {% if results|length == 0 %}
             <h2>No results...</h2>
@@ -67,9 +67,9 @@
             <table>
                 <tr>
                     {% for h in fields %}
-            			<th>{{ h }}</th>
+                            			<th>{{ h }}</th>
                     {% endfor %}
-          		</tr>
+                      		</tr>
                 {% for t in results %}
                     <tr>
                         {% for i in t %}

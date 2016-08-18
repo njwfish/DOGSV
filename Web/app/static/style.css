@@ -1,93 +1,94 @@
 /* Remove the navbar's default margin-bottom and rounded borders */
 .navbar {
-	margin-bottom: 0;
-	border-radius: 0;
+    margin-bottom: 0;
+    border-radius: 0;
 }
 
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
 .row.content {height: auto;}
 
 .sidenav {
-	padding-top: 20px;
-	height: auto;
+    padding-top: 20px;
+    height: auto;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 50px;
+    /* Margin bottom by footer height */
+    margin-bottom: 50px;
+    overflow-y:auto;
 }
 
 
 table {
-	width:100%;
+    width:100%;
 }
 table, th, td {
-	border: 1px solid black;
-	border-collapse: collapse;
+    border: 1px solid black;
+    border-collapse: collapse;
 }
 th, td {
-	padding: 5px;
-	text-align: left;
+    padding: 5px;
+    text-align: left;
 }
 table tr:nth-child(even) {
-	background-color: #9D9D9D;
-}		
+    background-color: #9D9D9D;
+}
 table tr:nth-child(odd) {
-	background-color: #fff;
+    background-color: #fff;
 }
 table th {
-	color: white;
-	background-color: #222222;
-} 
+    color: white;
+    background-color: #222222;
+}
 
 /* Set black background color, white text and some padding */
 footer {
-	background: #222222;
-	color: white;
-	padding: 15px;
-	position: absolute;
-  	bottom: 0;
-  	width: 100%;
-	height:50px;
-} 
+    background: #222222;
+    color: white;
+    padding: 15px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height:50px;
+}
 
 wrapper {
-	margin:0 auto;
-	min-height:100%;
-	padding-bottom:-30px;
-	width:985px;
-	position: relative;
+    margin:0 auto;
+    min-height:100%;
+    padding-bottom:-30px;
+    width:985px;
+    position: relative;
 }
 
 container {
-	padding:20px 0;
+    padding:20px 0;
 }
 
 /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
-	.sidenav {
-		height: auto;
-		padding: 15px;
-	}
-	.row.content {height:auto;}
+    .sidenav {
+        height: auto;
+        padding: 15px;
+    }
+    .row.content {height:auto;}
 }
 
 .alignleft {
-	float: left;
+    float: left;
 }
 .alignright {
-	float: right;
+    float: right;
 }
 
 .centered {
-	height: 30%;
-	display: flex;
-	align-items: center;
-	justify-content: center 
+    height: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center
 }
 
 /* The Modal (background) */
@@ -136,38 +137,38 @@ container {
     letter-spacing: 1px;
     text-transform: uppercase;
 }
- 
+
 .btn:focus, .btn:active:focus, .btn.active:focus {
     outline: 0 none;
 }
- 
+
 .btn-primary {
     background: #222222;
     color: #9D9D9D;
 }
- 
+
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
     background: #ffffff;
     background: #9D9D9D;
 }
- 
+
 .btn-primary:active, .btn-primary.active {
     background: #ffffff;
     box-shadow: none;
 }
 
 .btn.sharp {
-  border-radius:0;
+    border-radius:0;
 }
 
 a {
-	color:#9D9D9D;
+    color:#9D9D9D;
 }
 
 
 a:hover{
-	color:#ffffff;
-	text-decoration: none;
+    color:#ffffff;
+    text-decoration: none;
 }
 
 textarea {
@@ -183,12 +184,12 @@ h1 button{
 }
 
 .nav-tabs > li > a:hover{
-  background-color: #222222 !important;
+    background-color: #222222 !important;
     color:#ffffff;
 }
 
 .panel-title > a:hover{
-	color:#9D9D9D;
+    color:#9D9D9D;
 }
 
 .wrapper{
@@ -204,13 +205,13 @@ h1 button{
 
 .controls{
     text-align: right;
-   
+
 }
 #editor {
-	position: relative;
-	border-bottom: 2px solid #9D9D9D;
-	height:75%;
-	width: 100%;
+    position: relative;
+    border-bottom: 2px solid #9D9D9D;
+    height:75%;
+    width: 100%;
 }
 
 input[type="checkbox"] {
@@ -229,9 +230,9 @@ input[type="checkbox"]:checked{
 }
 .selector {
 
-     list-style-type:none;
-     margin:25px 0 0 0;
-     padding:0;
+    list-style-type:none;
+    margin:25px 0 0 0;
+    padding:0;
 }
 
 .selector li {
@@ -260,13 +261,13 @@ input[type="checkbox"]:checked{
 }
 
 .selector label {
-     padding:5px;
-     border:1px solid #CCC; 
-     cursor:pointer;
+    padding:5px;
+    border:1px solid #CCC;
+    cursor:pointer;
     z-index:90;
 }
 
 .selector label:hover {
-     background:#DDD;
+    background:#DDD;
 }
 

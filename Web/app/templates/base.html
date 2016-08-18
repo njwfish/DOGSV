@@ -1,9 +1,9 @@
 <html>
-  <head>
+<head>
     {% if title %}
-      <title>{{ title }} - DOGSV</title>
+        <title>{{ title }} - DOGSV</title>
     {% else %}
-      <title>DOGSV</title>
+        <title>DOGSV</title>
     {% endif %}
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
@@ -11,63 +11,63 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href= "{{ url_for('static', filename ='dog_logo.png') }}">
-  </head>
-  <body>
-  <div class="fixed-nav">
+</head>
+<body>
+<div class="fixed-nav">
     <nav class="navbar navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="{{url_for('index.show')}}"> <img src= {{ url_for('static', filename ='logo.png') }} width="25"></a>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{url_for('index.show')}}"> <img src= {{ url_for('static', filename ='logo.png') }} width="25"></a>
+            </div>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="nav navbar-nav">
+                    <li id="build"><a href="{{url_for('builder.show')}}">Build</a></li>
+                    <li id="query"><a href="{{url_for('query.show')}}">Query</a></li>
+                    <li id="library"><a href="{{url_for('library.show')}}">Library</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="docs"> Documentation</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="collapse navbar-collapse" id="nav">
-          <ul class="nav navbar-nav">
-            <li id="build"><a href="{{url_for('builder.show')}}">Build</a></li>
-            <li id="query"><a href="{{url_for('query.show')}}">Query</a></li>
-            <li id="library"><a href="{{url_for('library.show')}}">Library</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="docs"> Documentation</a></li>
-          </ul>
-        </div>
-      </div>
     </nav>
-    </div>
-    <hr>
-    <div class="">
-      <div class="row content">
+</div>
+<hr>
+<div class="">
+    <div class="row content" style="width: 100%">
         <div class="col-sm-2 sidenav"></div>
-          <div class="col-sm-8 text-left">
+        <div class="col-sm-8 text-left">
             <form action="" method="post" name="record">
-              {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                  <ul>
-                  {% for message in messages %}
-                      <li>{{ message }} </li>
-                  {% endfor %}
-                  </ul>
-                {% endif %}
-              {% endwith %}
-              {% block content %}{% endblock %}
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <ul>
+                            {% for message in messages %}
+                                <li>{{ message }} </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
             </form>
-          </div>
+        </div>
         <div class="col-sm-2 sidenav"></div>
-      </div>
     </div>
-  </body>
-  <footer class="footer">
-   <p class="alignleft">
-    <a href="about">About</a> | 
-    <a href="docs">Documentation</a>
-   </p>
-   <p class="alignright">
-    <a href="library">Library</a> | 
-    <a href="builder">Build</a> | 
-    <a href="query">Query</a>
-   </p>
-  </footer>
+</div>
+</body>
+<footer class="footer">
+    <p class="alignleft">
+        <a href="about">About</a> |
+        <a href="docs">Documentation</a>
+    </p>
+    <p class="alignright">
+        <a href="library">Library</a> |
+        <a href="builder">Build</a> |
+        <a href="query">Query</a>
+    </p>
+</footer>
 </html>

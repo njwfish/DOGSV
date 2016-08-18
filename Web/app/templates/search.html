@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-	<form action="" method="post" name="record">
-		<p class = "centered">
+    <form action="" method="post" name="record">
+        <p class = "centered">
         <h1 style="font-size: 800%;text-align:center;">DOGSV</h1>
-			<center>
-				{{ form.search(style="width:75%;height:45px;") }}
-				<input type="submit" value="Search" id="submit" name="submit" class="btn btn-primary">
-			</center>
-		</p>
-	</form>
+        <center>
+            {{ form.search(style="width:75%;height:45px;") }}
+            <input type="submit" value="Search" id="submit" name="submit" class="btn btn-primary">
+        </center>
+        </p>
+    </form>
 {% endblock %}

@@ -3,7 +3,7 @@ from flask import redirect, request, url_for
 from collections import defaultdict
 from flask import Blueprint, abort
 from jinja2 import TemplateNotFound
-from app import maps
+from app.app import maps
 
 build = Blueprint('build', __name__, template_folder='templates')
 

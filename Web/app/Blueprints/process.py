@@ -44,6 +44,7 @@ def get_core_clusters(results):
                 break
     return clusters
 
+
 def cluster_results(query):
     ids = "select id, chrom, pos from" + query.lower().split('from')[1]
     results = query_sql(ids, variants, variants_cursor)
@@ -56,45 +57,45 @@ def cluster_results(query):
     output = []
     for c in clusters:
         where = query.split('where')
-        output.append([list(query_sql(where[0] + ('where id = %d and' % id) + where[1], variants, variants_cursor)[0])
-                       for id in c])
+        output.append([list(query_sql(where[0]
+                                      + ('where id = %d and' % id)
+                                      + where[1], variants, variants_cursor)[0]) for id in c])
+    return output
 
 
 @process.route('/process', methods=['GET', 'POST'])
 def show():
     form = QueryForm()
     query = request.args['submit']
-    results = query_sql(query, variants, variants_cursor)
-    results = [list(r) for r in results] if results is not None else results
-    fields = [i[0] for i in variants_cursor.description]
-
-
-    if results is not None and len(results) > 0:
+    clusters = []
+    if query is not None and len(query) > 0:
+        clusters = cluster_results(query)
+        fields = [i[0].upper() for i in variants_cursor.description]
+        print fields
         t = fields.index('TYPE') if 'TYPE' in fields else -1
         f = fields.index('FILTER') if 'FILTER' in fields else -1
         g = fields.index('GT') if 'GT' in fields else -1
-        s = fields.index('sample_id') if 'sample_id' in fields else -1
+        s = fields.index('SAMPLE_ID') if 'SAMPLE_ID' in fields else -1
         id_map = Maps(variants, variants_cursor, 0)
         id_map.gen_dicts()
-        results = sorted(results, key=lambda element: (element[0], element[1]))
-        clusters = get_core_clusters(results)
-        for i in range(len(results)):
-            if t > -1:
-                results[i][t] = id_map.variant_mapping[results[i][t]] if results[i][
-                                                                             t] in id_map.variant_mapping else 'None'
-            if f > -1:
-                results[i][f] = id_map.filter_mapping[results[i][f]] if results[i][
-                                                                            f] in id_map.filter_mapping else 'None'
-            if g > -1:
-                results[i][g] = id_map.genotype_mapping[results[i][g]] if results[i][
-                                                                              g] in id_map.genotype_mapping else 'None'
-            if s > -1:
-                results[i][s] = id_map.sample_mapping[results[i][s]] if results[i][
-                                                                            s] in id_map.sample_mapping else 'None'
+        for c in clusters:
+            for i in range(len(c)):
+                if t > -1:
+                    c[i][t] = id_map.variant_mapping[c[i][t]] \
+                        if c[i][t] in id_map.variant_mapping else 'None'
+                if f > -1:
+                    c[i][f] = id_map.filter_mapping[c[i][f]] \
+                        if c[i][f] in id_map.filter_mapping else 'None'
+                if g > -1:
+                    c[i][g] = id_map.genotype_mapping[c[i][g]] \
+                        if c[i][g] in id_map.genotype_mapping else 'None'
+                if s > -1:
+                    c[i][s] = id_map.sample_mapping[c[i][s]] \
+                        if c[i][s] in id_map.sample_mapping else 'None'
         insert_sql("queries ", ["query"], [query], queries, queries_cursor)
 
     try:
-        render_template('results.html', form=form, fields=fields, results=results, query=query)
+        return render_template('process.html', form=form, fields=fields, clusters=clusters, query=query)
     except TemplateNotFound:
         abort(404)
 

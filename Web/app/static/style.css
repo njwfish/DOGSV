@@ -271,3 +271,7 @@ input[type="checkbox"]:checked{
     background:#DDD;
 }
 
+.noborder td {
+    border: 0;
+}
+

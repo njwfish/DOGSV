@@ -36,7 +36,7 @@ def get_core_clusters(results):
     for i in range(len(clusters)):
         i -= removed
         for j in range(len(clusters)):
-            if not set(clusters[i]).issubset(set(clusters[j])) and i < j:
+            if not set(clusters[i]).issubset(set(clusters[j])) and i < j: # i > j?
                 break
             if set(clusters[i]).issubset(set(clusters[j])) and i != j:
                 del clusters[i]
@@ -45,15 +45,37 @@ def get_core_clusters(results):
     return clusters
 
 
+def set_operations(clusters, intersect, exclude):
+    if len(intersect) == 0 and len(exclude) == 0:
+        return clusters
+    removed = 0
+    for i in range(len(clusters)):
+        i -= removed
+        samples = []
+        for r in clusters[i]:
+            sql = "select sample_id from genotype where record_id = %d" % r
+            samples += [r[0] for r in query_sql(sql, variants, variants_cursor)]
+        if set(intersect).issubset(set(samples)) and len(set(exclude).intersection(set(samples))) == 0:
+            continue
+        del clusters[i]
+        removed += 1
+    return clusters
+
+
 def cluster_results(query):
     ids = "select id, chrom, pos from" + query.lower().split('from')[1]
+    process = query.split("# ")[1].split("process")[1] if '# ' in query else 'include  exclude  '
+    include = [int(r) if not r == '' else '' for r in process.split("include ")[1].split(" ")[0].split(",")]
+    exclude = [int(r) if not r == '' else '' for r in process.split("exclude ")[1].split(" ")[0].split(",")]
+    print include, exclude
     results = query_sql(ids, variants, variants_cursor)
     results = sorted(results, key=lambda element: (element[1], element[2]))
     get_chrom = itemgetter(1)
     clusters = []
     for key, chrom in groupby(results, get_chrom):
         c = list(chrom)
-        clusters = clusters + get_core_clusters(c)
+        clusters += set_operations(get_core_clusters(c), include, exclude)
+    print clusters
     output = []
     for c in clusters:
         where = query.split('where')
@@ -62,16 +84,15 @@ def cluster_results(query):
                                       + where[1], variants, variants_cursor)[0]) for id in c])
     return output
 
-
 @process.route('/process', methods=['GET', 'POST'])
 def show():
     form = QueryForm()
     query = request.args['submit']
     clusters = []
+    fields = []
     if query is not None and len(query) > 0:
         clusters = cluster_results(query)
         fields = [i[0].upper() for i in variants_cursor.description]
-        print fields
         t = fields.index('TYPE') if 'TYPE' in fields else -1
         f = fields.index('FILTER') if 'FILTER' in fields else -1
         g = fields.index('GT') if 'GT' in fields else -1

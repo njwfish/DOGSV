@@ -6,7 +6,7 @@ from Blueprints.builder import builder
 from Blueprints.query import query
 from Blueprints.library import library
 from Blueprints.sql_to_vcf import sql_to_vcf
-from Blueprints.process import process
+from Blueprints.processing import process
 
 app.register_blueprint(index)
 app.register_blueprint(results)

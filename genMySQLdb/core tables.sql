@@ -9,8 +9,8 @@ INSERT INTO ref_variant(variant,unabbreviated) VALUES ('DUP','Duplication');
 INSERT INTO ref_variant(variant,unabbreviated) VALUES ('INS','Insertion');
 INSERT INTO ref_variant(variant,unabbreviated) VALUES ('INV','Inversion');
 INSERT INTO ref_variant(variant,unabbreviated) VALUES ('TRA','Translocation');
-INSERT INTO ref_variant(variant,unabbreviated) VALUES ('SIN','Sine');
-INSERT INTO ref_variant(variant,unabbreviated) VALUES ('LIN','Line');
+INSERT INTO ref_variant(variant,unabbreviated) VALUES ('SIN','SINE');
+INSERT INTO ref_variant(variant,unabbreviated) VALUES ('LIN','LINE');
 INSERT INTO ref_variant(variant,unabbreviated) VALUES ('BXP','Breakpoint');
 
 create table ref_alignment_location (
@@ -126,7 +126,7 @@ insert into ref_genotype(genotype_id,genotype) values (2,'0/0');
 insert into ref_genotype(genotype_id,genotype) values (3,'0/1');
 insert into ref_genotype(genotype_id,genotype) values (4,'1/1');
 
-create table genotype_samples (
+create table genotype (
 sample_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
 record_id int(11) unsigned not null comment 'The unique identifier of this record, used for reference.',
 GT tinyint(3) unsigned comment 'The unique identifier of this genotype, used for reference.',
@@ -134,3 +134,45 @@ primary key(sample_id, record_id),
 foreign key fk_genotype_sample_id(sample_id) references samples(sample_id),
 foreign key fk_genotype_record_id(record_id) references records(ID),
 foreign key fk_genotype(GT) references ref_genotype(genotype_id)) comment = 'Allows querying of genotype sample data regardless of tool.';
+
+create table ref_gene (
+gene_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
+gene_name varchar(16) comment 'The unique identifier of this record, used for reference.',
+chrom smallint(6) unsigned not null comment 'This is a foreign key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of this gene.',
+pos1 int(11) unsigned not null comment 'Coordinate where the gene starts.',
+pos2 int(11) unsigned not null comment 'Coordinate where the gene ends.',
+primary key(gene_id, chrom),
+foreign key fk_alignment_location1(CHROM) references ref_alignment_location(location_id)) comment = 'Allows checking variant to see if it is inside a genomic feature.';
+
+create table ref_exon (
+gene_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
+transcript_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
+exon_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
+chrom smallint(6) unsigned not null comment 'This is a foreign key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of this gene.',
+pos1 int(11) unsigned not null comment 'Coordinate where the gene starts.',
+pos2 int(11) unsigned not null comment 'Coordinate where the gene ends.',
+primary key (transcript_id, exon_id, chrom),
+foreign key fk_alignment_location(CHROM) references ref_alignment_location(location_id),
+foreign key fk_gene_id(gene_id) references ref_gene(gene_id)) comment = 'Allows checking variant to see if it is inside a genomic feature.';
+
+create table ref_utr (
+gene_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
+transcript_id mediumint(8) unsigned not null comment 'The unique identifier of this individual, used for reference.',
+utr_id mediumint(8) unsigned not null auto_increment comment 'The unique identifier of this individual, used for reference.',
+type tinyint(3) unsigned not null comment 'The unique identifier of this record, used for reference.',
+chrom smallint(6) unsigned not null comment 'This is a foreign key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of this gene.',
+pos1 int(11) unsigned not null comment 'Coordinate where the gene starts.',
+pos2 int(11) unsigned not null comment 'Coordinate where the gene ends.',
+primary key(utr_id, transcript_id, type, chrom),
+foreign key fk_alignment_location(CHROM) references ref_alignment_location(location_id),
+foreign key fk_gene_id(gene_id) references ref_gene(gene_id)) comment = 'Allows checking variant to see if it is inside a genomic feature.';
+
+create table ref_rna (
+rna_id varchar(24) not null comment 'The unique identifier of this individual, used for reference.',
+known tinyint(3) unsigned not null comment 'Is this a known microrna.',
+mature tinyint(3) unsigned not null comment 'Is this a mature microrna (as opposed to precursor).',
+chrom smallint(6) unsigned not null comment 'This is a foreign key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of this gene.',
+pos1 int(11) unsigned not null comment 'Coordinate where the gene starts.',
+pos2 int(11) unsigned not null comment 'Coordinate where the gene ends.',
+primary key(rna_id, known, mature, chrom),
+foreign key fk_alignment_location1(CHROM) references ref_alignment_location(location_id)) comment = 'Allows checking variant to see if it is inside a genomic feature.';

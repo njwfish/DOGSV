@@ -91,7 +91,6 @@ class SQLtoVCF:
             if record['records'][7] is not None else '.'
         record['records'][6] = self.maps.filter_mapping[record['records'][6]] \
             if record['records'][6] is not None else '.'
-
         record['records'][0] = self.maps.alignment_location_mapping[record['records'][0]] \
             if record['records'][0] is not None else '.'
         for i in range(len(record['records'])):

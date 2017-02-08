@@ -70,7 +70,6 @@ class VCFtoMySQL:
     def gen_variant_map(self):
         for variant in self.variant_type_mapping.values():
             sql = "SELECT variant_id FROM ref_variant WHERE variant = '%s'" % variant
-
             variant_id = query_sql(sql, self.db, self.cursor)
             try:
                 self.variant_mapping.update({variant: variant_id[0][0]})
@@ -108,6 +107,7 @@ class VCFtoMySQL:
         if key in self.variant_mapping:
             return self.variant_mapping[key]
         else:
+            print "Inserted ref_variant:", [(str(key))]
             insert_sql('ref_variant', ['variant'], [(str(key))], self.db, self.cursor)
             variant_id = self.cursor.lastrowid
             self.variant_mapping.update({key: variant_id})
@@ -117,6 +117,7 @@ class VCFtoMySQL:
         if key in self.alignment_location_mapping:
             return self.alignment_location_mapping[key]
         else:
+            print "Inserted ref_alignment_location:", [(str(key))]
             insert_sql('ref_alignment_location', ['location'],
                        [(str(key)).split(self.CHROM_format)[1]], self.db, self.cursor)
             location_id = self.cursor.lastrowid
@@ -127,6 +128,7 @@ class VCFtoMySQL:
         if key in self.filter_mapping:
             return self.filter_mapping[key]
         else:
+            print "Inserted ref_filter:", [(str(key))]
             insert_sql('ref_filter', ['filter'], [(str(key))], self.db, self.cursor)
             filter_id = self.cursor.lastrowid
             self.filter_mapping.update({key:filter_id})

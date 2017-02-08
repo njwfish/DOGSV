@@ -5,7 +5,6 @@ def execute_sql(sql, db, cursor):
     """
     try:
         cursor.execute(sql)
-        db.commit()
     except:
         # Rollback (undo changes) in case there is any error
         print "Error: rolling back..."

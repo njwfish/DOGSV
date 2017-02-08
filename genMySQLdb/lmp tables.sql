@@ -19,7 +19,7 @@ EV varchar(50) comment 'Type of LUMPY evidence contributing to the variant call'
 PRPOS varchar(50) comment 'LUMPY probability curve of the POS breakend',
 PREND varchar(50) comment 'LUMPY probability curve of the END breakend',
 primary key(record_id),
-foreign key fk_dly_info_record_id(record_id) references records(ID));
+foreign key fk_lmp_info_record_id(record_id) references records(ID));
 
 create table lmp_samples(
 sample_id mediumint(8) unsigned not null,
@@ -29,5 +29,5 @@ PE int(11) comment 'Number of paired-end reads supporting the variant',
 SR int(11) comment 'Number of split reads supporting the variant',
 BD int(11) comment 'Amount of BED evidence supporting the variant',
 primary key(sample_id, record_id),
-foreign key fk_dly_samples_record_id(record_id) references records(ID),
-foreign key fk_dly_samples_sample_id(sample_id) references samples(sample_id));
+foreign key fk_lmp_samples_record_id(record_id) references records(ID),
+foreign key fk_lmp_samples_sample_id(sample_id) references samples(sample_id));

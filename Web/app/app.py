@@ -1,5 +1,7 @@
 from flask import Flask
 from maps import Maps
+from query import QueryJSONEncoder, QueryJSONDecoder
+
 import MySQLdb
 
 variants = MySQLdb.connect("localhost", "root", "12345", "DogSVStore")
@@ -12,3 +14,5 @@ queries_cursor = queries.cursor()
 
 app = Flask(__name__)
 app.config.from_object('config')
+app.json_encoder = QueryJSONEncoder
+app.json_decoder = QueryJSONDecoder

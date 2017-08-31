@@ -1,0 +1,11 @@
+dogsv:
+  name:     dogsv
+  address:  localhost
+  user:     root
+  password:
+
+library:
+  name:     library
+  address:  localhost
+  user:     root
+  password:

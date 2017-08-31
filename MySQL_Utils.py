@@ -18,7 +18,7 @@ def query_sql(sql, db, cursor):
         cursor.execute(sql)
         return cursor.fetchall()
     except:
-        print "Error: unable to fecth data"
+        print "Error: unable to fetch data"
         print sql
     return None
 
@@ -27,8 +27,8 @@ def insert_sql(table, cols, vals, db, cursor):
     """Attempt to add val to col in table in database via cursor
         :param table: a table in the connected MySQL database
         :type table: string
-        :param col: the columns in the selected table
-        :type col: string list
+        :param cols: the columns in the selected table
+        :type cols: string list
         :param vals: the vals, in the same order as the columns, for the table
         :type vals: string list
     """

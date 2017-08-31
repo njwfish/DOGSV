@@ -5,9 +5,11 @@ def execute_sql(sql, db, cursor):
     """
     try:
         cursor.execute(sql)
-    except:
+        db.commit()
+    except db.Error as e:
         # Rollback (undo changes) in case there is any error
-        print "Error: rolling back..."
+        print "Error: rolling back"
+        print e
         print sql
         db.rollback()
 
@@ -31,6 +33,6 @@ def insert_sql(table, cols, vals, db, cursor):
         :param vals: the vals, in the same order as the columns, for the table
         :type vals: string list
     """
-    sql = "INSERT INTO %s(%s) VALUES ('%s')" % (
+    sql = "INSERT INTO %s(%s) VALUES ('%s');" % (
             table, ', '.join(cols), '\', \''.join(str(v) for v in vals))
     execute_sql(sql, db, cursor)

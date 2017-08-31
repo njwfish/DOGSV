@@ -2,6 +2,7 @@
 
 import sys
 import glob, os
+import argparse
 from VCFtoMySQL_Loader import VCFtoMySQL
 
 CHROM_format = 'chr'
@@ -11,7 +12,7 @@ hasGT = True
 ids = {
     'individual_id': 	'0',
     'record_id':		'0',
-    'tool_id': 			'DLY',
+    'tool_id': 			'dly',
 }
 
 '''TODO: Add variant types specific to this tool on the left,
@@ -83,9 +84,25 @@ toolSamples = [
 
 
 def main(argv):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--import', nargs='+', help='Space separated list of files. Import a single file or '
+                                                          'multiple files into DOGSV.')
+    parser.add_argument('-e', '--exclude', nargs='+', help='Space separated list of files. Import all files in '
+                                                           'current dicrecotry except those in this list.')
+    parser.add_argument('-l', '--log', help='The log file of an interrupted import,  can be used to resume '
+                                            'a failed import.')
+    args = parser.parse_args()
     vcf_loader = VCFtoMySQL(ids, variant_type_mapping, core, toolInfo, toolSamples, CHROM_format, hasGT)
-    for file in glob.glob("*.vcf"):
-        vcf_loader.load(file)
+    if len(args.include) > 0:
+        for file in args.include:
+            vcf_loader.load(file)
+    elif len(args.exclude) > 0:
+        for file in glob.glob("*.vcf"):
+            if file not in args.exclude:
+                vcf_loader.load(file)
+    else:
+        for file in glob.glob("*.vcf"):
+            vcf_loader.load(file)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

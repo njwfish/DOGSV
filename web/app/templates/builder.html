@@ -1,0 +1,544 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Builder <button id="openModal" type="button" class="btn btn-primary">Columns</button></h1>
+    <!-- Trigger/Open The Modal -->
+    <hr>
+    <!-- The Modal -->
+    <div id="chooseCols" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="container">
+                <h2>Select Column</h2>
+                <div class="col-sm-6 col-md-6">
+                    <h5>Exclude</h5>
+                    {{cols.columns_exclude(style="width:75%;height:200px;")}}
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <h5>Include</h5>
+                    {{cols.columns_include(style="width:75%;height:200px;")}}
+                </div>
+                <hr>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#records">Core</a></li>
+                    {% for t in tools %}
+                        <li><a data-toggle="tab" href="#{{t}}">{{t}}</a></li>
+                    {% endfor %}
+                </ul>
+                <div class="tab-content">
+                    <div id="records" class="tab-pane fade in active">
+                        <div class="col-sm-4 col-md-4">
+                            <h5>Recordsc</h5>
+                            <p><select id="records_columns" multiple name="records_columns" style="width:100%;height:100px;">
+                                {% for r in records %}
+                                    <option value="r.{{r}}">r.{{r}}</option>
+                                {% endfor %}
+                            </select></p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <h5>Samples</h5>
+                            <p><select id="samples_columns" multiple name="samples_columns" style="width:100%;height:100px;">
+                                {% for s in samples %}
+                                    <option value="s.{{s}}">s.{{s}}</option>
+                                {% endfor %}
+                            </select></p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <h5>Genotypes</h5>
+                            <p><select id="genotypes_columns" multiple name="genotypes_columns" style="width:100%;height:100px;">
+                                {% for g in genotypes %}
+                                    <option value="g.{{g}}">g.{{g}}</option>
+                                {% endfor %}
+                            </select></p>
+                        </div>
+                    </div>
+                    {% for t in tools %}
+                        <div id={{t}} class="tab-pane fade">
+                            <div class="col-sm-6 col-md-6">
+                                <h5>Info</h5>
+                                {% set key = ("%s_info" % t) %}
+                                <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
+                                    {% for c in tool_columns[key] %}
+                                        <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
+                                    {% endfor %}
+                                </select></p>
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+                                <h5>Samples</h5>
+                                {% set key = ("%s_samples" % t) %}
+                                <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
+                                    {% for c in tool_columns[key] %}
+                                        <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
+                                    {% endfor %}
+                                </select></p>
+                            </div>
+                        </div>
+                    {% endfor %}
+            </div>
+        </div>
+        <button id="closeModal" type="button" class="btn btn-primary">Close</button>
+    </div>
+    </div>
+    <h4>Filters</h4>
+    {{form.tool_clauses(style="width:75%;height:200px;")}}
+    <div class="container" style="width:75%;">
+        <hr>
+        <ul id="tools" class="nav nav-tabs">
+            <li><a data-toggle="tab" href="#record_filters">Records</a></li>
+            {% for t in tools %}
+                <li><a data-toggle="tab" href="#{{t}}_tools">{{t}}</a></li>
+            {% endfor %}
+        </ul>
+        <div class="tab-content" style="min-height: 200px;">
+            <div id=record_filters class="tab-pane fade">
+                <div class="col-sm-4 col-md-4 centered">
+                    <div style="width:100%;">
+                        <h4>Columns</h4>
+                        <select id="records_cols" multiple name="r" style="width:100%;height:200px;">
+                            <option value=str|REF>REF</option>
+                            <option value=str|ALT>ALT</option>
+                            <option value=str|QUAL>QUAL</option>
+                            <option value=num|len>len</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4 centered">
+                    <ul class="selector" id="records_operators">
+                        
+                            <li>
+                                <input type="radio" id="records_less" value="<" name="records_operator" />
+                                <label id="records_less_label" for="records_less"><</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="records_more" value=">" name="records_operator" />
+                                <label id="records_more_label" for="records_more">></label>
+                            </li>
+                            <li>
+                                <input type="radio" id="records_between" value="between" name="records_operator" />
+                                <label id="records_between_label" for="records_between">between</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="records_equal" value="=" name="records_operator" />
+                                <label id="records_equal_label" for="records_equal">=</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="records_like" value="like" name="records_operator" />
+                                <label id="records_like_label" for="records_like">like</label>
+                            </li>
+                        
+                    </ul>
+                </div>
+                <div class="col-sm-4 col-md-4">
+
+                    <div class="centered">
+                        <p style="height:20px"><input type="text" id="records_val" style="width:120%;"></p><p id="records_range" style="height:20px"><input type="text" id="records_start" style="width:40%;"> and <input type="text" id="records_end" style="width:40%;"></p>
+                    </div>
+
+                </div>
+                <p class="alignright">
+                    <input type="button" value="Add" id="records_add" name="records_add" class="btn btn-primary">
+                </p>
+            </div>
+
+            {% for t in tools %}
+                <div id={{t}}_tools class="tab-pane fade">
+                    <div class="col-sm-4 col-md-4 centered">
+                        <div style="width:100%;">
+                            <h4>Columns</h4>
+                                {% set key = ("%s_info" % t) %}
+                                <select id="{{t}}_cols" multiple name="{{t}}_info" style="width:100%;height:200px;">
+                                    {% for i in range(0, tool_columns[key]|length) %}
+                                        <option value={{tool_types[key][i]}}|{{tool_columns[key][i]}}>{{tool_columns[key][i]}}</option>
+                                    {% endfor %}
+                                </select>
+                                <ul class="selector" id="{{t}}_switch">
+                                    <li style="float:left;">
+                                        <input type="radio" id="{{t}}_info_switch" value="{{t}}_info" name="{{t}}_switch" checked="checked"/>
+                                        <label for="{{t}}_info_switch">{{t}}_info</label>
+                                    </li>
+                                    <li style="float:left;">
+                                        <input type="radio" id="{{t}}_samples_switch" value="{{t}}_samples" name="{{t}}_switch" />
+                                        <label for="{{t}}_samples_switch">{{t}}_samples</label>
+                                    </li>
+                                </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-md-4 centered">
+                        <ul class="selector" id="{{t}}_operators">
+                            
+                                <li>
+                                    <input type="radio" id="{{t}}_less" value="<" name="{{t}}_operator" />
+                                    <label id="{{t}}_less_label" for="{{t}}_less"><</label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="{{t}}_more" value=">" name="{{t}}_operator" />
+                                    <label id="{{t}}_more_label" for="{{t}}_more">></label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="{{t}}_between" value="between" name="{{t}}_operator" />
+                                    <label id="{{t}}_between_label" for="{{t}}_between">between</label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="{{t}}_equal" value="=" name="{{t}}_operator" />
+                                    <label id="{{t}}_equal_label" for="{{t}}_equal">=</label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="{{t}}_like" value="like" name="{{t}}_operator" />
+                                    <label id="{{t}}_like_label" for="{{t}}_like">like</label>
+                                </li>
+                            
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-4">
+
+                        <div class="centered">
+                            <p style="height:20px"><input type="text" id="{{t}}_val" style="width:120%;"></p><p id="{{t}}_range" style="height:20px"><input type="text" id="{{t}}_start" style="width:40%;"> and <input type="text" id="{{t}}_end" style="width:40%;"></p>
+                        </div>
+
+                    </div>
+                    <p class="alignright">
+                        <input type="button" value="Add" id="{{t}}_add" name="{{t}}_add" class="btn btn-primary">
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <form action="" method="post" name="record">
+        {{ form.hidden_tag() }}
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#Record">Record</a>
+                    </h4>
+                </div>
+                <div id="Record" class="panel-collapse collapse">
+                    <div class="row" style="padding:10px;">
+                        <div class="col-sm-4 col-md-4">
+                            <p>{{ form.homref }} Homozygous Reference</p>
+                            <p>{{ form.homalt }} Homozygous Alternate</p>
+                            <p>{{ form.het }} Heterozygous</p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <p>{{ form.DEL }} DEL</p>
+                            <p>{{ form.DUP }} DUP</p>
+                            <p>{{ form.INS }} INS</p>
+                            <p>{{ form.INV }} INV</p>
+                            <p>{{ form.TRA }} TRA</p>
+                            <p>{{ form.SIN }} SIN</p>
+                            <p>{{ form.LIN }} LIN</p>
+                            <p>{{ form.BXP }} BXP</p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <div class="alignright">
+                                <p class="alignright">
+                                    Ref: {{ form.ref(size=20) }}
+                                </p><br>
+                                <p class="alignright">
+                                    Alt: {{ form.alt(size=20) }}
+                                </p><br>
+                                <p class="alignright">
+                                    Qual: {{ form.qual(size=20) }}
+                                </p><br>
+                                <p class="alignright">
+                                    Length: {{ form.len(size=20) }}
+                                </p><br>
+                                <p class="alignright">
+                                    Filter: {{ form.filter(size=20) }}
+                                </p><br>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#Region">Region</a>
+                    </h4>
+                </div>
+                <div id="Region" class="panel-collapse collapse">
+                    <div class="row" style="padding:10px;">
+                        <div class="col-sm-4 col-md-4">
+                            <h5>Options</h5>
+                            <p>{{form.region_exclude(style="width:100%;height:100px;")}}</p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <h5>Include</h5>
+                            <p> {{form.region_include(style="width:100%;height:100px;")}}</p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <div class="alignright">
+                                <p class="alignright">Chrom: <input type="text" id="chrom"></p><br>
+                                <p class="alignright">Start: <input type="text" id="start"></p><br>
+                                <p class="alignright">End: <input type="text" id="end"></p><br>
+                            </div>
+                            <p>Chrom 2 <input type="checkbox" name="isSecond" id="isSecond"></p><br>
+
+                            <input type="button" value="Add" id="add" name="add" class="btn btn-primary">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#Breed">Breed</a>
+                    </h4>
+                </div>
+                <div id="Breed" class="panel-collapse collapse">
+                    <div class="row" style="padding:10px;">
+                        <div class="col-sm-4 col-md-4">
+                            <h5>Options</h5>
+                            <p>{{form.breed_exclude(style="width:100%;height:100px;")}}</p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <h5>Include</h5>
+                            <p> {{form.breed_include(style="width:100%;height:100px;")}}</p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#Sample">Sample</a>
+                    </h4>
+                </div>
+                <div id="Sample" class="panel-collapse collapse">
+                    <div class="row" style="padding:10px;">
+                        <div class="col-sm-4 col-md-4">
+                            <h5>Options</h5>
+                            <p>{{form.sample_exclude(style="width:100%;height:100px;")}}</p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <h5>Include</h5>
+                            <p> {{form.sample_include(style="width:100%;height:100px;")}}</p>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p><input type="submit" value="Query" id="submit" name="submit" class="btn btn-primary"></p>
+    </form>
+    <script type="text/javascript">
+        $('#tools a:first').tab('show');
+        function move_selected(from, to) {
+            return !$(from + ' option:selected').remove().appendTo(to);
+        };
+
+        function select_all(box) {
+            return !$(box + ' option').prop('selected', true);
+        }
+
+        $(document).ready( function() {
+            $('#form-breed_exclude').dblclick( function(){move_selected('#form-breed_exclude', '#form-breed_include')});
+            $('#form-breed_include').dblclick( function(){move_selected('#form-breed_include', '#breed_exclude')});
+            $('#form-sample_exclude').dblclick( function(){move_selected('#form-sample_exclude', '#form-sample_include')});
+            $('#form-sample_include').dblclick( function(){move_selected('#form-sample_include', '#form-sample_exclude')});
+            $('#form-tool_exclude').dblclick( function(){move_selected('#form-tool_exclude', '#form-tool_include')});
+            $('#form-tool_include').dblclick( function(){move_selected('#form-tool_include', '#form-tool_exclude')});
+            $('#form-region_exclude').dblclick( function(){move_selected('#form-region_exclude', '#form-region_include')});
+            $('#form-region_include').dblclick( function(){move_selected('#form-region_include', '#form-region_exclude')});
+
+
+            $('#records_like').hide();
+            $('#records_like_label').hide();
+            $('#records_range').hide();
+            {% set key = ("%s_info" % t) %}
+            $('#{{key}}_columns').dblclick(function () {
+                move_selected('#{{key}}_columns', '#cols-columns_include')
+            });
+            {% set key = ("%s_samples" % t) %}
+            $('#{{key}}_columns').dblclick(function () {
+                move_selected('#{{key}}_columns', '#cols-columns_include')
+            });
+
+            $('#records_between_label').click(function () {
+                $('#records_val').hide();
+                $('#records_range').show();
+            });
+
+            $('#records_less_label').click(function () {
+                $('#records_val').show();
+                $('#records_range').hide();
+            });
+            $('#records_more_label').click(function () {
+                $('#records_val').show();
+                $('#records_range').hide();
+            });
+            $('#records_equal_label').click(function () {
+                $('#records_val').show();
+                $('#records_range').hide();
+            });
+
+            $('#records_add').click(function () {
+                var e = document.getElementById("records_cols");
+                var col = e.name + "." + e.options[e.selectedIndex].value.split("|")[1];
+                var operator = $('input[name=records_operator]:checked').val();
+                var val = document.getElementById('records_val').value;
+                if (operator == "between") {
+                    var val = document.getElementById('records_start').value + " and " + document.getElementById('records_end').value;
+                }
+                clause = col + " " + operator + " " + val;
+                return $('#form-tool_clauses').append("<option value=\"" + clause + "\">" + clause + "</option>")
+            });
+
+            $('#records_cols').click(function () {
+                var e = document.getElementById("records_cols");
+                var type = e.options[e.selectedIndex].value.split("|")[0];
+                if (type.includes("str")) {
+                    $('#records_less').hide();
+                    $('#records_less_label').hide();
+                    $('#records_more').hide();
+                    $('#records_more_label').hide();
+                    $('#records_between').hide();
+                    $('#records_between_label').hide();
+                    $('#records_like').show();
+                    $('#records_like_label').show();
+                } else {
+                    $('#records_less').show();
+                    $('#records_less_label').show();
+                    $('#records_more').show();
+                    $('#records_more_label').show();
+                    $('#records_between').show();
+                    $('#records_between_label').show();
+                    $('#records_like').hide();
+                    $('#records_like_label').hide();
+                }
+            });
+
+            {% for t in tools %}
+                $('#{{t}}_like').hide();
+                $('#{{t}}_like_label').hide();
+                $('#{{t}}_range').hide();
+                {% set key = ("%s_info" % t) %}
+                $('#{{key}}_columns').dblclick( function(){move_selected('#{{key}}_columns', '#cols-columns_include')} );
+                {% set key = ("%s_samples" % t) %}
+                $('#{{key}}_columns').dblclick( function(){move_selected('#{{key}}_columns', '#cols-columns_include')} );
+
+                $('#{{t}}_between_label').click( function(){
+                    $('#{{t}}_val').hide();
+                    $('#{{t}}_range').show();
+                });
+
+                $('#{{t}}_less_label').click( function(){
+                    $('#{{t}}_val').show();
+                    $('#{{t}}_range').hide();
+                });
+                $('#{{t}}_more_label').click( function(){
+                    $('#{{t}}_val').show();
+                    $('#{{t}}_range').hide();
+                });
+                $('#{{t}}_equal_label').click( function(){
+                    $('#{{t}}_val').show();
+                    $('#{{t}}_range').hide();
+                });
+
+                $('#{{t}}_add').click( function(){
+                    var e = document.getElementById("{{t}}_cols");
+                    var col =  e.name + "." + e.options[e.selectedIndex].value.split("|")[1];
+                    var operator = $('input[name={{t}}_operator]:checked').val();
+                    var val = document.getElementById('{{t}}_val').value;
+                    if (operator == "between"){
+                        var val = document.getElementById('{{t}}_start').value + " and " + document.getElementById('{{t}}_end').value;
+                    }
+                    clause = col + " " + operator + " " + val;
+                    return $('#form-tool_clauses').append("<option value=\"" + clause + "\">" + clause + "</option>")
+                });
+
+                {% set key = ("%s_info" % t) %}
+                $('#{{t}}_info_switch').click( function(){
+                    $('#{{t}}_cols option').remove();
+                    $("{% for i in range(0, tool_columns[key]|length) %} <option value={{tool_types[key][i]}}|{{tool_columns[key][i]}}>{{tool_columns[key][i]}}</option>{% endfor %}").appendTo('#{{t}}_cols');
+                    document.getElementById("{{t}}_cols").setAttribute("name","{{key}}");
+                });
+                {% set key = ("%s_samples" % t) %}
+                $('#{{t}}_samples_switch').click( function(){
+                    $('#{{t}}_cols option').remove();
+                    $("{% for i in range(0, tool_columns[key]|length) %} <option value={{tool_types[key][i]}}|{{tool_columns[key][i]}}>{{tool_columns[key][i]}}</option>{% endfor %}").appendTo('#{{t}}_cols');
+                    document.getElementById("{{t}}_cols").setAttribute("name","{{key}}");
+                });
+
+                $('#{{t}}_cols').click( function(){
+                    var e = document.getElementById("{{t}}_cols");
+                    var type = e.options[e.selectedIndex].value.split("|")[0];
+                    if (type.includes("str")){
+                        $('#{{t}}_less').hide();
+                        $('#{{t}}_less_label').hide();
+                        $('#{{t}}_more').hide();
+                        $('#{{t}}_more_label').hide();
+                        $('#{{t}}_between').hide();
+                        $('#{{t}}_between_label').hide();
+                        $('#{{t}}_like').show();
+                        $('#{{t}}_like_label').show();
+                    } else {
+                        $('#{{t}}_less').show();
+                        $('#{{t}}_less_label').show();
+                        $('#{{t}}_more').show();
+                        $('#{{t}}_more_label').show();
+                        $('#{{t}}_between').show();
+                        $('#{{t}}_between_label').show();
+                        $('#{{t}}_like').hide();
+                        $('#{{t}}_like_label').hide();
+                    }
+                });
+
+
+            {% endfor %}
+
+            $('#submit').click(function(){
+                select_all('#form-breed_include');
+                select_all('#form-sample_include');
+                select_all('#form-tool_include');
+                select_all('#form-region_include');
+                select_all('#form-tool_clauses');
+                select_all('#cols-records_include');
+                select_all('#cols-samples_include');
+                select_all('#cols-genotypes_include');
+            });
+
+            $('#records_columns').dblclick( function(){move_selected('#records_columns', '#cols-columns_include')} );
+            $('#samples_columns').dblclick( function(){move_selected('#samples_columns', '#cols-columns_include')} );
+            $('#genotypes_columns').dblclick( function(){move_selected('#genotypes_columns', '#cols-columns_include')} );
+            $('#cols-columns_include').dblclick( function(){move_selected('#cols-columns_include', '#cols-columns_exclude')} );
+            $('#cols-columns_exclude').dblclick( function(){move_selected('#cols-columns_exclude', '#cols-columns_include')} );
+            $('#openModal').click(function() {
+                chooseCols.style.display = "block";
+            });
+            $('#closeModal').click(function() {
+                chooseCols.style.display = "none";
+            });
+            $('#add').click(function() {
+                if (document.getElementById('chrom').value.length > 0 & document.getElementById('start').value.length > 0 & document.getElementById('end').value.length > 0) {
+                    if (document.getElementById('isSecond').checked){
+                        region = "chrom2 is " + document.getElementById('chrom').value + " and pos2 between " + document.getElementById('start').value + " and " + document.getElementById('end').value;
+                    } else {
+                        region = "chrom is " + document.getElementById('chrom').value + " and pos between " + document.getElementById('start').value + " and " + document.getElementById('end').value;
+                    }
+                    document.getElementById('chrom').value = "";
+                    document.getElementById('start').value = "";
+                    document.getElementById('end').value = "";
+                    return $('#form-region_include').append("<option value=\"" + region + "\">" + region + "</option>");
+                }
+            });
+        });
+    </script>
+{% endblock %}

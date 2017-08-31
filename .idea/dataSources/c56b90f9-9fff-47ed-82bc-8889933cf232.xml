@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dataSource name="MySQL - DogSVStore@localhost">
-  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.0">
+<dataSource name="dogsv">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.2">
     <root id="1"/>
-    <schema id="2" parent="1" name="DogSVStore">
+    <schema id="2" parent="1" name="dogsv">
+      <Current>1</Current>
       <Visible>1</Visible>
     </schema>
     <schema id="3" parent="1" name="information_schema"/>
@@ -29,723 +30,1105 @@
     <table id="16" parent="2" name="ref_breed">
       <Comment>This is a reference table to breed_type in the individuals table.</Comment>
     </table>
-    <table id="17" parent="2" name="ref_filter">
+    <table id="17" parent="2" name="ref_exon">
+      <Comment>Allows checking variant to see if it is inside a genomic feature.</Comment>
+    </table>
+    <table id="18" parent="2" name="ref_filter">
       <Comment>This is a reference table to FILTER in the records table.</Comment>
     </table>
-    <table id="18" parent="2" name="ref_genotype">
+    <table id="19" parent="2" name="ref_gene">
+      <Comment>Allows checking variant to see if it is inside a genomic feature.</Comment>
+    </table>
+    <table id="20" parent="2" name="ref_genotype">
       <Comment>This is a reference table to GT in the genotypes table.</Comment>
     </table>
-    <table id="19" parent="2" name="ref_sample">
+    <table id="21" parent="2" name="ref_rna">
+      <Comment>Allows checking variant to see if it is inside a genomic feature.</Comment>
+    </table>
+    <table id="22" parent="2" name="ref_sample">
       <Comment>This is a reference table to tissue_type in the samples table.</Comment>
     </table>
-    <table id="20" parent="2" name="ref_sequencing">
+    <table id="23" parent="2" name="ref_sequencing">
       <Comment>This is a reference table to tissue_type in the samples table.</Comment>
     </table>
-    <table id="21" parent="2" name="ref_tissue">
+    <table id="24" parent="2" name="ref_tissue">
       <Comment>This is a reference table to tissue_type in the samples table.</Comment>
     </table>
-    <table id="22" parent="2" name="ref_tool">
+    <table id="25" parent="2" name="ref_tool">
       <Comment>This is a reference table to tool in the tools_used table.</Comment>
     </table>
-    <table id="23" parent="2" name="ref_variant">
+    <table id="26" parent="2" name="ref_utr">
+      <Comment>Allows checking variant to see if it is inside a genomic feature.</Comment>
+    </table>
+    <table id="27" parent="2" name="ref_variant">
       <Comment>This is a reference table to TYPE in the records table.</Comment>
     </table>
-    <table id="24" parent="2" name="samples">
+    <table id="28" parent="2" name="samples">
       <Comment>Information on the sample from chich the variant calls were generated.</Comment>
     </table>
-    <table id="25" parent="2" name="tools_used">
+    <table id="29" parent="2" name="tools_used">
       <Comment>Stores the tools used to generate or coroberate a given variant.</Comment>
     </table>
-    <column id="26" parent="8" name="record_id">
+    <column id="30" parent="8" name="record_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this record, used for reference.</Comment>
       <DataType>int(11) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="27" parent="8" name="CIPOS_0">
+    <column id="31" parent="8" name="CIPOS_0">
+      <Position>2</Position>
       <Comment>PE confidence interval around POS</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="28" parent="8" name="CIPOS_1">
+    <column id="32" parent="8" name="CIPOS_1">
+      <Position>3</Position>
       <Comment>PE confidence interval around POS</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="29" parent="8" name="CIEND_0">
+    <column id="33" parent="8" name="CIEND_0">
+      <Position>4</Position>
       <Comment>PE confidence interval around END</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="30" parent="8" name="CIEND_1">
+    <column id="34" parent="8" name="CIEND_1">
+      <Position>5</Position>
       <Comment>PE confidence interval around END</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="31" parent="8" name="PE">
+    <column id="35" parent="8" name="PE">
+      <Position>6</Position>
       <Comment>Paired-end support of the structural variant</Comment>
       <DataType>int(3)|0</DataType>
     </column>
-    <column id="32" parent="8" name="MAPQ">
+    <column id="36" parent="8" name="MAPQ">
+      <Position>7</Position>
       <Comment>Median mapping quality of paired-ends</Comment>
       <DataType>int(3)|0</DataType>
     </column>
-    <column id="33" parent="8" name="SR">
+    <column id="37" parent="8" name="SR">
+      <Position>8</Position>
       <Comment>Split-read support</Comment>
       <DataType>int(3)|0</DataType>
     </column>
-    <column id="34" parent="8" name="SRQ">
+    <column id="38" parent="8" name="SRQ">
+      <Position>9</Position>
       <Comment>Split-read consensus alignment quality</Comment>
       <DataType>float|0</DataType>
     </column>
-    <column id="35" parent="8" name="CONSENSUS">
+    <column id="39" parent="8" name="CONSENSUS">
+      <Position>10</Position>
       <Comment>Split-read consensus sequence</Comment>
       <DataType>varchar(1000)|0</DataType>
     </column>
-    <column id="36" parent="8" name="CE">
+    <column id="40" parent="8" name="CE">
+      <Position>11</Position>
       <Comment>Consensus sequence entropy</Comment>
       <DataType>float|0</DataType>
     </column>
-    <column id="37" parent="8" name="CT">
+    <column id="41" parent="8" name="CT">
+      <Position>12</Position>
       <Comment>Paired-end signature induced connection type</Comment>
       <DataType>varchar(16)|0</DataType>
     </column>
-    <column id="38" parent="8" name="SVMETHOD">
+    <column id="42" parent="8" name="SVMETHOD">
+      <Position>13</Position>
       <Comment>Type of approach used to detect SV</Comment>
       <DataType>varchar(18)|0</DataType>
     </column>
-    <key id="39" parent="8" name="PRIMARY">
+    <key id="43" parent="8" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>record_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="40" parent="8" name="dly_info_ibfk_1">
+    <foreign-key id="44" parent="8" name="dly_info_ibfk_1">
       <ColNames>record_id</ColNames>
-      <RefKeyName>records</RefKeyName>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>records</RefTableName>
+      <RefColNames>ID</RefColNames>
     </foreign-key>
-    <column id="41" parent="9" name="sample_id">
+    <column id="45" parent="9" name="sample_id">
+      <Position>1</Position>
       <DataType>mediumint(8) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="42" parent="9" name="record_id">
+    <column id="46" parent="9" name="record_id">
+      <Position>2</Position>
       <DataType>int(11) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="43" parent="9" name="GL_0">
+    <column id="47" parent="9" name="GL_0">
+      <Position>3</Position>
       <Comment>Log10-scaled genotype likelihoods for RR,RA,AA genotypes</Comment>
       <DataType>float|0</DataType>
     </column>
-    <column id="44" parent="9" name="GL_1">
+    <column id="48" parent="9" name="GL_1">
+      <Position>4</Position>
       <Comment>Log10-scaled genotype likelihoods for RR,RA,AA genotypes</Comment>
       <DataType>float|0</DataType>
     </column>
-    <column id="45" parent="9" name="GL_2">
+    <column id="49" parent="9" name="GL_2">
+      <Position>5</Position>
       <Comment>Log10-scaled genotype likelihoods for RR,RA,AA genotypes</Comment>
       <DataType>float|0</DataType>
     </column>
-    <column id="46" parent="9" name="GQ">
+    <column id="50" parent="9" name="GQ">
+      <Position>6</Position>
       <Comment>Genotype Quality</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="47" parent="9" name="FT">
+    <column id="51" parent="9" name="FT">
+      <Position>7</Position>
       <Comment>Per-sample genotype filter</Comment>
       <DataType>varchar(10)|0</DataType>
     </column>
-    <column id="48" parent="9" name="RC">
+    <column id="52" parent="9" name="RC">
+      <Position>8</Position>
       <Comment>Raw high-quality read counts for the SV</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="49" parent="9" name="RCL">
+    <column id="53" parent="9" name="RCL">
+      <Position>9</Position>
       <Comment>Raw high-quality read counts for the left control region</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="50" parent="9" name="RCR">
+    <column id="54" parent="9" name="RCR">
+      <Position>10</Position>
       <Comment>Raw high-quality read counts for the right control region</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="51" parent="9" name="CN">
+    <column id="55" parent="9" name="CN">
+      <Position>11</Position>
       <Comment>Read-depth based copy-number estimate for autosomal sites</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="52" parent="9" name="DR">
+    <column id="56" parent="9" name="DR">
+      <Position>12</Position>
       <Comment># high-quality reference pairs</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="53" parent="9" name="DV">
+    <column id="57" parent="9" name="DV">
+      <Position>13</Position>
       <Comment># high-quality variant pairs</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="54" parent="9" name="RR">
+    <column id="58" parent="9" name="RR">
+      <Position>14</Position>
       <Comment># high-quality reference junction reads</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="55" parent="9" name="RV">
+    <column id="59" parent="9" name="RV">
+      <Position>15</Position>
       <Comment># high-quality variant junction reads</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <index id="56" parent="9" name="fk_dly_samples_record_id">
+    <index id="60" parent="9" name="fk_dly_samples_record_id">
       <ColNames>record_id</ColNames>
     </index>
-    <key id="57" parent="9" name="PRIMARY">
+    <key id="61" parent="9" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>sample_id
 record_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="58" parent="9" name="dly_samples_ibfk_2">
+    <foreign-key id="62" parent="9" name="dly_samples_ibfk_2">
       <ColNames>sample_id</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>samples</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>sample_id</RefColNames>
     </foreign-key>
-    <foreign-key id="59" parent="9" name="dly_samples_ibfk_3">
+    <foreign-key id="63" parent="9" name="dly_samples_ibfk_3">
       <ColNames>record_id</ColNames>
-      <RefKeyName>records</RefKeyName>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>records</RefTableName>
+      <RefColNames>ID</RefColNames>
     </foreign-key>
-    <column id="60" parent="10" name="sample_id">
+    <column id="64" parent="10" name="sample_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this individual, used for reference.</Comment>
       <DataType>mediumint(8) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="61" parent="10" name="record_id">
+    <column id="65" parent="10" name="record_id">
+      <Position>2</Position>
       <Comment>The unique identifier of this record, used for reference.</Comment>
       <DataType>int(11) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="62" parent="10" name="GT">
+    <column id="66" parent="10" name="GT">
+      <Position>3</Position>
       <Comment>The unique identifier of this genotype, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
     </column>
-    <index id="63" parent="10" name="fk_genotype">
+    <index id="67" parent="10" name="fk_genotype">
       <ColNames>GT</ColNames>
     </index>
-    <index id="64" parent="10" name="fk_genotype_record_id">
+    <index id="68" parent="10" name="fk_genotype_record_id">
       <ColNames>record_id</ColNames>
     </index>
-    <key id="65" parent="10" name="PRIMARY">
+    <key id="69" parent="10" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>sample_id
 record_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="66" parent="10" name="genotype_ibfk_1">
+    <foreign-key id="70" parent="10" name="genotype_ibfk_1">
       <ColNames>sample_id</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>samples</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>sample_id</RefColNames>
     </foreign-key>
-    <foreign-key id="67" parent="10" name="genotype_ibfk_2">
+    <foreign-key id="71" parent="10" name="genotype_ibfk_2">
       <ColNames>record_id</ColNames>
-      <RefKeyName>records</RefKeyName>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>records</RefTableName>
+      <RefColNames>ID</RefColNames>
     </foreign-key>
-    <foreign-key id="68" parent="10" name="genotype_ibfk_3">
+    <foreign-key id="72" parent="10" name="genotype_ibfk_3">
       <ColNames>GT</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_genotype</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>genotype_id</RefColNames>
     </foreign-key>
-    <column id="69" parent="11" name="individual_id">
+    <column id="73" parent="11" name="individual_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this individual, used for reference.</Comment>
       <DataType>mediumint(8) unsigned|0</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
     </column>
-    <column id="70" parent="11" name="breed_type">
+    <column id="74" parent="11" name="breed_type">
+      <Position>2</Position>
       <Comment>The unique identifier of this breed, used for reference.</Comment>
       <DataType>smallint(6) unsigned|0</DataType>
     </column>
-    <column id="71" parent="11" name="sex">
+    <column id="75" parent="11" name="sex">
+      <Position>3</Position>
       <Comment>The boolean sex of the individual. True is female, false is male.</Comment>
       <DataType>tinyint(1)|0</DataType>
     </column>
-    <column id="72" parent="11" name="disease_status">
+    <column id="76" parent="11" name="disease_status">
+      <Position>4</Position>
       <Comment>Information on any diseases the individual might have.</Comment>
       <DataType>varchar(255)|0</DataType>
     </column>
-    <index id="73" parent="11" name="fk_breed">
+    <index id="77" parent="11" name="fk_breed">
       <ColNames>breed_type</ColNames>
     </index>
-    <key id="74" parent="11" name="PRIMARY">
+    <key id="78" parent="11" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>individual_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="75" parent="11" name="individuals_ibfk_1">
+    <foreign-key id="79" parent="11" name="individuals_ibfk_1">
       <ColNames>breed_type</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_breed</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>breed_id</RefColNames>
     </foreign-key>
-    <column id="76" parent="12" name="record_id">
+    <column id="80" parent="12" name="record_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this record, used for reference.</Comment>
       <DataType>int(11) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="77" parent="12" name="strands">
+    <column id="81" parent="12" name="strands">
+      <Position>2</Position>
       <DataType>varchar(40)|0</DataType>
     </column>
-    <column id="78" parent="12" name="CIPOS_0">
+    <column id="82" parent="12" name="CIPOS_0">
+      <Position>3</Position>
       <Comment>PE confidence interval around POS</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="79" parent="12" name="CIPOS_1">
+    <column id="83" parent="12" name="CIPOS_1">
+      <Position>4</Position>
       <Comment>PE confidence interval around POS</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="80" parent="12" name="CIEND_0">
+    <column id="84" parent="12" name="CIEND_0">
+      <Position>5</Position>
       <Comment>PE confidence interval around END</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="81" parent="12" name="CIEND_1">
+    <column id="85" parent="12" name="CIEND_1">
+      <Position>6</Position>
       <Comment>PE confidence interval around END</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="82" parent="12" name="CIPOS95_0">
+    <column id="86" parent="12" name="CIPOS95_0">
+      <Position>7</Position>
       <Comment>Confidence interval (95%) around POS for imprecise variants</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="83" parent="12" name="CIPOS95_1">
+    <column id="87" parent="12" name="CIPOS95_1">
+      <Position>8</Position>
       <Comment>Confidence interval (95%) around POS for imprecise variants</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="84" parent="12" name="CIEND95_0">
+    <column id="88" parent="12" name="CIEND95_0">
+      <Position>9</Position>
       <Comment>Confidence interval (95%) around END for imprecise variants</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="85" parent="12" name="CIEND95_1">
+    <column id="89" parent="12" name="CIEND95_1">
+      <Position>10</Position>
       <Comment>Confidence interval (95%) around END for imprecise variants</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="86" parent="12" name="MATEID">
+    <column id="90" parent="12" name="MATEID">
+      <Position>11</Position>
       <Comment>ID of mate breakends</Comment>
       <DataType>varchar(20)|0</DataType>
     </column>
-    <column id="87" parent="12" name="EVENT">
+    <column id="91" parent="12" name="EVENT">
+      <Position>12</Position>
       <Comment>ID of event associated to breakend</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="88" parent="12" name="SECONDARY">
+    <column id="92" parent="12" name="SECONDARY">
+      <Position>13</Position>
       <Comment>Secondary breakend in a multi-line variants</Comment>
       <DataType>tinyint(1)|0</DataType>
     </column>
-    <column id="89" parent="12" name="SU">
+    <column id="93" parent="12" name="SU">
+      <Position>14</Position>
       <Comment>Number of pieces of evidence supporting the variant across all samples</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="90" parent="12" name="PE">
+    <column id="94" parent="12" name="PE">
+      <Position>15</Position>
       <Comment>Paired-end support of the structural variant</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="91" parent="12" name="SR">
+    <column id="95" parent="12" name="SR">
+      <Position>16</Position>
       <Comment>Number of split reads supporting the variant across all samples</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="92" parent="12" name="EV">
+    <column id="96" parent="12" name="EV">
+      <Position>17</Position>
       <Comment>Type of LUMPY evidence contributing to the variant call</Comment>
       <DataType>varchar(50)|0</DataType>
     </column>
-    <column id="93" parent="12" name="PRPOS">
+    <column id="97" parent="12" name="PRPOS">
+      <Position>18</Position>
       <Comment>LUMPY probability curve of the POS breakend</Comment>
       <DataType>varchar(50)|0</DataType>
     </column>
-    <column id="94" parent="12" name="PREND">
+    <column id="98" parent="12" name="PREND">
+      <Position>19</Position>
       <Comment>LUMPY probability curve of the END breakend</Comment>
       <DataType>varchar(50)|0</DataType>
     </column>
-    <key id="95" parent="12" name="PRIMARY">
+    <key id="99" parent="12" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>record_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="96" parent="12" name="lmp_info_ibfk_1">
+    <foreign-key id="100" parent="12" name="lmp_info_ibfk_1">
       <ColNames>record_id</ColNames>
-      <RefKeyName>records</RefKeyName>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>records</RefTableName>
+      <RefColNames>ID</RefColNames>
     </foreign-key>
-    <column id="97" parent="13" name="sample_id">
+    <column id="101" parent="13" name="sample_id">
+      <Position>1</Position>
       <DataType>mediumint(8) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="98" parent="13" name="record_id">
+    <column id="102" parent="13" name="record_id">
+      <Position>2</Position>
       <DataType>int(11) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="99" parent="13" name="SU">
+    <column id="103" parent="13" name="SU">
+      <Position>3</Position>
       <Comment>Number of pieces of evidence supporting the variant</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="100" parent="13" name="PE">
+    <column id="104" parent="13" name="PE">
+      <Position>4</Position>
       <Comment>Number of paired-end reads supporting the variant</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="101" parent="13" name="SR">
+    <column id="105" parent="13" name="SR">
+      <Position>5</Position>
       <Comment>Number of split reads supporting the variant</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="102" parent="13" name="BD">
+    <column id="106" parent="13" name="BD">
+      <Position>6</Position>
       <Comment>Amount of BED evidence supporting the variant</Comment>
       <DataType>int(11)|0</DataType>
     </column>
-    <index id="103" parent="13" name="fk_dly_samples_record_id">
+    <index id="107" parent="13" name="fk_dly_samples_record_id">
       <ColNames>record_id</ColNames>
     </index>
-    <key id="104" parent="13" name="PRIMARY">
+    <key id="108" parent="13" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>sample_id
 record_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="105" parent="13" name="lmp_samples_ibfk_2">
+    <foreign-key id="109" parent="13" name="lmp_samples_ibfk_2">
       <ColNames>sample_id</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>samples</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>sample_id</RefColNames>
     </foreign-key>
-    <foreign-key id="106" parent="13" name="lmp_samples_ibfk_1">
+    <foreign-key id="110" parent="13" name="lmp_samples_ibfk_1">
       <ColNames>record_id</ColNames>
-      <RefKeyName>records</RefKeyName>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>records</RefTableName>
+      <RefColNames>ID</RefColNames>
     </foreign-key>
-    <column id="107" parent="14" name="CHROM">
+    <column id="111" parent="14" name="CHROM">
+      <Position>1</Position>
       <Comment>This is a foriegn key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of the POS where this variant was detected.</Comment>
       <DataType>smallint(6) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="108" parent="14" name="POS">
+    <column id="112" parent="14" name="POS">
+      <Position>2</Position>
       <Comment>Coordinate where the variant occurs.</Comment>
       <DataType>int(11) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="109" parent="14" name="ID">
+    <column id="113" parent="14" name="ID">
+      <Position>3</Position>
       <Comment>The unique identifier of this record, used for reference.</Comment>
       <DataType>int(11) unsigned|0</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
     </column>
-    <column id="110" parent="14" name="REF">
+    <column id="114" parent="14" name="REF">
+      <Position>4</Position>
       <Comment>The reference allele.</Comment>
       <DataType>varchar(20)|0</DataType>
     </column>
-    <column id="111" parent="14" name="ALT">
+    <column id="115" parent="14" name="ALT">
+      <Position>5</Position>
       <Comment>The alternative alleles observed in the samples provided during VCF generation.</Comment>
       <DataType>varchar(50)|0</DataType>
     </column>
-    <column id="112" parent="14" name="QUAL">
+    <column id="116" parent="14" name="QUAL">
+      <Position>6</Position>
       <Comment>The Phred-scaled probability that a REF/ALT polymorphism exists at this site given sequencing data. Often missing for strucutral vaiants.</Comment>
       <DataType>varchar(12)|0</DataType>
     </column>
-    <column id="113" parent="14" name="FILTER">
+    <column id="117" parent="14" name="FILTER">
+      <Position>7</Position>
       <Comment>This field contains the name of any filter that the variant fails to pass, or the value PASS if the variant passed all filters.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
     </column>
-    <column id="114" parent="14" name="TYPE">
+    <column id="118" parent="14" name="TYPE">
+      <Position>8</Position>
       <Comment>This is a foriegn key to the variants table, this setup is used to allow for faster queries.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="115" parent="14" name="CHROM2">
+    <column id="119" parent="14" name="CHROM2">
+      <Position>9</Position>
       <Comment>This is a foriegn key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of the POS2 where this variant was detected. Mostly only relevant for translocations.</Comment>
       <DataType>smallint(6) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="116" parent="14" name="pos2">
+    <column id="120" parent="14" name="pos2">
+      <Position>10</Position>
       <DataType>int(11)|0</DataType>
     </column>
-    <column id="117" parent="14" name="len">
+    <column id="121" parent="14" name="len">
+      <Position>11</Position>
       <DataType>int(11)|0</DataType>
     </column>
-    <index id="118" parent="14" name="fk_alignment_location1">
+    <index id="122" parent="14" name="fk_alignment_location1">
       <ColNames>CHROM</ColNames>
     </index>
-    <index id="119" parent="14" name="fk_alignment_location2">
+    <index id="123" parent="14" name="fk_alignment_location2">
       <ColNames>CHROM2</ColNames>
     </index>
-    <index id="120" parent="14" name="fk_filter">
+    <index id="124" parent="14" name="fk_filter">
       <ColNames>FILTER</ColNames>
     </index>
-    <index id="121" parent="14" name="fk_vaiant">
+    <index id="125" parent="14" name="fk_vaiant">
       <ColNames>TYPE</ColNames>
     </index>
-    <key id="122" parent="14" name="PRIMARY">
+    <key id="126" parent="14" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>ID
 CHROM
 TYPE</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="123" parent="14" name="records_ibfk_2">
+    <foreign-key id="127" parent="14" name="records_ibfk_2">
       <ColNames>CHROM</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_alignment_location</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>location_id</RefColNames>
     </foreign-key>
-    <foreign-key id="124" parent="14" name="records_ibfk_4">
+    <foreign-key id="128" parent="14" name="records_ibfk_4">
       <ColNames>FILTER</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_filter</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>filter_id</RefColNames>
     </foreign-key>
-    <foreign-key id="125" parent="14" name="records_ibfk_1">
+    <foreign-key id="129" parent="14" name="records_ibfk_1">
       <ColNames>TYPE</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_variant</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>variant_id</RefColNames>
     </foreign-key>
-    <foreign-key id="126" parent="14" name="records_ibfk_3">
+    <foreign-key id="130" parent="14" name="records_ibfk_3">
       <ColNames>CHROM2</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_alignment_location</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>location_id</RefColNames>
     </foreign-key>
-    <trigger id="127" parent="14" name="default_to_CHROM">
+    <trigger id="131" parent="14" name="default_to_CHROM">
       <Turn>before-row</Turn>
       <Events>I</Events>
     </trigger>
-    <column id="128" parent="15" name="location_id">
+    <column id="132" parent="15" name="location_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this location, used for reference.</Comment>
       <DataType>smallint(6) unsigned|0</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
     </column>
-    <column id="129" parent="15" name="location">
+    <column id="133" parent="15" name="location">
+      <Position>2</Position>
       <Comment>The alignment location where the variant is found. Necessary to locate variants, this stores chromosomes and unplaced scaffolds.</Comment>
       <DataType>varchar(20)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="130" parent="15" name="unabbreviated">
+    <column id="134" parent="15" name="unabbreviated">
+      <Position>3</Position>
       <DataType>varchar(40)|0</DataType>
     </column>
-    <key id="131" parent="15" name="PRIMARY">
+    <key id="135" parent="15" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>location_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="132" parent="16" name="breed_id">
+    <column id="136" parent="16" name="breed_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this breed, used for reference.</Comment>
       <DataType>smallint(6) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="133" parent="16" name="breed">
+    <column id="137" parent="16" name="breed">
+      <Position>2</Position>
       <Comment>Four letter abreviation of the breed.</Comment>
       <DataType>varchar(4)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="134" parent="16" name="unabbreviated">
+    <column id="138" parent="16" name="unabbreviated">
+      <Position>3</Position>
       <Comment>The unabbreviated name of this item.</Comment>
       <DataType>varchar(40)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="135" parent="16" name="PRIMARY">
+    <key id="139" parent="16" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>breed_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="136" parent="17" name="filter_id">
+    <column id="140" parent="17" name="gene_id">
+      <Position>1</Position>
+      <Comment>The unique identifier of this individual, used for reference.</Comment>
+      <DataType>mediumint(8) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="141" parent="17" name="transcript_id">
+      <Position>2</Position>
+      <Comment>The unique identifier of this individual, used for reference.</Comment>
+      <DataType>mediumint(8) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="142" parent="17" name="exon_id">
+      <Position>3</Position>
+      <Comment>The unique identifier of this individual, used for reference.</Comment>
+      <DataType>mediumint(8) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="143" parent="17" name="chrom">
+      <Position>4</Position>
+      <Comment>This is a foreign key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of this gene.</Comment>
+      <DataType>smallint(6) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="144" parent="17" name="pos1">
+      <Position>5</Position>
+      <Comment>Coordinate where the gene starts.</Comment>
+      <DataType>int(11) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="145" parent="17" name="pos2">
+      <Position>6</Position>
+      <Comment>Coordinate where the gene ends.</Comment>
+      <DataType>int(11) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="146" parent="17" name="fk_alignment_location">
+      <ColNames>chrom</ColNames>
+    </index>
+    <index id="147" parent="17" name="fk_gene_id">
+      <ColNames>gene_id</ColNames>
+    </index>
+    <key id="148" parent="17" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>transcript_id
+exon_id
+chrom</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="149" parent="17" name="ref_exon_ibfk_2">
+      <ColNames>gene_id</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>ref_gene</RefTableName>
+      <RefColNames>gene_id</RefColNames>
+    </foreign-key>
+    <foreign-key id="150" parent="17" name="ref_exon_ibfk_1">
+      <ColNames>chrom</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>ref_alignment_location</RefTableName>
+      <RefColNames>location_id</RefColNames>
+    </foreign-key>
+    <column id="151" parent="18" name="filter_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this filter, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
     </column>
-    <column id="137" parent="17" name="filter">
+    <column id="152" parent="18" name="filter">
+      <Position>2</Position>
       <Comment>The filter used by whatever tool to determine pass or fail or whatever other metric is being utilized.</Comment>
       <DataType>varchar(20)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="138" parent="17" name="PRIMARY">
+    <key id="153" parent="18" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>filter_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="139" parent="18" name="genotype_id">
+    <column id="154" parent="19" name="gene_id">
+      <Position>1</Position>
+      <Comment>The unique identifier of this individual, used for reference.</Comment>
+      <DataType>mediumint(8) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="155" parent="19" name="gene_name">
+      <Position>2</Position>
+      <Comment>The unique identifier of this record, used for reference.</Comment>
+      <DataType>varchar(16)|0</DataType>
+    </column>
+    <column id="156" parent="19" name="chrom">
+      <Position>3</Position>
+      <Comment>This is a foreign key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of this gene.</Comment>
+      <DataType>smallint(6) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="157" parent="19" name="pos1">
+      <Position>4</Position>
+      <Comment>Coordinate where the gene starts.</Comment>
+      <DataType>int(11) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="158" parent="19" name="pos2">
+      <Position>5</Position>
+      <Comment>Coordinate where the gene ends.</Comment>
+      <DataType>int(11) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="159" parent="19" name="fk_alignment_location1">
+      <ColNames>chrom</ColNames>
+    </index>
+    <key id="160" parent="19" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>gene_id
+chrom</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="161" parent="19" name="ref_gene_ibfk_1">
+      <ColNames>chrom</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>ref_alignment_location</RefTableName>
+      <RefColNames>location_id</RefColNames>
+    </foreign-key>
+    <column id="162" parent="20" name="genotype_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this genotype, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="140" parent="18" name="genotype">
+    <column id="163" parent="20" name="genotype">
+      <Position>2</Position>
       <Comment>The three letter code describing the genotype.</Comment>
       <DataType>varchar(3)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="141" parent="18" name="PRIMARY">
+    <key id="164" parent="20" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>genotype_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="142" parent="19" name="sample_id">
+    <column id="165" parent="21" name="rna_id">
+      <Position>1</Position>
+      <Comment>The unique identifier of this individual, used for reference.</Comment>
+      <DataType>mediumint(8) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="166" parent="21" name="rna_name">
+      <Position>2</Position>
+      <Comment>The unique identifier of this individual, used for reference.</Comment>
+      <DataType>varchar(24)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="167" parent="21" name="known">
+      <Position>3</Position>
+      <Comment>Is this a known microrna.</Comment>
+      <DataType>tinyint(3) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="168" parent="21" name="mature">
+      <Position>4</Position>
+      <Comment>Is this a mature microrna (as opposed to precursor).</Comment>
+      <DataType>tinyint(3) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="169" parent="21" name="chrom">
+      <Position>5</Position>
+      <Comment>This is a foreign key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of this gene.</Comment>
+      <DataType>smallint(6) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="170" parent="21" name="pos1">
+      <Position>6</Position>
+      <Comment>Coordinate where the gene starts.</Comment>
+      <DataType>int(11) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="171" parent="21" name="pos2">
+      <Position>7</Position>
+      <Comment>Coordinate where the gene ends.</Comment>
+      <DataType>int(11) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="172" parent="21" name="fk_alignment_location1">
+      <ColNames>chrom</ColNames>
+    </index>
+    <key id="173" parent="21" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>rna_id
+known
+mature
+chrom</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="174" parent="21" name="ref_rna_ibfk_1">
+      <ColNames>chrom</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>ref_alignment_location</RefTableName>
+      <RefColNames>location_id</RefColNames>
+    </foreign-key>
+    <column id="175" parent="22" name="sample_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this samples, used for reference.</Comment>
       <DataType>mediumint(8) unsigned|0</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
     </column>
-    <column id="143" parent="19" name="sample">
+    <column id="176" parent="22" name="sample">
+      <Position>2</Position>
       <Comment>The file name of this sample.</Comment>
       <DataType>varchar(40)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="144" parent="19" name="PRIMARY">
+    <key id="177" parent="22" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>sample_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="145" parent="20" name="sequencing_id">
+    <column id="178" parent="23" name="sequencing_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this breed, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="146" parent="20" name="sequencing_platform">
+    <column id="179" parent="23" name="sequencing_platform">
+      <Position>2</Position>
       <Comment>Four letter abreviation of the sequencing platform.</Comment>
       <DataType>varchar(4)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="147" parent="20" name="unabbreviated">
+    <column id="180" parent="23" name="unabbreviated">
+      <Position>3</Position>
       <Comment>The unabbreviated name of this item.</Comment>
       <DataType>varchar(40)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="148" parent="20" name="PRIMARY">
+    <key id="181" parent="23" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>sequencing_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="149" parent="21" name="tissue_id">
+    <column id="182" parent="24" name="tissue_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this tissue type, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="150" parent="21" name="tissue">
+    <column id="183" parent="24" name="tissue">
+      <Position>2</Position>
       <Comment>Four letter abreviation of the tissue type.</Comment>
       <DataType>varchar(4)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="151" parent="21" name="unabbreviated">
+    <column id="184" parent="24" name="unabbreviated">
+      <Position>3</Position>
       <Comment>The unabbreviated name of this item.</Comment>
       <DataType>varchar(40)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="152" parent="21" name="PRIMARY">
+    <key id="185" parent="24" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>tissue_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="153" parent="22" name="tool_id">
+    <column id="186" parent="25" name="tool_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this tool, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="154" parent="22" name="tool">
+    <column id="187" parent="25" name="tool">
+      <Position>2</Position>
       <Comment>Four letter abreviation of the tool.</Comment>
       <DataType>varchar(4)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="155" parent="22" name="unabbreviated">
+    <column id="188" parent="25" name="unabbreviated">
+      <Position>3</Position>
       <Comment>The unabbreviated name of this item.</Comment>
       <DataType>varchar(40)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="156" parent="22" name="PRIMARY">
+    <key id="189" parent="25" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>tool_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="157" parent="23" name="variant_id">
+    <column id="190" parent="26" name="gene_id">
+      <Position>1</Position>
+      <Comment>The unique identifier of this individual, used for reference.</Comment>
+      <DataType>mediumint(8) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="191" parent="26" name="transcript_id">
+      <Position>2</Position>
+      <Comment>The unique identifier of this individual, used for reference.</Comment>
+      <DataType>mediumint(8) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="192" parent="26" name="utr_id">
+      <Position>3</Position>
+      <Comment>The unique identifier of this individual, used for reference.</Comment>
+      <DataType>mediumint(8) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="193" parent="26" name="type">
+      <Position>4</Position>
+      <Comment>The unique identifier of this record, used for reference.</Comment>
+      <DataType>tinyint(3) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="194" parent="26" name="chrom">
+      <Position>5</Position>
+      <Comment>This is a foreign key to the alignment_location table. This is done to optimize query speed while also dealing with unplaced scaffolds. It represents the chromosome of this gene.</Comment>
+      <DataType>smallint(6) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="195" parent="26" name="pos1">
+      <Position>6</Position>
+      <Comment>Coordinate where the gene starts.</Comment>
+      <DataType>int(11) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="196" parent="26" name="pos2">
+      <Position>7</Position>
+      <Comment>Coordinate where the gene ends.</Comment>
+      <DataType>int(11) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="197" parent="26" name="fk_alignment_location">
+      <ColNames>chrom</ColNames>
+    </index>
+    <index id="198" parent="26" name="fk_gene_id">
+      <ColNames>gene_id</ColNames>
+    </index>
+    <key id="199" parent="26" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>utr_id
+transcript_id
+type
+chrom</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="200" parent="26" name="ref_utr_ibfk_2">
+      <ColNames>gene_id</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>ref_gene</RefTableName>
+      <RefColNames>gene_id</RefColNames>
+    </foreign-key>
+    <foreign-key id="201" parent="26" name="ref_utr_ibfk_1">
+      <ColNames>chrom</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>ref_alignment_location</RefTableName>
+      <RefColNames>location_id</RefColNames>
+    </foreign-key>
+    <column id="202" parent="27" name="variant_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this variant, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
     </column>
-    <column id="158" parent="23" name="variant">
+    <column id="203" parent="27" name="variant">
+      <Position>2</Position>
       <Comment>Three letter abreviation of the variant type, used in input and output VCF files.</Comment>
       <DataType>varchar(3)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="159" parent="23" name="unabbreviated">
+    <column id="204" parent="27" name="unabbreviated">
+      <Position>3</Position>
       <Comment>The unabbreviated name of this item.</Comment>
       <DataType>varchar(40)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="160" parent="23" name="PRIMARY">
+    <key id="205" parent="27" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>variant_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="161" parent="24" name="sample_id">
+    <column id="206" parent="28" name="sample_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this sample, used for reference.</Comment>
       <DataType>mediumint(8) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="162" parent="24" name="individual_id">
+    <column id="207" parent="28" name="individual_id">
+      <Position>2</Position>
       <Comment>The unique identifier of this individual, used for reference.</Comment>
       <DataType>mediumint(8) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="163" parent="24" name="tissue_type">
+    <column id="208" parent="28" name="tissue_type">
+      <Position>3</Position>
       <Comment>The unique identifier of this tissue type, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
     </column>
-    <column id="164" parent="24" name="tumor">
+    <column id="209" parent="28" name="tumor">
+      <Position>4</Position>
       <Comment>True if this is a tumor, false if it is not.</Comment>
       <DataType>tinyint(1)|0</DataType>
     </column>
-    <column id="165" parent="24" name="mean_read_depth">
+    <column id="210" parent="28" name="mean_read_depth">
+      <Position>5</Position>
       <Comment>Read  depth of this smaple accross the genome.</Comment>
       <DataType>float|0</DataType>
     </column>
-    <column id="166" parent="24" name="insert_size">
+    <column id="211" parent="28" name="insert_size">
+      <Position>6</Position>
       <Comment>The length of the make pair library.</Comment>
       <DataType>smallint(5) unsigned|0</DataType>
     </column>
-    <column id="167" parent="24" name="sequencing_type">
+    <column id="212" parent="28" name="sequencing_type">
+      <Position>7</Position>
       <Comment>The unique identifier of this sequencing platform, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
     </column>
-    <column id="168" parent="24" name="mapped_reads">
+    <column id="213" parent="28" name="mapped_reads">
+      <Position>8</Position>
       <Comment>Number of reads confidently mapped to the reference genome.</Comment>
       <DataType>int(11) unsigned|0</DataType>
     </column>
-    <column id="169" parent="24" name="unmapped_reads">
+    <column id="214" parent="28" name="unmapped_reads">
+      <Position>9</Position>
       <Comment>Number of reads unable to be mapped to the reference genome.</Comment>
       <DataType>int(11) unsigned|0</DataType>
     </column>
-    <index id="170" parent="24" name="fk_individual_id">
+    <index id="215" parent="28" name="fk_individual_id">
       <ColNames>individual_id</ColNames>
     </index>
-    <index id="171" parent="24" name="fk_sequencing">
+    <index id="216" parent="28" name="fk_sequencing">
       <ColNames>sequencing_type</ColNames>
     </index>
-    <index id="172" parent="24" name="fk_tissue">
+    <index id="217" parent="28" name="fk_tissue">
       <ColNames>tissue_type</ColNames>
     </index>
-    <key id="173" parent="24" name="PRIMARY">
+    <key id="218" parent="28" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>sample_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="174" parent="24" name="samples_ibfk_1">
+    <foreign-key id="219" parent="28" name="samples_ibfk_1">
       <ColNames>sample_id</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_sample</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>sample_id</RefColNames>
     </foreign-key>
-    <foreign-key id="175" parent="24" name="samples_ibfk_2">
+    <foreign-key id="220" parent="28" name="samples_ibfk_2">
       <ColNames>individual_id</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>individuals</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>individual_id</RefColNames>
     </foreign-key>
-    <foreign-key id="176" parent="24" name="samples_ibfk_3">
+    <foreign-key id="221" parent="28" name="samples_ibfk_3">
       <ColNames>tissue_type</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_tissue</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>tissue_id</RefColNames>
     </foreign-key>
-    <foreign-key id="177" parent="24" name="samples_ibfk_4">
+    <foreign-key id="222" parent="28" name="samples_ibfk_4">
       <ColNames>sequencing_type</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_sequencing</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>sequencing_id</RefColNames>
     </foreign-key>
-    <column id="178" parent="25" name="record_id">
+    <column id="223" parent="29" name="record_id">
+      <Position>1</Position>
       <Comment>The unique identifier of this record, used for reference.</Comment>
       <DataType>int(11) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="179" parent="25" name="tool">
+    <column id="224" parent="29" name="tool">
+      <Position>2</Position>
       <Comment>The unique identifier of this tool, used for reference.</Comment>
       <DataType>tinyint(3) unsigned|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="180" parent="25" name="fk_tool">
+    <index id="225" parent="29" name="fk_tool">
       <ColNames>tool</ColNames>
     </index>
-    <key id="181" parent="25" name="PRIMARY">
+    <key id="226" parent="29" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>record_id
 tool</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="182" parent="25" name="tools_used_ibfk_1">
+    <foreign-key id="227" parent="29" name="tools_used_ibfk_1">
       <ColNames>record_id</ColNames>
-      <RefKeyName>records</RefKeyName>
+      <RefSchemaName>dogsv</RefSchemaName>
+      <RefTableName>records</RefTableName>
+      <RefColNames>ID</RefColNames>
     </foreign-key>
-    <foreign-key id="183" parent="25" name="tools_used_ibfk_2">
+    <foreign-key id="228" parent="29" name="tools_used_ibfk_2">
       <ColNames>tool</ColNames>
+      <RefSchemaName>dogsv</RefSchemaName>
       <RefTableName>ref_tool</RefTableName>
-      <RefKeyName>PRIMARY</RefKeyName>
       <RefColNames>tool_id</RefColNames>
     </foreign-key>
   </database-model>

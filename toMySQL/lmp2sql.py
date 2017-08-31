@@ -11,7 +11,7 @@ hasGT = True
 ids = {
     'individual_id': 	'0',
     'variant_id':		'0',
-    'tool_id': 			'LMP',
+    'tool_id': 			'lmp',
 }
 
 '''TODO: Add variant types specific to this tool on the left,

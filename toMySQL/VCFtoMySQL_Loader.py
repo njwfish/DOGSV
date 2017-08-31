@@ -2,18 +2,31 @@
 
 import MySQLdb
 import vcf
+import logging
+import atexit
 from MySQL_Utils import query_sql, insert_sql
 
 
 class VCFtoMySQL:
     def __init__(self, ids, variant_type_mapping, core, toolInfo, toolSamples, CHROM_format, hasGT):
+        logger = logging.getLogger('VCFtoSQL')
+        hdlr = logging.FileHandler('/var/tmp/dogsv.import.log')
+        formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+        hdlr.setFormatter(formatter)
+        logger.addHandler(hdlr)
+        logger.setLevel(logging.INFO)
+        self.logger = logger
+        print 'test'
+        self.logger.info('Run beginning')
         self.sample_mapping = {}
         self.variant_mapping = {}
         self.alignment_location_mapping = {}
         self.tool_mapping = {}
         self.genotype_mapping = {}
         self.filter_mapping = {}
-        self.db = MySQLdb.connect("localhost", "root", "12345", "DogSVStore")
+        db = MySQLdb.connect("127.0.0.1", "root", "", "dogsv")
+        self.db = db
+        cursor = db.cursor()
         self.cursor = self.db.cursor()
         self.CHROM_format = CHROM_format
         self.hasGT = hasGT
@@ -22,6 +35,20 @@ class VCFtoMySQL:
         self.core = core
         self.toolInfo = toolInfo
         self.toolSamples = toolSamples
+        start_info = query_sql('select chrom,pos,id from records '
+                               'where id=('
+                               '   select max(id) from records'
+                               ')', db, cursor)
+
+        def log_last_entry():
+            info = query_sql('select chrom,pos,id from records '
+                             'where id=('
+                             '   select max(id) from records'
+                             ')', db, cursor)
+            logger.error('Import interrupted')
+            logger.error('Last imported record: ' + str(info[0]))
+
+        atexit.register(log_last_entry)
 
     @staticmethod
     def get_field(record, field):
@@ -59,6 +86,7 @@ class VCFtoMySQL:
             if len(sample_id) == 0:
                 insert_sql('individuals', ['sex'], ['1'], self.db, self.cursor)
                 individual_id = self.cursor.lastrowid
+                print individual_id, self.db.insert_id()
                 insert_sql('ref_sample', ['sample'], [str_sample_id], self.db, self.cursor)
                 sample_id = self.cursor.lastrowid
                 insert_sql('samples', ['sample_id, individual_id'],
@@ -89,7 +117,7 @@ class VCFtoMySQL:
         sql = "SELECT tool_id, tool FROM ref_tool"
         tools = query_sql(sql, self.db, self.cursor)
         for tool in tools:
-            self.tool_mapping.update({tool[1]: tool[0]})
+            self.tool_mapping.update({tool[1].lower(): tool[0]})
 
     def gen_genotype_map(self):
         sql = "SELECT genotype_id, genotype FROM ref_genotype"
@@ -236,6 +264,7 @@ class VCFtoMySQL:
             insert_sql("%s_samples" % self.ids['tool_id'], cols, vals, self.db, self.cursor)
 
     def load(self, file):
+        self.logger.info('Importing ' + file)
         vcf_reader = vcf.Reader(open(file, 'r'))
         self.gen_individual_map(vcf_reader)
         self.gen_variant_map()
@@ -247,3 +276,4 @@ class VCFtoMySQL:
             self.insert_record(record)
             self.insert_info(record)
             self.insert_sample_data(record)
+        self.logger.info('Imported ' + file)

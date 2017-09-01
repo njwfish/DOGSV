@@ -1,15 +1,15 @@
-import MySQLdb
 from flask import Flask
-
-from QueryJSON import QueryJSONEncoder, QueryJSONDecoder
 from maps import Maps
+from query import QueryJSONEncoder, QueryJSONDecoder
 
-variants = MySQLdb.connect("127.0.0.1", "root", "", "dogsv")
+import MySQLdb
+
+variants = MySQLdb.connect("localhost", "root", "12345", "DogSVStore")
 variants_cursor = variants.cursor()
 maps = Maps(variants, variants_cursor, 1)
 maps.gen_dicts()
 
-queries = MySQLdb.connect("127.0.0.1", "root", "", "library")
+queries = MySQLdb.connect("localhost", "root", "12345", "Library")
 queries_cursor = queries.cursor()
 
 app = Flask(__name__)

@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block content %}
@@ -10,14 +9,14 @@
         <!-- Modal content -->
         <div class="modal-content">
             <div class="container">
-                <h2>Select Column</h2>
-                <div class="col-sm-6 col-md-6">
-                    <h5>Exclude</h5>
-                    {{cols.columns_exclude(style="width:75%;height:200px;")}}
+                <h2><center>Select Columns</center></h2>
+                <div class="col-sm-6">
+                    <h5><center>Exclude</center></h5>
+                    <p>{{cols.columns_exclude(style="width:100%;height:200px;")}}</p>
                 </div>
-                <div class="col-sm-6 col-md-6">
-                    <h5>Include</h5>
-                    {{cols.columns_include(style="width:75%;height:200px;")}}
+                <div class="col-sm-6">
+                    <h5><center>Include</center></h5>
+                    <p>{{cols.columns_include(style="width:100%;height:200px;")}}</p>
                 </div>
                 <hr>
                 <ul class="nav nav-tabs">
@@ -28,24 +27,24 @@
                 </ul>
                 <div class="tab-content">
                     <div id="records" class="tab-pane fade in active">
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Recordsc</h5>
+                        <div class="col-sm-4">
+                            <h5><center>Records</center></h5>
                             <p><select id="records_columns" multiple name="records_columns" style="width:100%;height:100px;">
                                 {% for r in records %}
                                     <option value="r.{{r}}">r.{{r}}</option>
                                 {% endfor %}
                             </select></p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Samples</h5>
+                        <div class="col-sm-4">
+                            <h5><center>Samples</center></h5>
                             <p><select id="samples_columns" multiple name="samples_columns" style="width:100%;height:100px;">
                                 {% for s in samples %}
                                     <option value="s.{{s}}">s.{{s}}</option>
                                 {% endfor %}
                             </select></p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Genotypes</h5>
+                        <div class="col-sm-4">
+                            <h5><center>Genotypes</center></h5>
                             <p><select id="genotypes_columns" multiple name="genotypes_columns" style="width:100%;height:100px;">
                                 {% for g in genotypes %}
                                     <option value="g.{{g}}">g.{{g}}</option>
@@ -55,24 +54,24 @@
                     </div>
                     {% for t in tools %}
                         <div id={{t}} class="tab-pane fade">
-                            <div class="col-sm-6 col-md-6">
-                                <h5>Info</h5>
-                                {% set key = ("%s_info" % t) %}
-                                <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
-                                    {% for c in tool_columns[key] %}
-                                        <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
-                                    {% endfor %}
-                                </select></p>
-                            </div>
-                            <div class="col-sm-6 col-md-6">
-                                <h5>Samples</h5>
-                                {% set key = ("%s_samples" % t) %}
-                                <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
-                                    {% for c in tool_columns[key] %}
-                                        <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
-                                    {% endfor %}
-                                </select></p>
-                            </div>
+                        <div class="col-sm-6">
+                            <h5><center>Info</center></h5>
+                            {% set key = ("%s_info" % t) %}
+                            <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
+                                {% for c in tool_columns[key] %}
+                                    <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
+                                {% endfor %}
+                            </select></p>
+                        </div>
+                        <div class="col-sm-6">
+                            <h5><center>Samples</center></h5>
+                            {% set key = ("%s_samples" % t) %}
+                            <p><select id="{{key}}_columns" multiple name="{{key}}_columns" style="width:100%;height:100px;">
+                                {% for c in tool_columns[key] %}
+                                    <option value="{{key}}.{{c}}">{{key}}.{{c}}</option>
+                                {% endfor %}
+                            </select></p>
+                        </div>
                         </div>
                     {% endfor %}
             </div>
@@ -80,8 +79,8 @@
         <button id="closeModal" type="button" class="btn btn-primary">Close</button>
     </div>
     </div>
-    <h4>Filters</h4>
-    {{form.tool_clauses(style="width:75%;height:200px;")}}
+    <h4><center>Filters</center></h4>
+    <center>{{form.tool_clauses(style="width:75%;height:200px;")}}</center>
     <div class="container" style="width:75%;">
         <hr>
         <ul id="tools" class="nav nav-tabs">
@@ -92,9 +91,9 @@
         </ul>
         <div class="tab-content" style="min-height: 200px;">
             <div id=record_filters class="tab-pane fade">
-                <div class="col-sm-4 col-md-4 centered">
+                <div class="col-sm-4 centered">
                     <div style="width:100%;">
-                        <h4>Columns</h4>
+                        <center><h4>Columns</h4></center>
                         <select id="records_cols" multiple name="r" style="width:100%;height:200px;">
                             <option value=str|REF>REF</option>
                             <option value=str|ALT>ALT</option>
@@ -103,9 +102,9 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-sm-4 col-md-4 centered">
+                <div class="col-sm-4 centered">
                     <ul class="selector" id="records_operators">
-                        
+                        <center>
                             <li>
                                 <input type="radio" id="records_less" value="<" name="records_operator" />
                                 <label id="records_less_label" for="records_less"><</label>
@@ -126,10 +125,10 @@
                                 <input type="radio" id="records_like" value="like" name="records_operator" />
                                 <label id="records_like_label" for="records_like">like</label>
                             </li>
-                        
+                        </center>
                     </ul>
                 </div>
-                <div class="col-sm-4 col-md-4">
+                <div class="col-sm-4">
 
                     <div class="centered">
                         <p style="height:20px"><input type="text" id="records_val" style="width:120%;"></p><p id="records_range" style="height:20px"><input type="text" id="records_start" style="width:40%;"> and <input type="text" id="records_end" style="width:40%;"></p>
@@ -143,9 +142,9 @@
 
             {% for t in tools %}
                 <div id={{t}}_tools class="tab-pane fade">
-                    <div class="col-sm-4 col-md-4 centered">
+                    <div class="col-sm-4 centered">
                         <div style="width:100%;">
-                            <h4>Columns</h4>
+                            <center><h4>Columns</h4><center>
                                 {% set key = ("%s_info" % t) %}
                                 <select id="{{t}}_cols" multiple name="{{t}}_info" style="width:100%;height:200px;">
                                     {% for i in range(0, tool_columns[key]|length) %}
@@ -164,9 +163,9 @@
                                 </ul>
                         </div>
                     </div>
-                    <div class="col-sm-4 col-md-4 centered">
+                    <div class="col-sm-4 centered">
                         <ul class="selector" id="{{t}}_operators">
-                            
+                            <center>
                                 <li>
                                     <input type="radio" id="{{t}}_less" value="<" name="{{t}}_operator" />
                                     <label id="{{t}}_less_label" for="{{t}}_less"><</label>
@@ -187,10 +186,10 @@
                                     <input type="radio" id="{{t}}_like" value="like" name="{{t}}_operator" />
                                     <label id="{{t}}_like_label" for="{{t}}_like">like</label>
                                 </li>
-                            
+                            </center>
                         </ul>
                     </div>
-                    <div class="col-sm-4 col-md-4">
+                    <div class="col-sm-4">
 
                         <div class="centered">
                             <p style="height:20px"><input type="text" id="{{t}}_val" style="width:120%;"></p><p id="{{t}}_range" style="height:20px"><input type="text" id="{{t}}_start" style="width:40%;"> and <input type="text" id="{{t}}_end" style="width:40%;"></p>
@@ -211,17 +210,17 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#Record">Record</a>
+                        <a data-toggle="collapse" href="#Record"><center>Record</center></a>
                     </h4>
                 </div>
                 <div id="Record" class="panel-collapse collapse">
                     <div class="row" style="padding:10px;">
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-4">
                             <p>{{ form.homref }} Homozygous Reference</p>
                             <p>{{ form.homalt }} Homozygous Alternate</p>
                             <p>{{ form.het }} Heterozygous</p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-4">
                             <p>{{ form.DEL }} DEL</p>
                             <p>{{ form.DUP }} DUP</p>
                             <p>{{ form.INS }} INS</p>
@@ -231,7 +230,7 @@
                             <p>{{ form.LIN }} LIN</p>
                             <p>{{ form.BXP }} BXP</p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-4">
                             <div class="alignright">
                                 <p class="alignright">
                                     Ref: {{ form.ref(size=20) }}
@@ -261,20 +260,20 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#Region">Region</a>
+                        <a data-toggle="collapse" href="#Region"><center>Region</center></a>
                     </h4>
                 </div>
                 <div id="Region" class="panel-collapse collapse">
                     <div class="row" style="padding:10px;">
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Options</h5>
+                        <div class="col-sm-4">
+                            <h5><center>Options</center></h5>
                             <p>{{form.region_exclude(style="width:100%;height:100px;")}}</p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Include</h5>
+                        <div class="col-sm-4">
+                            <h5><center>Include</center></h5>
                             <p> {{form.region_include(style="width:100%;height:100px;")}}</p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-4">
                             <div class="alignright">
                                 <p class="alignright">Chrom: <input type="text" id="chrom"></p><br>
                                 <p class="alignright">Start: <input type="text" id="start"></p><br>
@@ -292,20 +291,20 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#Breed">Breed</a>
+                        <a data-toggle="collapse" href="#Breed"><center>Breed</center></a>
                     </h4>
                 </div>
                 <div id="Breed" class="panel-collapse collapse">
                     <div class="row" style="padding:10px;">
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Options</h5>
+                        <div class="col-sm-4">
+                            <h5><center>Options</center></h5>
                             <p>{{form.breed_exclude(style="width:100%;height:100px;")}}</p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Include</h5>
+                        <div class="col-sm-4">
+                            <h5><center>Include</center></h5>
                             <p> {{form.breed_include(style="width:100%;height:100px;")}}</p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-4">
 
                         </div>
                     </div>
@@ -316,20 +315,20 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#Sample">Sample</a>
+                        <a data-toggle="collapse" href="#Sample"><center>Sample</center></a>
                     </h4>
                 </div>
                 <div id="Sample" class="panel-collapse collapse">
                     <div class="row" style="padding:10px;">
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Options</h5>
+                        <div class="col-sm-4">
+                            <h5><center>Options</center></h5>
                             <p>{{form.sample_exclude(style="width:100%;height:100px;")}}</p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Include</h5>
+                        <div class="col-sm-4">
+                            <h5><center>Include</center></h5>
                             <p> {{form.sample_include(style="width:100%;height:100px;")}}</p>
                         </div>
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-4">
 
                         </div>
                     </div>

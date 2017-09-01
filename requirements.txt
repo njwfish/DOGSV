@@ -1,0 +1,8 @@
+cement==2.10.2
+Jinja2==2.9.6
+Flask==0.12.1
+tabulate==0.7.7
+PyVCF==0.6.8
+flask_wtf==0.14.2
+WTForms==2.1
+PyYAML==3.12

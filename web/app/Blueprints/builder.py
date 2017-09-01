@@ -1,7 +1,7 @@
-from web.app.app import variants, variants_cursor
+from app.app import variants, variants_cursor
 from flask import redirect, request, url_for
-from web.app.forms import BuilderForm, ColumnForm
-from MySQL_Utils import query_sql
+from app.forms import BuilderForm, ColumnForm
+from app.MySQL_Utils import query_sql
 
 from flask import Blueprint, abort, render_template
 from jinja2 import TemplateNotFound
@@ -56,7 +56,7 @@ def show():
                                     breeds=breeds, tools=tools, tool_filters=tool_filters, columns=columns))
 
     sql = "SELECT Unabbreviated FROM ref_breed"
-    if form.breed_include.choices is not None and len(form.breed_include.choices) > 0:
+    if form.breed_include.choices is not None:
         form.breed_exclude.choices = [(b[0], b[0]) for b in query_sql(sql, variants, variants_cursor)
                                       if (b[0], b[0]) not in form.breed_include.choices]
     else:

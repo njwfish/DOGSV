@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="dogsv" uuid="c56b90f9-9fff-47ed-82bc-8889933cf232">
-      <database-info product="MySQL" version="5.7.18" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.40 ( Revision: 402933ef52cad9aa82624e80acbea46e3a701ce6 )">
+    <data-source name="MySQL - DogSVStore@localhost" uuid="c56b90f9-9fff-47ed-82bc-8889933cf232">
+      <database-info product="MySQL" version="5.7.13" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
         <extra-name-characters>#@</extra-name-characters>
         <identifier-quote-string>`</identifier-quote-string>
       </database-info>
       <case-sensitivity plain-identifiers="mixed" quoted-identifiers="upper" />
+      <secret-storage>master_key</secret-storage>
       <user-name>root</user-name>
       <introspection-schemas>*:dogsv</introspection-schemas>
+      <resolve-scope>DogSVStore:</resolve-scope>
+      <unqualified-resolve-schemas>DogSVStore:</unqualified-resolve-schemas>
     </data-source>
   </component>
 </project>

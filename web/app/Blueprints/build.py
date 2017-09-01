@@ -3,7 +3,7 @@ from flask import redirect, request, url_for
 from collections import defaultdict
 from flask import Blueprint, abort
 from jinja2 import TemplateNotFound
-from web.app.app import maps
+from app.app import maps
 
 build = Blueprint('build', __name__, template_folder='templates')
 
@@ -31,7 +31,6 @@ def show():
     tools = ["t.tool = '%s'" % (maps.tool_mapping[maps.tool_name_mapping[tool]]) for tool in tools]
     regions = ["(%s)" % region.replace(" is ", "=") for region in regions]
     necessary_joins = []
-
 
     filters = defaultdict(list)
     for f in tool_filters:
@@ -91,7 +90,7 @@ def show():
     if len(cols) == 0:
         cols = ['chrom,pos,filter,type,chrom2,pos2,len']
 
-    query = "select %s from records %s" % (', '.join(cols), ' '.join(query))
+    query = "select %s from records r %s limit 5000" % (', '.join(cols), ' '.join(query))
     try:
         return redirect(url_for('results.show', query=query))
     except TemplateNotFound:

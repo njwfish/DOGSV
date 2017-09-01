@@ -4741,7 +4741,7 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 
 	// Support: Android 4.0 - 4.3 only
 	// Check state lost if the name is set (#11217)
-	// Support: Windows web Apps (WWA)
+	// Support: Windows Web Apps (WWA)
 	// `name` and `type` must use .setAttribute for WWA (#14901)
 	input.setAttribute( "type", "radio" );
 	input.setAttribute( "checked", "checked" );

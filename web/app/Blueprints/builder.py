@@ -1,7 +1,7 @@
-from app.app import variants, variants_cursor
+from web.app.app import variants, variants_cursor
 from flask import redirect, request, url_for
-from app.forms import BuilderForm, ColumnForm
-from app.MySQL_Utils import query_sql
+from web.app.forms import BuilderForm, ColumnForm
+from MySQL_Utils import query_sql
 
 from flask import Blueprint, abort, render_template
 from jinja2 import TemplateNotFound
@@ -56,7 +56,7 @@ def show():
                                     breeds=breeds, tools=tools, tool_filters=tool_filters, columns=columns))
 
     sql = "SELECT Unabbreviated FROM ref_breed"
-    if form.breed_include.choices is not None:
+    if form.breed_include.choices is not None and len(form.breed_include.choices) > 0:
         form.breed_exclude.choices = [(b[0], b[0]) for b in query_sql(sql, variants, variants_cursor)
                                       if (b[0], b[0]) not in form.breed_include.choices]
     else:
@@ -75,11 +75,14 @@ def show():
         form.tool_exclude.choices = [(b[0], b[0]) for b in query_sql(sql, variants, variants_cursor)]
 
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'records'"
-    records = [b[0] for b in query_sql(sql, variants, variants_cursor)]
+    results = query_sql(sql, variants, variants_cursor)
+    records = [b[0] for b in results] if results is not None else []
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'samples'"
-    samples = [b[0] for b in query_sql(sql, variants, variants_cursor)]
+    results = query_sql(sql, variants, variants_cursor)
+    samples = [b[0] for b in results] if results is not None else []
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'genotype'"
-    genotypes = [b[0] for b in query_sql(sql, variants, variants_cursor)]
+    results = query_sql(sql, variants, variants_cursor)
+    genotypes = [b[0] for b in results] if results is not None else []
 
     sql = "SELECT tool FROM ref_tool"
     tools = [b[0].lower() for b in query_sql(sql, variants, variants_cursor)]

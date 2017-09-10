@@ -29,7 +29,7 @@ class QueryController(CementBaseController):
         description = "Interface to query an instance of a DOGSV database."
         arguments = \
             [
-                (['-j', '--jable'], dict(action='store', help='The query id of the query to subquery.')),
+                (['-t', '--table'], dict(action='store', help='The query id of the query to subquery.')),
                 (['-b', '--breeds'], dict(action='store', help='List of breeds to limit the query to.')),
                 (['-r', '--regions'], dict(action='store', help='List of regions to query.')),
                 (['-c', '--columns'], dict(action='store', help='Columns to display from query.')),
@@ -38,7 +38,7 @@ class QueryController(CementBaseController):
                                                         'filter variants by start position.')),
                 (['--end'], dict(action='store', help='List of triples, of the form (chrom, pos1, pos2), to '
                                                       'filter variants by end position.')),
-                (['--requirements'], dict(action='store', help='SQL formatted where clause.')),
+                (['--requirements'], dict(nargs='+', action='store', help='SQL formatted where clause.')),
                 (['-n', '--lines'], dict(action='store', help='Number of rows to print, default 500.')),
                 (['-q', '--query'], dict(action='store', help='Previous query id, used for sub querying.')),
 
@@ -47,26 +47,25 @@ class QueryController(CementBaseController):
     @expose(hide=True)
     def query(self):
         self.app.log.info('Inside query.query()')
-        tid = self.app.pargs.jable
         columns = self.app.pargs.columns
         table = 'records'
         requirements = self.app.pargs.requirements
-        joins = []
+        joins = None
         if requirements is not None:
-            for required_join in requirements.split('.')[:-1]:
-                required_join = required_join.split(' ')[-1]
-                if required_join != "records":
-                    joins.append('inner join {0} on records.id=record_id'.format(required_join))
-        print requirements, joins
-        if tid is None:
-            curr = Query.Query(columns, table, joins, requirements)
+            print requirements
+            column_tables = [col.split('.') for col in columns.split(',')]
+            requirements = [req.split(',') for req in requirements]
+            print requirements
+            joins = ['inner join {0} on records.id=record_id'.format(table)
+                     for table, _ in requirements + column_tables if table != 'records']
+            requirements = ['{0}.{1}'.format(table, field) for table, field in requirements]
+        if table is not None:
+            curr = Query.Query(columns, table, joins, requirements, None)
         else:
-            with open("tmp/{0}.p".format(tid), "r") as pfile:
-                super_columns, super_table, super_joins, super_requirements, super_order, \
-                                             super_process, super_process_vars, super_tid = pickle.load(pfile)
-            print super_columns, super_table, super_joins, super_requirements, super_order
-            curr = Query.Query(super_columns, super_table, super_joins, super_requirements, super_order, tid=super_tid)
-            curr = curr.sub_query(columns, joins, requirements)
+            with open("tmp/{0}.p".format(self.app.pargs.table), "r") as pfile:
+                curr_vars = pickle.load(pfile)
+                curr = Query.Query(*curr_vars)
+            curr.sub_query()
         results, fields = curr.get_results()
         with open("tmp/{0}.p".format(curr.tid), "w") as pfile:
             curr_vars = (curr.columns, curr.table, curr.joins, curr.requirements,

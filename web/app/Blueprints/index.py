@@ -1,5 +1,5 @@
 from flask import Blueprint, abort, render_template, session
-from app.forms import SearchForm
+from web.app.forms import SearchForm
 from jinja2 import TemplateNotFound
 
 

@@ -1,5 +1,5 @@
-from flask_wtf import Form
-from wtforms import SelectMultipleField, StringField, IntegerField, DecimalField, BooleanField, TextAreaField, validators
+from flask_wtf import FlaskForm as Form
+from wtforms import SelectMultipleField, StringField, IntegerField, BooleanField, TextAreaField, validators
 
 
 class BuilderForm(Form):
@@ -21,20 +21,20 @@ class BuilderForm(Form):
     het = BooleanField('het', default=False)
     homalt = BooleanField('HomAlt', default=False)
 
-    region_include = SelectMultipleField('region_include',choices=[])
-    region_exclude = SelectMultipleField('region_exclude',choices=[])
+    region_include = SelectMultipleField('region_include', choices=[])
+    region_exclude = SelectMultipleField('region_exclude', choices=[])
 
-    breed_include = SelectMultipleField('breed_include',choices=[])
-    breed_exclude = SelectMultipleField('breed_exclude',choices=[])
+    breed_include = SelectMultipleField('breed_include', choices=[])
+    breed_exclude = SelectMultipleField('breed_exclude', choices=[])
 
-    sample_include = SelectMultipleField('individual_include',choices=[])
-    sample_exclude = SelectMultipleField('individual_exclude',choices=[])
+    sample_include = SelectMultipleField('individual_include', choices=[])
+    sample_exclude = SelectMultipleField('individual_exclude', choices=[])
     tumor = BooleanField('tumor', default=False)
 
-    tool_include = SelectMultipleField('tool_include',choices=[])
-    tool_exclude = SelectMultipleField('tool_exclude',choices=[])
+    tool_include = SelectMultipleField('tool_include', choices=[])
+    tool_exclude = SelectMultipleField('tool_exclude', choices=[])
 
-    tool_clauses = SelectMultipleField('tool_clauses',choices=[])
+    tool_clauses = SelectMultipleField('tool_clauses', choices=[])
 
 
 class QueryForm(Form):
@@ -46,5 +46,5 @@ class SearchForm(Form):
 
 
 class ColumnForm(Form):
-    columns_include= SelectMultipleField('columns_include',choices=[])
-    columns_exclude= SelectMultipleField('columns_exclude',choices=[])
+    columns_include = SelectMultipleField('columns_include', choices=[])
+    columns_exclude = SelectMultipleField('columns_exclude', choices=[])

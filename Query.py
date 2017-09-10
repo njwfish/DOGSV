@@ -3,6 +3,7 @@ import yaml
 from itertools import groupby
 from operator import itemgetter
 from uuid import uuid4
+from collections import OrderedDict
 
 import MySQLdb
 
@@ -25,10 +26,17 @@ class QueryParser:
         :return: columns, table, joins, where, order
         """
         prog = re.compile(
-            'select (.*) from (\w+) *(\w+ join \w+ on ((?!order)(?!where).)*)*(where ((?!order).)*)*(order by .*)*'
+            'select (.*) from (\w+) *(\w+ join \w+ on ((?!order)(?!where).)*)*(where (.*) ((?!order).)*)*(order by .*)*'
         )
         match = prog.match(query.lower()).groups(0)
-        return match[0], match[1], match[2], match[4], match[6]
+        print "MATCH:", match
+        columns = match[0]
+        table = match[1]
+        joins = match[2] if match[2] != 0 else []
+        requirements = match[4] if match[4] != 0 else ''
+        order = match[6] if match[4] != 0 else ''
+        print "SPLIT: ", columns, table, joins, requirements, order
+        return columns, table, joins, requirements, order
 
     @staticmethod
     def assemble(columns, table, joins, requirements, order, limit):
@@ -42,12 +50,12 @@ class QueryParser:
         :param limit:
         :return:
         """
-        print joins
+        print "ASSEMBLE: ", columns, table, joins, requirements, order
         core = 'select %s from %s' % (columns, table)
-        joins = ' '.join(set(joins)) if isinstance(joins, list) else ''
-        where = 'where (%s)' % requirements if isinstance(requirements, str) else ''
-        order = order if isinstance(order, str) else ''
-        limit = limit if isinstance(limit, str) else ''
+        joins = ' '.join(list(OrderedDict.fromkeys(joins))) if isinstance(joins, list) and len(joins) > 0 else ''
+        where = 'where (%s)' % requirements if isinstance(requirements, basestring) and requirements != '' else ''
+        order = order if isinstance(order, basestring) else ''
+        limit = limit if isinstance(limit, basestring) else ''
         return ' '.join([core, joins, where, order, limit])
 
 
@@ -84,12 +92,11 @@ class Query:
         self.tid = tid
         if self.tid is None:
             sql, self.tid = Query.get_gen_table_sql(id_query)
-            print sql
             execute_sql(sql, self.variants, self.variants_cursor)
 
     @staticmethod
     def get_gen_table_sql(query):
-        tid = "t" + str(uuid4()).replace("-", "")
+        tid = "t_" + str(uuid4()).replace("-", "")
         return "CREATE TABLE IF NOT EXISTS %s (primary key(id)) ENGINE=MyISAM AS (%s)" % (tid, query), tid
 
     @staticmethod
@@ -106,6 +113,9 @@ class Query:
             else:
                 break
         return cluster
+
+    def get_sql(self):
+        return QueryParser.assemble(self.columns, self.table, self.joins, self.requirements, '', '')
 
     def get_core_clusters(self, results, search, interval):
         clusters = []
@@ -157,10 +167,15 @@ class Query:
         return self.get_clustered_results()
 
     def get_results(self, columns=None):
-        columns = columns if columns is not None else self.columns
-        print columns.lower(), self.tid + " t", self.joins + ["left join records on t.id=records.id"], self.requirements, self.order, self.limit
-        sql = QueryParser.assemble(columns.lower(), self.tid + " t", self.joins +
-                                   ["left join records on t.id=records.id"], self.requirements, self.order, self.limit)
+        columns = columns if columns is not None else str(self.columns)
+        print columns.lower()
+        print self.tid + " t"
+        print self.joins
+        print self.requirements
+        print self.order
+        print self.limit
+        sql = QueryParser.assemble(columns.lower(), self.tid + " t", ["inner join records on t.id=records.id"] +
+                                   self.joins, self.requirements, self.order, self.limit)
         #sql = "select %s from %s t left join records on t.id=records.id" % (columns.lower(), self.tid)
         results = query_sql(sql, self.variants, self.variants_cursor)
         results = [list(r) for r in results]
@@ -217,11 +232,8 @@ class Query:
                     self.variants_cursor)
 
     def sub_query(self, columns, joins, requirements):
-        print "params", columns, joins, requirements
         joins.insert(0, 'left join records on t.id=records.id')
         subquery = QueryParser.assemble(self.primary_columns, self.tid + " t", joins, requirements, None, 'limit 5000')
-        print "id_subquery", subquery
         sql, tid = Query.get_gen_table_sql(subquery)
-        print "gen table", sql
         execute_sql(sql, self.variants, self.variants_cursor)
         return Query(columns, self.table, joins, requirements, None, tid=tid)

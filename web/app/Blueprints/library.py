@@ -1,6 +1,6 @@
 from flask import Blueprint, abort, render_template
-from app.app import queries, queries_cursor
-from app.MySQL_Utils import query_sql
+from web.app.app import queries, queries_cursor
+from MySQL_Utils import query_sql
 from jinja2 import TemplateNotFound
 
 

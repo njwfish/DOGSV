@@ -73,7 +73,7 @@ class Query:
         :param tid:
         """
 
-        self.variants = MySQLdb.connect("localhost", "root", "", "dogsv")
+        self.variants = MySQLdb.connect("127.0.0.1", "root", "", "dogsv")
         self.variants_cursor = self.variants.cursor()
         self.maps = Maps(self.variants, self.variants_cursor, 1)
         self.maps.gen_dicts()

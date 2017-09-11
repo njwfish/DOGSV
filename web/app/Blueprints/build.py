@@ -54,6 +54,7 @@ def show():
     if len(samples) > 0 or len(genotypes) > 0 or "genotype" in necessary_joins or "samples" in necessary_joins:
         joins.append('INNER JOIN genotype on genotype.record_id=records.id')
         if len(samples) > 0:
+            samples = ['(' + ' or '.join(samples) + ')']
             requirements.append(' or '.join(samples))
         if len(genotypes) > 0:
             requirements.append(' or '.join(genotypes))
@@ -82,8 +83,9 @@ def show():
     for key in filters.keys():
         requirements.append(filters[key])
 
-    regoins = ['(' + ' or '.join(regions) + ')'] if len(regions) > 0 else []
+    regions = ['(' + ' or '.join(regions) + ')'] if len(regions) > 0 else []
     types = ['(' + ' or '.join(types) + ')'] if len(types) > 0 else []
+
     requirements += regions + types
     requirements = '(' + ') and ('.join(requirements) + ')' if len(requirements) > 0 else ''
 
@@ -93,9 +95,6 @@ def show():
     if cols == '':
         cols = 'records.chrom,records.pos,records.filter,records.type,records.chrom2,records.pos2,records.len'
 
-
-    query = "select %s from records %s" % (', '.join(cols), ' '.join(query))
-    print "BUILDER", cols, joins, requirements
     try:
         return redirect(url_for('results.show', columns=cols, joins='|'.join(joins), requirements=requirements))
     except TemplateNotFound:

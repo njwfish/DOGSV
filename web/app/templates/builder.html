@@ -2,6 +2,15 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <style>
+    .btn {
+        padding: 5px 15px;
+        border: 0 none;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    </style>
     <h1>Builder <button id="openModal" type="button" class="btn btn-primary">Columns</button></h1>
     <!-- Trigger/Open The Modal -->
     <hr>
@@ -80,8 +89,118 @@
         <button id="closeModal" type="button" class="btn btn-primary">Close</button>
     </div>
     </div>
+
+    <h4>Regions</h4>
+    <div class="row" style="padding:10px;">
+        <div class="col-sm-6 col-md-6">
+            <h5>Exclude</h5>
+            <p>{{form.region_exclude(style="width:100%;height:100px;")}}</p>
+        </div>
+        <div class="col-sm-6 col-md-6">
+            <h5>Include</h5>
+            <p> {{form.region_include(style="width:100%;height:100px;")}}</p>
+        </div>
+    </div>
+
+    <p style="width:100%;height:40px;">
+        Locus: <input type="text" id="locus" style="width:60%;height:100%;">
+        <input type="button" value="Include" id="include_region" name="include_region" class="btn btn-primary">
+        <input type="button" value="Exclude" id="exclude_region" name="exclude_region" class="btn btn-primary">
+    </p>
+    <br>
+
+
+    <h4>Samples</h4>
+    <div class="row" style="padding:10px;height:350px">
+        <div class="col-sm-4 col-md-4">
+            <h5>Options</h5>
+            <select multiple style="width:100%;height:275px;" id="sample_options" name="sample_options">
+                {% for v, s in sample_options %}
+                    <option value="{{ v }}">{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <h5>Exclude</h5>
+            <p>{{form.sample_exclude(style="width:100%;height:120px;")}}</p>
+            <h5>Include</h5>
+            <p> {{form.sample_include(style="width:100%;height:120px;")}}</p>
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <h5>Add</h5>
+            <p>
+                <textarea type="text" id="sample_text" style="width:99.5%;height:250px;"></textarea>
+                <input type="button" value="Include" id="include_samples" name="include_samples" class="btn btn-primary sharp" style="width:49%;">
+                <input type="button" value="Exclude" id="exclude_samples" name="exclude_samples" class="btn btn-primary sharp" style="width:49%;">
+
+            </p>
+        </div>
+
+    </div>
+
+    <br>
+    <h4>Genotype</h4>
+    <div  class="col-sm-4 col-md-4">
+        <p>{{ form.homref }} Homozygous Reference</p>
+    </div>
+    <div  class="col-sm-4 col-md-4">
+        <p>{{ form.homalt }} Homozygous Alternate</p>
+    </div>
+    <div  class="col-sm-4 col-md-4">
+        <p>{{ form.het }} Heterozygous</p>
+    </div>
+
+    <br>
+
+    <br>
+
+
+    <h4>Variant Type</h4>
+    <div>
+        <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-3">
+                                {{ form.DEL }} DEL
+                    </div>
+                    <div class="col-xs-3">
+                                        {{ form.DUP }} DUP
+
+                    </div>
+                    <div class="col-xs-3">
+                                {{ form.INS }} INS
+                    </div>
+                    <div class="col-xs-3">
+                                {{ form.INV }} INV
+                    </div>
+              </div>
+        </div>
+        <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-3">
+                                {{ form.TRA }} TRA
+                    </div>
+                    <div class="col-xs-3">
+                                {{ form.SIN }} SIN
+                    </div>
+                    <div class="col-xs-3">
+                                {{ form.LIN }} LIN
+                    </div>
+                    <div class="col-xs-3">
+                         {{ form.BXP }} BXP
+                    </div>
+              </div>
+        </div>
+
+
+
+
+
+    </div>
+
+    <br>
+
     <h4>Filters</h4>
-    {{form.tool_clauses(style="width:75%;height:200px;")}}
+    {{form.tool_clauses(style="width:100%;height:200px;")}}
     <div class="container" style="width:75%;">
         <hr>
         <ul id="tools" class="nav nav-tabs">
@@ -95,17 +214,18 @@
                 <div class="col-sm-4 col-md-4 centered">
                     <div style="width:100%;">
                         <h4>Columns</h4>
-                        <select id="records_cols" multiple name="r" style="width:100%;height:200px;">
+                        <select id="records_cols" multiple name="r" style="width:100%;height:226px;">
                             <option value=str|REF>REF</option>
                             <option value=str|ALT>ALT</option>
                             <option value=str|QUAL>QUAL</option>
+                            <option value=str|ALT>FILTER</option>
                             <option value=num|len>len</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-sm-4 col-md-4 centered">
                     <ul class="selector" id="records_operators">
-                        
+
                             <li>
                                 <input type="radio" id="records_less" value="<" name="records_operator" />
                                 <label id="records_less_label" for="records_less"><</label>
@@ -126,7 +246,7 @@
                                 <input type="radio" id="records_like" value="like" name="records_operator" />
                                 <label id="records_like_label" for="records_like">like</label>
                             </li>
-                        
+
                     </ul>
                 </div>
                 <div class="col-sm-4 col-md-4">
@@ -147,7 +267,7 @@
                         <div style="width:100%;">
                             <h4>Columns</h4>
                                 {% set key = ("%s_info" % t) %}
-                                <select id="{{t}}_cols" multiple name="{{t}}_info" style="width:100%;height:200px;">
+                                <select id="{{t}}_cols" multiple name="{{t}}_info" style="width:100%;height:100px;">
                                     {% for i in range(0, tool_columns[key]|length) %}
                                         <option value={{tool_types[key][i]}}|{{tool_columns[key][i]}}>{{tool_columns[key][i]}}</option>
                                     {% endfor %}
@@ -166,7 +286,7 @@
                     </div>
                     <div class="col-sm-4 col-md-4 centered">
                         <ul class="selector" id="{{t}}_operators">
-                            
+
                                 <li>
                                     <input type="radio" id="{{t}}_less" value="<" name="{{t}}_operator" />
                                     <label id="{{t}}_less_label" for="{{t}}_less"><</label>
@@ -187,7 +307,7 @@
                                     <input type="radio" id="{{t}}_like" value="like" name="{{t}}_operator" />
                                     <label id="{{t}}_like_label" for="{{t}}_like">like</label>
                                 </li>
-                            
+
                         </ul>
                     </div>
                     <div class="col-sm-4 col-md-4">
@@ -207,143 +327,13 @@
 
     <form action="" method="post" name="record">
         {{ form.hidden_tag() }}
-        <div class="panel-group">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#Record">Record</a>
-                    </h4>
-                </div>
-                <div id="Record" class="panel-collapse collapse">
-                    <div class="row" style="padding:10px;">
-                        <div class="col-sm-4 col-md-4">
-                            <p>{{ form.homref }} Homozygous Reference</p>
-                            <p>{{ form.homalt }} Homozygous Alternate</p>
-                            <p>{{ form.het }} Heterozygous</p>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-                            <p>{{ form.DEL }} DEL</p>
-                            <p>{{ form.DUP }} DUP</p>
-                            <p>{{ form.INS }} INS</p>
-                            <p>{{ form.INV }} INV</p>
-                            <p>{{ form.TRA }} TRA</p>
-                            <p>{{ form.SIN }} SIN</p>
-                            <p>{{ form.LIN }} LIN</p>
-                            <p>{{ form.BXP }} BXP</p>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-                            <div class="alignright">
-                                <p class="alignright">
-                                    Ref: {{ form.ref(size=20) }}
-                                </p><br>
-                                <p class="alignright">
-                                    Alt: {{ form.alt(size=20) }}
-                                </p><br>
-                                <p class="alignright">
-                                    Qual: {{ form.qual(size=20) }}
-                                </p><br>
-                                <p class="alignright">
-                                    Length: {{ form.len(size=20) }}
-                                </p><br>
-                                <p class="alignright">
-                                    Filter: {{ form.filter(size=20) }}
-                                </p><br>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                </div>
-            </div>
-        </div>
-        <div class="panel-group">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#Region">Region</a>
-                    </h4>
-                </div>
-                <div id="Region" class="panel-collapse collapse">
-                    <div class="row" style="padding:10px;">
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Options</h5>
-                            <p>{{form.region_exclude(style="width:100%;height:100px;")}}</p>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Include</h5>
-                            <p> {{form.region_include(style="width:100%;height:100px;")}}</p>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-                            <div class="alignright">
-                                <p class="alignright">Chrom: <input type="text" id="chrom"></p><br>
-                                <p class="alignright">Start: <input type="text" id="start"></p><br>
-                                <p class="alignright">End: <input type="text" id="end"></p><br>
-                            </div>
-                            <p>Chrom 2 <input type="checkbox" name="isSecond" id="isSecond"></p><br>
-
-                            <input type="button" value="Add" id="add" name="add" class="btn btn-primary">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="panel-group">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#Breed">Breed</a>
-                    </h4>
-                </div>
-                <div id="Breed" class="panel-collapse collapse">
-                    <div class="row" style="padding:10px;">
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Options</h5>
-                            <p>{{form.breed_exclude(style="width:100%;height:100px;")}}</p>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Include</h5>
-                            <p> {{form.breed_include(style="width:100%;height:100px;")}}</p>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="panel-group">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#Sample">Sample</a>
-                    </h4>
-                </div>
-                <div id="Sample" class="panel-collapse collapse">
-                    <div class="row" style="padding:10px;">
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Options</h5>
-                            <p>{{form.sample_exclude(style="width:100%;height:100px;")}}</p>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-                            <h5>Include</h5>
-                            <p> {{form.sample_include(style="width:100%;height:100px;")}}</p>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <p><input type="submit" value="Query" id="submit" name="submit" class="btn btn-primary"></p>
     </form>
     <script type="text/javascript">
         $('#tools a:first').tab('show');
         function move_selected(from, to) {
             return !$(from + ' option:selected').remove().appendTo(to);
-        };
-
+        }
         function select_all(box) {
             return !$(box + ' option').prop('selected', true);
         }
@@ -351,8 +341,8 @@
         $(document).ready( function() {
             $('#form-breed_exclude').dblclick( function(){move_selected('#form-breed_exclude', '#form-breed_include')});
             $('#form-breed_include').dblclick( function(){move_selected('#form-breed_include', '#breed_exclude')});
-            $('#form-sample_exclude').dblclick( function(){move_selected('#form-sample_exclude', '#form-sample_include')});
-            $('#form-sample_include').dblclick( function(){move_selected('#form-sample_include', '#form-sample_exclude')});
+            $('#form-sample_exclude').dblclick( function(){move_selected('#form-sample_exclude', '#sample_options')});
+            $('#form-sample_include').dblclick( function(){move_selected('#form-sample_include', '#sample_options')});
             $('#form-tool_exclude').dblclick( function(){move_selected('#form-tool_exclude', '#form-tool_include')});
             $('#form-tool_include').dblclick( function(){move_selected('#form-tool_include', '#form-tool_exclude')});
             $('#form-region_exclude').dblclick( function(){move_selected('#form-region_exclude', '#form-region_include')});
@@ -395,9 +385,9 @@
                 var operator = $('input[name=records_operator]:checked').val();
                 var val = document.getElementById('records_val').value;
                 if (operator == "between") {
-                    var val = document.getElementById('records_start').value + " and " + document.getElementById('records_end').value;
+                    val = document.getElementById('records_start').value + " and " + document.getElementById('records_end').value;
                 }
-                clause = col + " " + operator + " " + val;
+                var clause = col + " " + operator + " " + val;
                 return $('#form-tool_clauses').append("<option value=\"" + clause + "\">" + clause + "</option>")
             });
 
@@ -457,10 +447,10 @@
                     var col =  e.name + "." + e.options[e.selectedIndex].value.split("|")[1];
                     var operator = $('input[name={{t}}_operator]:checked').val();
                     var val = document.getElementById('{{t}}_val').value;
-                    if (operator == "between"){
-                        var val = document.getElementById('{{t}}_start').value + " and " + document.getElementById('{{t}}_end').value;
+                    if (operator === "between"){
+                        val = document.getElementById('{{t}}_start').value + " and " + document.getElementById('{{t}}_end').value;
                     }
-                    clause = col + " " + operator + " " + val;
+                    var clause = col + " " + operator + " " + val;
                     return $('#form-tool_clauses').append("<option value=\"" + clause + "\">" + clause + "</option>")
                 });
 
@@ -520,23 +510,82 @@
             $('#genotypes_columns').dblclick( function(){move_selected('#genotypes_columns', '#cols-columns_include')} );
             $('#cols-columns_include').dblclick( function(){move_selected('#cols-columns_include', '#cols-columns_exclude')} );
             $('#cols-columns_exclude').dblclick( function(){move_selected('#cols-columns_exclude', '#cols-columns_include')} );
+
+
             $('#openModal').click(function() {
                 chooseCols.style.display = "block";
             });
             $('#closeModal').click(function() {
                 chooseCols.style.display = "none";
             });
-            $('#add').click(function() {
-                if (document.getElementById('chrom').value.length > 0 & document.getElementById('start').value.length > 0 & document.getElementById('end').value.length > 0) {
-                    if (document.getElementById('isSecond').checked){
-                        region = "records.chrom2 is " + document.getElementById('chrom').value + " and records.pos2 between " + document.getElementById('start').value + " and " + document.getElementById('end').value;
+            $('#include_samples').click(function() {
+                var text_samples = document.getElementById( 'sample_text' ).value.replace(/ /g,'');
+                var optionsToSelect = text_samples.split(",");
+                var select = document.getElementById( 'sample_options' );
+
+                for ( var i = 0, l = select.options.length, o; i < l; i++ ) {
+                  o = select.options[i];
+                  var index = optionsToSelect.indexOf( o.text );
+                  if ( index !== -1 ) {
+                    o.selected = true;
+                    optionsToSelect.splice(index, 1);
+                  }
+                }
+
+                move_selected('#sample_options', '#form-sample_include');
+                document.getElementById( 'sample_text' ).value = optionsToSelect;
+            });
+            $('#exclude_samples').click(function() {
+                var text_samples = document.getElementById( 'sample_text' ).value.replace(/ /g,'');
+                var optionsToSelect = text_samples.split(",");
+                var select = document.getElementById( 'sample_options' );
+
+                for ( var i = 0, l = select.options.length, o; i < l; i++ ) {
+                  o = select.options[i];
+                  var index = optionsToSelect.indexOf( o.text );
+                  if ( index !== -1 ) {
+                    o.selected = true;
+                    optionsToSelect.splice(index, 1);
+                  }
+                }
+
+                move_selected('#sample_options', '#form-sample_exclude');
+                document.getElementById( 'sample_text' ).value = optionsToSelect;
+            });
+            $('#include_region').click(function() {
+                if (document.getElementById('locus').value.length > 0) {
+                    var chrom = document.getElementById('locus').value;
+                    var split_region = chrom.replace("chr", "").replace(/,/g, "").split(":");
+                    var query_chrom = split_region[0];
+                    var split_range = split_region[1].split("-");
+                    var region = ''
+                    if (split_range.length === 2){
+                        region = "records.chrom = " + query_chrom + " and records.pos between " + split_range[0] + " and " + split_range[1];
+                    } else if (split_range.length === 1){
+                        region = "records.chrom = " + query_chrom + " and records.pos = " + split_range[0];
                     } else {
-                        region = "records.chrom is " + document.getElementById('chrom').value + " and records.pos between " + document.getElementById('start').value + " and " + document.getElementById('end').value;
+                        return;
                     }
-                    document.getElementById('chrom').value = "";
-                    document.getElementById('start').value = "";
-                    document.getElementById('end').value = "";
-                    return $('#form-region_include').append("<option value=\"" + region + "\">" + region + "</option>");
+                    document.getElementById('locus').value = "";
+                    return $('#form-region_include').append("<option value=\"" + region + "\">" + chrom + "</option>");
+                }
+            });
+            $('#exclude_region').click(function() {
+                if (document.getElementById('locus').value.length > 0) {
+                    var chrom = document.getElementById('locus').value;
+                    var split_region = chrom.replace("chr", "").replace(/,/g, "").split(":");
+                    var query_chrom = split_region[0];
+                    var split_range = split_region[1].split("-");
+                    var region = ''
+                    if (split_range.length === 2){
+                        region = "records.chrom = " + query_chrom + " and records.pos between " + split_range[0] + " and " + split_range[1];
+                    } else if (split_range.length === 1){
+                        region = "records.chrom = " + query_chrom + " and records.pos = " + split_range[0];
+                    } else {
+                        return;
+                    }
+                    document.getElementById('locus').value = "";
+                    return $('#form-region_exclude').append("<option value=\"" + region + "\">" + chrom + "</option>");
                 }
             });
         });

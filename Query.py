@@ -81,23 +81,23 @@ class Query:
         self.process = process if process is not None else {}
         self.process_vars = process_vars if process_vars is not None else {}
         table_index = query_sql("show index from " + self.table, self.variants, self.variants_cursor)
-        self.primary_columns = ','.join(['{0}.{1}'.format(self.table, r[4]) for r in table_index if r[2] == 'PRIMARY'])
+        self.primary_columns = ','.join(['{0}'.format(r[4]) for r in table_index if r[2] == 'PRIMARY'])
         self.limit = "limit 5000"
         id_query = QueryParser.assemble(self.primary_columns,
                                         self.table,
                                         self.joins,
                                         self.requirements,
                                         self.order,
-                                        self.limit)
+                                        None)
         self.tid = tid
         if self.tid is None:
-            sql, self.tid = Query.get_gen_table_sql(id_query)
+            sql, self.tid = Query.get_gen_table_sql(id_query, self.primary_columns)
             execute_sql(sql, self.variants, self.variants_cursor)
 
     @staticmethod
-    def get_gen_table_sql(query):
+    def get_gen_table_sql(query, primary_key):
         tid = "t_" + str(uuid4()).replace("-", "")
-        return "CREATE TABLE IF NOT EXISTS %s (primary key(id)) ENGINE=MyISAM AS (%s)" % (tid, query), tid
+        return "CREATE TABLE IF NOT EXISTS %s (primary key(%s)) ENGINE=MyISAM AS (%s)" % (tid, primary_key, query), tid
 
     @staticmethod
     def get_cluster(results, i, interval, search):
@@ -168,12 +168,6 @@ class Query:
 
     def get_results(self, columns=None):
         columns = columns if columns is not None else str(self.columns)
-        print columns.lower()
-        print self.tid + " t"
-        print self.joins
-        print self.requirements
-        print self.order
-        print self.limit
         sql = QueryParser.assemble(columns.lower(), self.tid + " t", ["inner join records on t.id=records.id"] +
                                    self.joins, self.requirements, self.order, self.limit)
         #sql = "select %s from %s t left join records on t.id=records.id" % (columns.lower(), self.tid)
@@ -226,14 +220,9 @@ class Query:
                     if results[i][s] in id_map.sample_mapping else 'None'
         return results
 
-    def update_query(self, query):
-        execute_sql("DROP TABLE %s;" % self.tid, self.variants, self.variants_cursor)
-        execute_sql("CREATE TABLE IF NOT EXISTS %s AS (%s);" % (self.tid, query), self.variants,
-                    self.variants_cursor)
-
     def sub_query(self, columns, joins, requirements):
         joins.insert(0, 'left join records on t.id=records.id')
         subquery = QueryParser.assemble(self.primary_columns, self.tid + " t", joins, requirements, None, 'limit 5000')
-        sql, tid = Query.get_gen_table_sql(subquery)
+        sql, tid = Query.get_gen_table_sql(subquery, self.primary_columns)
         execute_sql(sql, self.variants, self.variants_cursor)
         return Query(columns, self.table, joins, requirements, None, tid=tid)

@@ -12,7 +12,7 @@ from maps import Maps
 
 
 class VCFQuery:
-    def __init__(self, query, dir, output, prefix_chrom, all_info):
+    def __init__(self, query, directory, output, prefix_chrom, all_info):
         """
 
         :param query: Query, query object
@@ -29,7 +29,7 @@ class VCFQuery:
         self.columns = defaultdict(list)
         self.column_info = {}
         self.merges = defaultdict(list)
-        self.dir = dir
+        self.dir = directory
         self.output = output
         self.files = []
 

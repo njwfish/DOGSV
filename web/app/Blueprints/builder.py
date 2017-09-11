@@ -38,21 +38,21 @@ def show():
                 'LIN': form.LIN.data,
                 'BXP': form.BXP.data
             }
-            genotypes = {
+            genotypes_cols = {
                 '0/0': form.homref.data,
                 '0/1': form.het.data,
                 '1/1': form.homalt.data
             }
             regions = form.region_include.data,
             tumor = form.tumor.data
-            samples = form.sample_include.data,
+            samples_cols = form.sample_include.data,
             breeds = form.breed_include.data,     # adding a comma here avoids a bad request
             tools = form.tool_include.data,       # adding a comma here avoids a bad request
             tool_filters = '["' + '", "'.join(form.tool_clauses.data) + '"]' \
                 if len(form.tool_clauses.data) > 0 else '[]'
             columns = cols.columns_include.data,
-            return redirect(url_for('build.show', types=types, genotypes=genotypes,
-                                    regions=regions, tumor=tumor, samples=samples,
+            return redirect(url_for('build.show', types=types, genotypes=genotypes_cols,
+                                    regions=regions, tumor=tumor, samples=samples_cols,
                                     breeds=breeds, tools=tools, tool_filters=tool_filters, columns=columns))
 
     sql = "SELECT Unabbreviated FROM ref_breed"
@@ -61,12 +61,6 @@ def show():
                                       if (b[0], b[0]) not in form.breed_include.choices]
     else:
         form.breed_exclude.choices = [(b[0],b[0]) for b in query_sql(sql, variants, variants_cursor)]
-    sql = "SELECT sample FROM ref_sample"
-    if form.sample_include.choices is not None:
-        form.sample_exclude.choices = [(b[0], b[0]) for b in query_sql(sql, variants, variants_cursor)
-                                       if (b[0], b[0]) not in form.sample_include.choices]
-    else:
-        form.sample_exclude.choices = [(b[0],b[0]) for b in query_sql(sql, variants, variants_cursor)]
     sql = "SELECT Unabbreviated FROM ref_tool"
     if form.tool_include.choices is not None:
         form.tool_exclude.choices = [(b[0], b[0]) for b in query_sql(sql, variants, variants_cursor)
@@ -74,15 +68,18 @@ def show():
     else:
         form.tool_exclude.choices = [(b[0], b[0]) for b in query_sql(sql, variants, variants_cursor)]
 
+    sql = "SELECT sample FROM ref_sample"
+    sample_options = [(b[0],b[0]) for b in query_sql(sql, variants, variants_cursor)]
+
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'records'"
     results = query_sql(sql, variants, variants_cursor)
-    records = [b[0] for b in results] if results is not None else []
+    records_cols = [b[0] for b in results] if results is not None else []
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'samples'"
     results = query_sql(sql, variants, variants_cursor)
-    samples = [b[0] for b in results] if results is not None else []
+    samples_cols = [b[0] for b in results] if results is not None else []
     sql = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'genotype'"
     results = query_sql(sql, variants, variants_cursor)
-    genotypes = [b[0] for b in results] if results is not None else []
+    genotypes_cols = [b[0] for b in results] if results is not None else []
 
     sql = "SELECT tool FROM ref_tool"
     tools = [b[0].lower() for b in query_sql(sql, variants, variants_cursor)]
@@ -112,7 +109,7 @@ def show():
 
     try:
         return render_template('builder.html', form=form, cols=cols, tools=tools,
-                               tool_columns=tool_columns, tool_types=tool_types, records=records,
-                               samples=samples, genotypes=genotypes)
+                               tool_columns=tool_columns, tool_types=tool_types, records=records_cols,
+                               samples=samples_cols, genotypes=genotypes_cols, sample_options=sample_options)
     except TemplateNotFound:
         abort(404)

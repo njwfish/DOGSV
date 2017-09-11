@@ -9,7 +9,8 @@ from jinja2 import TemplateNotFound
 
 builder = Blueprint('builder', __name__, template_folder='templates')
 
-@builder.route('/')
+
+@builder.route('/', methods=['GET', 'POST'])
 @builder.route('/builder', methods=['GET', 'POST'])
 def show():
     form = BuilderForm(prefix="form")

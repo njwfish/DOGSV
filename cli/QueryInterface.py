@@ -44,7 +44,7 @@ class QueryController(CementBaseController):
         columns = self.app.pargs.columns
         table = 'records'
         requirements = self.app.pargs.where
-        joins = self.app.pargs.joins
+        joins = [self.app.pargs.joins]
         curr = None
         if requirements is not None:
 

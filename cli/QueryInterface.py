@@ -48,7 +48,7 @@ class QueryController(CementBaseController):
         curr = None
         if requirements is not None:
 
-            if table is not None:
+            if table is None:
                 curr = Query.Query(columns, table, joins, requirements, None)
             else:
                 if self.app.pargs.sub == '1':

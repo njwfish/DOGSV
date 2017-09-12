@@ -29,17 +29,11 @@ class QueryController(CementBaseController):
         description = "Interface to query an instance of a DOGSV database."
         arguments = \
             [
-                (['-b', '--breeds'], dict(action='store', help='List of breeds to limit the query to.')),
-                (['-r', '--regions'], dict(action='store', help='List of regions to query.')),
                 (['-c', '--columns'], dict(action='store', help='Columns to display from query.')),
-                (['-v', '--variants'], dict(action='store', help='List of variant types to include in query.')),
-                (['--start'], dict(action='store', help='List of triples, of the form (chrom, pos1, pos2), to '
-                                                        'filter variants by start position.')),
-                (['--end'], dict(action='store', help='List of triples, of the form (chrom, pos1, pos2), to '
-                                                      'filter variants by end position.')),
                 (['--requirements'], dict(nargs='+', action='store', help='SQL formatted where clause.')),
                 (['-n', '--lines'], dict(action='store', help='Number of rows to print, default 500.')),
                 (['-q', '--query'], dict(action='store', help='Previous query id, used for sub querying.')),
+                (['-s', '--sub'], dict(action='store', help='Binary value (0, 1), where 1 means subquery, only use if this is a query that has been run using the cli beofre.')),
 
             ]
 
@@ -50,6 +44,7 @@ class QueryController(CementBaseController):
         table = 'records'
         requirements = self.app.pargs.requirements
         joins = None
+        curr = None
         if requirements is not None:
             print requirements
             column_tables = [col.split('.') for col in columns.split(',')]
@@ -58,13 +53,18 @@ class QueryController(CementBaseController):
             joins = ['inner join {0} on records.id=record_id'.format(table)
                      for table, _ in requirements + column_tables if table != 'records']
             requirements = ['{0}.{1}'.format(table, field) for table, field in requirements]
-        if table is not None:
-            curr = Query.Query(columns, table, joins, requirements, None)
-        else:
-            with open("tmp/{0}.p".format(self.app.pargs.query), "r") as pfile:
-                curr_vars = pickle.load(pfile)
-                curr = Query.Query(*curr_vars)
-            curr.sub_query()
+            if table is not None:
+                curr = Query.Query(columns, table, joins, requirements, None)
+            else:
+                if self.app.pargs.sub == '1':
+                    with open("tmp/{0}.p".format(self.app.pargs.query), "r") as pfile:
+                        curr_vars = pickle.load(pfile)
+                        curr = Query.Query(*curr_vars)
+                    curr.sub_query(columns, joins, requirements)
+                else:
+                    curr = Query.Query(columns, table, joins, requirements, None, tid=self.app.pargs.query)
+        if curr is None:
+            return
         results, fields = curr.get_results()
         with open("tmp/{0}.p".format(curr.tid), "w") as pfile:
             curr_vars = (curr.columns, curr.table, curr.joins, curr.requirements,

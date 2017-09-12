@@ -29,7 +29,6 @@ class QueryController(CementBaseController):
         description = "Interface to query an instance of a DOGSV database."
         arguments = \
             [
-                (['-t', '--table'], dict(action='store', help='The query id of the query to subquery.')),
                 (['-b', '--breeds'], dict(action='store', help='List of breeds to limit the query to.')),
                 (['-r', '--regions'], dict(action='store', help='List of regions to query.')),
                 (['-c', '--columns'], dict(action='store', help='Columns to display from query.')),
@@ -62,7 +61,7 @@ class QueryController(CementBaseController):
         if table is not None:
             curr = Query.Query(columns, table, joins, requirements, None)
         else:
-            with open("tmp/{0}.p".format(self.app.pargs.table), "r") as pfile:
+            with open("tmp/{0}.p".format(self.app.pargs.query), "r") as pfile:
                 curr_vars = pickle.load(pfile)
                 curr = Query.Query(*curr_vars)
             curr.sub_query()

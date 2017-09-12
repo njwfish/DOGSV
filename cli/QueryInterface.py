@@ -31,7 +31,7 @@ class QueryController(CementBaseController):
             [
                 (['-c', '--columns'], dict(action='store', help='Columns to display from query.')),
                 (['-j', '--joins'], dict(action='store', help='Joins from query.')),
-                (['-w', '--where'], dict(nargs='+', action='store', help='SQL formatted where clause.')),
+                (['-w', '--where'], dict(action='store', help='SQL formatted where clause.')),
                 (['-n', '--lines'], dict(action='store', help='Number of rows to print, default 500.')),
                 (['-q', '--query'], dict(action='store', help='Previous query id, used for sub querying.')),
                 (['-s', '--sub'], dict(action='store', help='Binary value (0, 1), where 1 means subquery, only use if this is a query that has been run using the cli beofre.')),

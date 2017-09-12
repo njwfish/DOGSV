@@ -115,7 +115,8 @@ class Query:
         return cluster
 
     def get_sql(self):
-        return QueryParser.assemble(self.columns, self.table, self.joins, self.requirements, '', '')
+        return QueryParser.assemble(self.columns.lower(), self.tid + " t", ["inner join records on t.id=records.id"] +
+                                    self.joins, self.requirements, self.order, self.limit)
 
     def get_core_clusters(self, results, search, interval):
         clusters = []

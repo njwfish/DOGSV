@@ -46,7 +46,7 @@ class QueryController(CementBaseController):
         requirements = self.app.pargs.where
         joins = [self.app.pargs.joins]
         curr = None
-        tmp_dir = os.path.dirname(os.path.dirname(__file__)) + '/tmp/'
+        tmp_dir = os.path.dirname(__file__) + '/tmp/'
         if requirements is not None:
 
             if table is None:

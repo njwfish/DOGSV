@@ -97,7 +97,7 @@ class Query:
     @staticmethod
     def get_gen_table_sql(query, primary_key):
         tid = "t_" + str(uuid4()).replace("-", "")
-        return "CREATE TABLE IF NOT EXISTS %s (primary key(%s)) ENGINE=MyISAM AS (%s)" % (tid, primary_key, query), tid
+        return "CREATE TABLE IF NOT EXISTS %s ENGINE=MyISAM AS (%s)" % (tid, query), tid
 
     @staticmethod
     def get_cluster(results, i, interval, search):

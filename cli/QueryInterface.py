@@ -46,13 +46,14 @@ class QueryController(CementBaseController):
         requirements = self.app.pargs.where
         joins = [self.app.pargs.joins]
         curr = None
+        tmp_dir = os.path.dirname(os.path.dirname(__file__)) + '/tmp/'
         if requirements is not None:
 
             if table is None:
                 curr = Query.Query(columns, table, joins, requirements, None)
             else:
                 if self.app.pargs.sub == '1':
-                    with open("tmp/{0}.p".format(self.app.pargs.query), "r") as pfile:
+                    with open(tmp_dir + "{0}.p".format(self.app.pargs.query), "r") as pfile:
                         curr_vars = pickle.load(pfile)
                         curr = Query.Query(*curr_vars)
                     curr.sub_query(columns, joins, requirements)
@@ -61,7 +62,7 @@ class QueryController(CementBaseController):
         if curr is None:
             return
         results, fields = curr.get_results()
-        with open("tmp/{0}.p".format(curr.tid), "w") as pfile:
+        with open(tmp_dir + "{0}.p".format(curr.tid), "w") as pfile:
             curr_vars = (curr.columns, curr.table, curr.joins, curr.requirements,
                          curr.order, curr.process, curr.process_vars, curr.tid)
             pickle.dump(curr_vars, pfile, protocol=pickle.HIGHEST_PROTOCOL)

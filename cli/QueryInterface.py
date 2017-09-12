@@ -30,7 +30,8 @@ class QueryController(CementBaseController):
         arguments = \
             [
                 (['-c', '--columns'], dict(action='store', help='Columns to display from query.')),
-                (['--requirements'], dict(nargs='+', action='store', help='SQL formatted where clause.')),
+                (['-j', '--joins'], dict(action='store', help='Joins from query.')),
+                (['-w', '--where'], dict(nargs='+', action='store', help='SQL formatted where clause.')),
                 (['-n', '--lines'], dict(action='store', help='Number of rows to print, default 500.')),
                 (['-q', '--query'], dict(action='store', help='Previous query id, used for sub querying.')),
                 (['-s', '--sub'], dict(action='store', help='Binary value (0, 1), where 1 means subquery, only use if this is a query that has been run using the cli beofre.')),
@@ -42,17 +43,11 @@ class QueryController(CementBaseController):
         self.app.log.info('Inside query.query()')
         columns = self.app.pargs.columns
         table = 'records'
-        requirements = self.app.pargs.requirements
-        joins = None
+        requirements = self.app.pargs.where
+        joins = self.app.pargs.joins
         curr = None
         if requirements is not None:
-            print requirements
-            column_tables = [col.split('.') for col in columns.split(',')]
-            requirements = [req.split(',') for req in requirements]
-            print requirements
-            joins = ['inner join {0} on records.id=record_id'.format(table)
-                     for table, _ in requirements + column_tables if table != 'records']
-            requirements = ['{0}.{1}'.format(table, field) for table, field in requirements]
+
             if table is not None:
                 curr = Query.Query(columns, table, joins, requirements, None)
             else:

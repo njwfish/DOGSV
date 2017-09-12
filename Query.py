@@ -56,7 +56,7 @@ class QueryParser:
         where = 'where (%s)' % requirements if isinstance(requirements, basestring) and requirements != '' else ''
         order = order if isinstance(order, basestring) else ''
         limit = limit if isinstance(limit, basestring) else ''
-        return ' '.join([core, joins, where, order, limit])
+        return ' \n'.join([core, joins, where, order, limit])
 
 
 class Query:
